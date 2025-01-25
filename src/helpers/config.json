@@ -1,0 +1,20 @@
+{
+  "UNIVERSITY": "Sousse",
+  
+  "ETABLISSEMENT": {
+    "FR": "École Polytechnique Sousse",
+    "AR": "المدرسة الخاصة للتقنيات بسوسة"
+  },
+
+  "QR": { "ALIAS": "POLYTECS", "PIN": "958326", "DOC_TYPE_EN": "CA", "DOC_TYPE_FR": "B9" ,"PARTICIPANT":"1050246G" },
+
+  "USER_1": {
+    "LOGIN": "admin",
+    "PASSWORD": "admin"
+  },
+  "//comment":"mode 0 for fake xml generation / mode 1 for real xml generation",
+  "MODE":0,
+  "comment2":"mode 0 for french / mode 1 for english",
+  "LANG":1
+
+}

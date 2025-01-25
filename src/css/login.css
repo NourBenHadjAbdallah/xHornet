@@ -1,0 +1,475 @@
+.split {
+    height: 100%;
+    width: 50%;
+    position: fixed;
+    /* z-index: 1; */
+    top: 0;
+    overflow-x: hidden;
+    /* padding-top: 20px; */
+ 
+}
+
+.left {
+    left: 0;
+
+}
+
+.right {
+    /* position: absolute; */
+    right: 0;
+    background-color: #609BF4;
+    z-index: -1;
+    /* opacity: 0.7; */
+}
+.form-button{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    height: 100px;
+    width: 80%;
+    align-items: center;
+}
+.dropdown-button{
+ 
+    left:800px;
+    height: 500px;
+    width: 230px;
+    align-items: center;
+}
+.button{
+    border: 2px solid red;
+
+}
+#top-button{
+   bottom: 0;
+   left: 50%;
+   position: absolute;
+background-color: transparent;
+color: white;
+border: 2px solid white;
+font-weight: 500;
+font-size: 20px;
+/* line-height: 40px; */
+font-family: 'Poppins', system-ui;
+font-style: normal;
+width: 230px;
+height: 42px;
+align-items: center;
+transform: translate(-50%,-50%);
+border-radius: 13px;
+}
+#top-button:active{
+    bottom: 0;
+    position: absolute;
+ background-color: white;
+ color: #619BF4;
+ border: 2px solid white;
+ font-weight: 500;
+ font-size: 20px;
+ /* line-height: 40px; */
+ font-family: 'Poppins', system-ui;
+ font-style: normal;
+ font-weight: 500;
+ font-size: 20px;
+ /* line-height: 40px; */
+ font-family: 'Poppins', system-ui;
+ font-style: normal;
+ width: 230px;
+ height: 42px;
+ align-items: center;
+ transform: translate(-50%,-50%);
+ border-radius: 13px;
+ 
+ }
+ #top-button:disabled{
+    bottom: 0;
+    position: absolute;
+    background: #b3b3b3;
+    color: white;
+    opacity: 0.6;
+    border: 2px solid white;
+ font-weight: 500;
+ font-size: 20px;
+ /* line-height: 40px; */
+ font-family: 'Poppins', system-ui;
+ font-style: normal;
+ font-weight: 500;
+ font-size: 20px;
+ /* line-height: 40px; */
+ font-family: 'Poppins', system-ui;
+ font-style: normal;
+ width: 230px;
+ height: 42px;
+ align-items: center;
+ transform: translate(-50%,-50%);
+ border-radius: 13px;
+ 
+ }
+#bottom-button{
+    left: 50%;
+    position: absolute;
+ background-color: transparent;
+ color: white;
+ border: 2px solid white;
+ font-weight: 500;
+ font-size: 20px;
+ /* line-height: 40px; */
+ font-family: 'Poppins', system-ui;
+ font-style: normal;
+ width: 230px;
+ height: 42px;
+ align-items: center;
+ transform: translate(-50%,-50%);
+ border-radius: 13px;
+}
+#bottom-button:disabled{
+    left: 50%;
+    position: absolute;
+    background: #b3b3b3;
+ color: white;
+ border: 2px solid white;
+ font-weight: 500;
+ font-size: 20px;
+ /* line-height: 40px; */
+ font-family: 'Poppins', system-ui;
+ font-style: normal;
+ width: 230px;
+ height: 42px;
+ align-items: center;
+ transform: translate(-50%,-50%);
+ border-radius: 13px;
+}
+#bottom-button:active{
+    left: 50%;
+    position: absolute;
+    background-color: white;
+    color: #619BF4;
+    border: 2px solid white;
+ font-weight: 500;
+ font-size: 20px;
+ /* line-height: 40px; */
+ font-family: 'Poppins', system-ui;
+ font-style: normal;
+ width: 230px;
+ align-items: center;
+ transform: translate(-50%,-50%);
+ border-radius: 13px;
+}
+/*Main title css properties*/
+.title-style {
+    position: relative;
+    width: 190px;
+    /* left: 16%; */
+    margin-top: 18%;
+    /* right: 0; */
+    margin-right: auto;
+    margin-left: auto;
+    text-align: center;
+    font-family: 'Poppins', system-ui;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 54px;
+    color: white;
+    border-bottom: 4px solid white;
+    padding-bottom: 5px;
+}
+
+/*Horizontal line css properties*/
+.line-horizontal {
+    position: absolute;
+    width: 100px;
+    height: 0px;
+    left: 6%;
+    top: 160px;
+    right: 0;
+    border: 3px solid white;
+}
+
+/*Svg Rect css properties*/
+.svg-rectangle {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    margin-left: 50%;
+    top: -120px;
+
+    background: #619BF4;
+    /* box-shadow: 0px 4px 51px rgba(0, 0, 0, 0.25); */
+    /* transform: rotate(9.82deg) */
+}
+
+/*Username input css properties*/
+.username-field {
+    position: relative;
+    width: 50%;
+    height: 30px;
+    left: 20%;
+    /* margin-right: 10%; */
+    margin-left: 5%;
+    margin-top: 80px;
+    font-family: 'Poppins', system-ui;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 30px;
+    background-color: #619BF4;
+    color: white;
+    /*border only bottom*/
+    outline: 0;
+    border-width: 0 0 2px;
+    border-color: white;
+
+
+}
+
+/*Password input css properties*/
+.password-field {
+    /* position: relative; */
+    width: 50%;
+    height: 30px;
+    /* left: 61rem;
+    right: 0; */
+    left: 20%;
+    margin-left: 5%;
+    margin-top: 140px;
+    font-family: 'Poppins', system-ui;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 30px;
+    background-color: #619BF4;
+    color: white;
+    /*border only bottom*/
+    outline: 0;
+    border-width: 0 0 2px;
+    border-color: white;
+    padding-right:30px;
+
+}
+
+/*Submit button css properties*/
+.submit-button {
+    position: absolute;
+    width: 50%;
+    height: 42px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    margin-top: 200px;
+    /* background: none; */
+    border-radius: 13px;
+    /* border: none; */
+    border: solid 2px;
+    border-color: white;
+    text-decoration: none;
+    background-color: transparent;
+    color: white;
+    font-weight: 500;
+    font-size: 20px;
+    /* line-height: 40px; */
+    font-family: 'Poppins', system-ui;
+    font-style: normal;
+}
+
+/*Submit button hover css properties*/
+.submit-button:hover {
+    background: white;
+    color: #609BF4;
+
+}
+
+/*Submit text css properties*/
+
+/* form {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+} */
+/*Input form placeholder css properties*/
+input::placeholder {
+    color: white;
+}
+
+/*Input form focus css properties*/
+input:focus {
+    border-color: #BFBFBF;
+}
+
+p:hover {
+    color: #619BF4;
+}
+
+/*login screen background css properties*/
+.login-background {
+    /* position: relative; */
+    background-repeat: no-repeat;
+    background-size: contain;
+    /* height: auto;
+    width: 100%; */
+    /* width: 912px;
+    height: 482px; */
+    /* width: 1200px;
+    height: 800px; */
+    background-image: url("../resources/login_background.png");
+}
+
+.login-section {
+     position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  width:700px;
+  height: 700px;
+
+}
+
+/*Password icon css properties*/
+.password-icon {
+    /* width: 1.2%; */
+    /* position: relative;
+    padding-left: 80%;
+    top: 381px; */
+    /* padding: 10px; */
+    position: absolute;
+    margin-left: 16%;
+    margin-top: 140px;
+    /* margin-right: 300px; */
+
+}
+
+
+/* .div-right {
+    background-color: #609BF4;
+    width: 50%;
+    left: 200px;
+
+} */
+.div-left {
+    background-color: #609BF4;
+    width:50%;
+    opacity: 70%;
+}
+
+.application-logo {
+    position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%)
+}
+/* @media screen and  (min-width: 1280px), screen and (min-height: 720px){ */
+
+    /* .line-horizontal {
+        position: absolute;
+        width: 84px;
+        height: 0px;
+        left: 519px;
+        top: 149px;
+        right: 0;
+        border: 3px solid #609BF4;
+    } */
+
+    /* .title-style {
+        position: absolute;
+        left: 32rem;
+        top: 4rem;
+        right: 0;
+        text-align: center;
+        font-family: 'Poppins', system-ui;
+        font-style: normal;
+        font-weight: 700;
+        font-size: 48px;
+        line-height: 54px;
+        color: #4A4A4A;
+
+    } */
+    /*Username input css properties*/
+    /* .username-field {
+        left: 50%;
+        width: 500px;
+
+    } */
+     /*Password input css properties*/
+     /* .password-field {
+        left: 50%;
+        width: 500px;
+
+    } */
+
+    /*Submit button css properties*/
+    /* .submit-button {
+        left: 50%;
+        width: 500px;
+
+    } */
+    /*Password icon css properties*/
+    /* .password-icon {
+        /* right: 20%;  */
+
+    /* }  */
+
+
+/* } */
+
+/* @media screen and (max-width: 1280px) and (max-height: 720px) {
+
+    /*Main title css properties*/
+    /* .title-style {
+        font-size: 40px;
+
+    } */
+
+    /*Horizontal line css properties*/
+    /* .line-horizontal {
+        position: absolute;
+        width: 84px;
+        height: 0px;
+        left: 519px;
+        top: 142px;
+        right: 0;
+        border: 3px solid #609BF4;
+    } */
+
+    /*Username input css properties*/
+    /* .username-field {
+        top: 272px;
+        left: 46rem;
+    } */
+
+    /*Password input css properties*/
+    /* .password-field {
+        top: 317px;
+        left: 46rem;
+    } */
+
+    /*Submit button css properties*/
+    /* .submit-button {
+        top: 377px;
+        left: 46rem;
+    } */
+
+    /* .password-icon {
+        position: absolute;
+        left: 64rem;
+        top: 317px;
+
+    } */
+
+    /*login screen background css properties*/
+    /* .login-background {
+        background-repeat: no-repeat; */
+        /* background-size: contain; */
+        /* width: 1280px;
+        height: 720px; */
+        /* width: 20%;
+        height: 20%; */
+        /* background-position: center;
+        background-size: cover;
+        position: relative;
+        background-image: url("../resources/login_background.png");
+
+    } */
+/* } */
