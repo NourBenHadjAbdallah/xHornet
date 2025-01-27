@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect,useRef } from "react";
 import "../css/main-interface.css";
 import { api } from "../api";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
@@ -13,6 +13,7 @@ var XMLParser = require("react-xml-parser");
 const PDFJS = window.pdfjsLib;
 
 const LicenceFormulaire = ({ base64, parentcallback,specialityDiploma }) => {
+  const isComponentMounted = useRef();
   const [pdfBytes, setPdfBytes] = useState("");
   const [show, setShow] = useState(false);
   const [firstName, setFirstName] = useState("");
@@ -165,18 +166,58 @@ const LicenceFormulaire = ({ base64, parentcallback,specialityDiploma }) => {
 
     setSpeciality(specialityNamesArray[div1.selectedIndex - 1]);
   };
-  async function modifyPdf(
-    lastName,
-    firstName,
-    id,
-    naissance,
-    lieu,
-    mention,
-    dateProces
-  ) {
-    //Procès verbal date
-    let dateProcesFR = reverseDateFrench(dateProces);
-    let monthProcesFR = toMonthNameFrenchPV(dateProces.substring(5, 7));
+  async function modifyPdf(type, data){
+    switch (type) {
+      case "licence":
+        // Logic for Licence PDF modification
+        console.log("Modifying Licence PDF", {
+          firstName,
+          lastName,
+          id,
+          naissance,
+          lieu,
+          mention,
+          academicYear,
+        });
+        await handlePdfModification();
+        break;
+
+        case "ingénieur":
+          // Logic for Ingénieur PDF modification
+          console.log("Modifying Ingénieur PDF", {
+            firstName,
+            lastName,
+            id,
+            naissance,
+            lieu,
+            speciality,
+            academicYear,
+          });
+          await handlePdfModification();
+          break;
+  
+        case "architecture":
+          // Logic for Architecture PDF modification
+          console.log("Modifying Architecture PDF", {
+            firstName,
+            lastName,
+            id,
+            naissance,
+            lieu,
+            academicYear,
+          });
+          await handlePdfModification();
+          break;
+  
+        default:
+          console.warn("Unknown form type for PDF modification");
+      }
+
+  }
+  const handlePdfModification = async () => {
+    // Procès verbal date
+    let dateProcesFR = reverseDateFrench(naissance);
+    let monthProcesFR = toMonthNameFrenchPV(naissance.substring(5, 7));
 
     let procesVerbal = dateProcesFR.replace(/-/g, " ");
     procesVerbal =
@@ -189,7 +230,7 @@ const LicenceFormulaire = ({ base64, parentcallback,specialityDiploma }) => {
       procesVerbal[7] +
       procesVerbal[8] +
       procesVerbal[9];
-    //Current Date French
+
     let month = toMonthNameFrenchPV(date.substring(3, 5));
     let datePermutation = date.replace(/\//g, " ");
     datePermutation =
@@ -202,43 +243,41 @@ const LicenceFormulaire = ({ base64, parentcallback,specialityDiploma }) => {
       datePermutation[7] +
       datePermutation[8] +
       datePermutation[9];
-    let birthEtudiantFR = reverseDateFrench(naissance);
 
-    // Fetch an existing PDF document
+    let birthEtudiantFR = reverseDateFrench(naissance);
     const diplomeName = getDiplome();
-   
+
     const url = "./assets/" + diplomeName;
-    //const url = "./assets/licence_Genie_Logiciel.pdf";
     const existingPdfBytes = await fetch(url).then((res) => res.arrayBuffer());
-    // Load a PDFDocument from the existing PDF bytes
+
     const pdfDoc = await PDFDocument.load(existingPdfBytes);
     pdfDoc.registerFontkit(fontkit);
-    // Embed times new roman font
+
     const timesNewRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
-    // Embed times new roman bold font
-    const timesNewRomanBoldFont = await pdfDoc.embedFont(
-      StandardFonts.TimesRomanBold
-    );
-    // Get the first page of the document
+    const timesNewRomanBoldFont = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
+
     const pages = pdfDoc.getPages();
     const firstPage = pages[0];
+
     const base64Image = imageQR64;
-    var base64Icon = `data:image/png;base64,${base64Image}`;
+    const base64Icon = `data:image/png;base64,${base64Image}`;
     const pngImage = await pdfDoc.embedPng(base64Icon);
+
     firstPage.drawImage(pngImage, {
       x: 366,
-      y:  26,
-      width: pngImage.width  / 1.4,
-      height: pngImage.height  / 1.4,
+      y: 26,
+      width: pngImage.width / 1.4,
+      height: pngImage.height / 1.4,
     });
+
     firstPage.drawText("Application Mobile:QrCheckMobile", {
       x: 359,
-      y:  30,
+      y: 30,
       size: 8,
       font: timesNewRomanFont,
       color: rgb(0, 0, 0),
     });
-    //FR
+
     firstPage.drawText(`${LastYear}-${Year}`, {
       x: 371,
       y: 375.5,
@@ -246,15 +285,7 @@ const LicenceFormulaire = ({ base64, parentcallback,specialityDiploma }) => {
       font: timesNewRomanFont,
       color: rgb(0, 0, 0),
     });
-    //EN
-    // firstPage.drawText(`${LastYear}-${Year}`, {
-    //   x: 402,
-    //   y: 375.5,
-    //   size: 9,
-    //   font: timesNewRomanFont,
-    //   color: rgb(0, 0, 0),
-    // });
-    //FR
+
     firstPage.drawText(procesVerbal, {
       x: 547,
       y: 375.5,
@@ -262,14 +293,7 @@ const LicenceFormulaire = ({ base64, parentcallback,specialityDiploma }) => {
       font: timesNewRomanFont,
       color: rgb(0, 0, 0),
     });
-    //EN
-    // firstPage.drawText(dateProces, {
-    //   x: 578,
-    //   y: 375.5,
-    //   size: 9,
-    //   font: timesNewRomanFont,
-    //   color: rgb(0, 0, 0),
-    // });
+
     firstPage.drawText(lastName + " " + firstName, {
       x: 110,
       y: 178,
@@ -285,7 +309,7 @@ const LicenceFormulaire = ({ base64, parentcallback,specialityDiploma }) => {
       font: timesNewRomanBoldFont,
       color: rgb(0, 0, 0),
     });
-    ///FR
+
     firstPage.drawText(lieu, {
       x: 211,
       y: 154,
@@ -293,15 +317,7 @@ const LicenceFormulaire = ({ base64, parentcallback,specialityDiploma }) => {
       font: timesNewRomanBoldFont,
       color: rgb(0, 0, 0),
     });
-    //EN
-    // firstPage.drawText(lieu, {
-    //   x: 231,
-    //   y: 154,
-    //   size: 14,
-    //   font: timesNewRomanBoldFont,
-    //   color: rgb(0, 0, 0),
-    // });
-    //FR
+
     firstPage.drawText(id, {
       x: 226,
       y: 130,
@@ -309,15 +325,7 @@ const LicenceFormulaire = ({ base64, parentcallback,specialityDiploma }) => {
       font: timesNewRomanBoldFont,
       color: rgb(0, 0, 0),
     });
-    //EN
-    // firstPage.drawText(id, {
-    //   x: 180,
-    //   y: 130,
-    //   size: 14,
-    //   font: timesNewRomanBoldFont,
-    //   color: rgb(0, 0, 0),
-    // });
-    //FR
+
     firstPage.drawText(datePermutation, {
       x: 667,
       y: 130.7,
@@ -325,39 +333,23 @@ const LicenceFormulaire = ({ base64, parentcallback,specialityDiploma }) => {
       font: timesNewRomanFont,
       color: rgb(0, 0, 0),
     });
-    //EN
-    // firstPage.drawText(date, {
-    //   x: 670,
-    //   y: 130.7,
-    //   size: 14,
-    //   font: timesNewRomanFont,
-    //   color: rgb(0, 0, 0),
-    // });
-    //EN
-    // firstPage.drawText(conversionMentionEnglish(mention), {
-    //   x: 751,
-    //   y: 210,
-    //   size: 10,
-    //   font: timesNewRomanBoldFont,
-    //   color: rgb(0, 0, 0),
-    // });
-//FR
-firstPage.drawText(conversionMentionFrench(mention), {
-  x: 714,
-  y: 212,
-  size: 14,
-  font: timesNewRomanBoldFont,
-  color: rgb(0, 0, 0),
-});
-    // Serialize the PDFDocument to bytes (a Uint8Array)
+
+    firstPage.drawText(conversionMentionFrench(mention), {
+      x: 714,
+      y: 212,
+      size: 14,
+      font: timesNewRomanBoldFont,
+      color: rgb(0, 0, 0),
+    });
+
     const pdfBytes = await pdfDoc.save();
     const blob = new Blob([pdfBytes], { type: "application/pdf" });
     const blobUrl = URL.createObjectURL(blob);
 
-    var _PDF_DOC = await PDFJS.getDocument({ url: blobUrl });
+    const _PDF_DOC = await PDFJS.getDocument({ url: blobUrl });
     setPdf(_PDF_DOC);
     setPdfBytes(pdfBytes);
-  }
+  };
 
   async function renderPage() {
     var page = await pdf.getPage(1);
