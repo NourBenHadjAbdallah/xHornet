@@ -9,7 +9,7 @@ import { PDFDocument, rgb,StandardFonts } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { xmlFake } from "../helpers/utils.js";
-import QrHandling from "./QrHandling.js";
+
 
 const ipc = window.require("electron").ipcRenderer;
 var XMLParser = require("react-xml-parser");
@@ -18,6 +18,7 @@ const PDFJS = window.pdfjsLib;
 
 const UniFormulaire = ({base64, parentcallback}) => {
   const [specialties, setSpecialties] = useState([]);
+  const [selectedSpecialty, setSelectedSpecialty] = useState("");
   const [Diploma, setDiploma] = useState();
   const [pdfBytes, setPdfBytes] = useState("");
   const [show, setShow] = useState(false);
@@ -77,6 +78,8 @@ const UniFormulaire = ({base64, parentcallback}) => {
 
 
 
+
+
     const reset = () => {
         setPdfBytes("");
         setPdf("");
@@ -90,6 +93,8 @@ const UniFormulaire = ({base64, parentcallback}) => {
         setFirstName("");
         setLastName("");
         setId("");
+        setSpecialties("");
+        setDiploma("");
         setMention("");
         setNaissance("");
         parentcallback("", false, "", "", "", "", "", "", "");
@@ -122,7 +127,7 @@ const UniFormulaire = ({base64, parentcallback}) => {
       "Génie Biotechnologique",
       "Génie Civil",
     ],
-    Bachelors: ["Business Intelligence", "Information Systems and Software Engineering"],
+    Bachelors: ["Business Intelligence", "Génie Logiciel et système d'information"],
   };
 
  /* const getSpecialityName = () => {
@@ -305,10 +310,11 @@ const UniFormulaire = ({base64, parentcallback}) => {
                 value={Diploma}
                 onChange={(handleDiplomaChange) => setDiploma(handleDiplomaChange.target.value)}
               >
-                <option value="" disabled>
-                  Sélectionner un diplôme</option>
-                  {diplomas.map((opt, index) => (
-                    <option key={index} value={opt.value}>{opt.label}</option>
+                <option value="" disabled>Sélectionner un diplôme</option>
+                {diplomas.map((diploma) => (
+                  <option key={diploma.value} value={diploma.value}>
+                    {diploma.label}
+                  </option>
                 ))}
               </select>
             </div>
@@ -316,8 +322,29 @@ const UniFormulaire = ({base64, parentcallback}) => {
             <div className="mt-4">
         {Diploma === "Bachelors" && (
           <div>
-            <label className="proces-label">Procès-verbal *
-                  <input
+          <lable className="speciality-label">Specialité *</lable>
+          <select
+          id="specialty"
+          className="input specialty-input"
+          value={specialties}
+          onChange={(e) => setSpecialties(e.target.value)}
+        >
+          <option value="">
+            {!Diploma 
+              ? "Sélectionnez d'abord un diplôme" 
+              : specialtieOptions[Diploma]?.length 
+                ? "Choisir une spécialité"
+                : "Aucune spécialité disponible"}
+          </option>
+          {specialtieOptions[Diploma]?.map((specialty) => (
+            <option key={specialty} value={specialty}>
+              {specialty}
+            </option>
+          ))}
+        </select>
+
+            <label className="proces-label">Procès-verbal *</label>
+            <input
                   className="input proces-input"
                   type="date"
                   min="1980-01-01"
@@ -326,7 +353,6 @@ const UniFormulaire = ({base64, parentcallback}) => {
                   value={dateProces}
                   onChange={(e) => setDateProces(e.target.value)}
                 />
-            </label>
             <label className="mention-label">Mention *</label>
               <select 
                 id="mention"
@@ -335,7 +361,7 @@ const UniFormulaire = ({base64, parentcallback}) => {
                 onChange={(e) => setMention(e.target.value)}
                 disabled={disableInput}
               >
-                <option value="" disabled>Sélectionner une option</option>
+              
                 {mentionOptions.map((opt, index) => (
                   <option key={index} value={opt.value}>{opt.label}</option>
                 ))}
@@ -345,8 +371,29 @@ const UniFormulaire = ({base64, parentcallback}) => {
         )}
         {Diploma === "Engineering" && (
           <div >
-          <label className="proces-label">Procès-verbal *
-                  <input
+          <lable className="speciality-label">Specialité *</lable>
+          <select
+          id="specialty"
+          className="input specialty-input"
+          value={specialties}
+          onChange={(e) => setSpecialties(e.target.value)}
+          
+        >
+          <option value="">
+            {!Diploma 
+              ? "Sélectionnez d'abord un diplôme" 
+              : specialtieOptions[Diploma]?.length 
+                ? "Choisir une spécialité"
+                : "Aucune spécialité disponible"}
+          </option>
+          {specialtieOptions[Diploma]?.map((specialty) => (
+            <option key={specialty} value={specialty}>
+              {specialty}
+            </option>
+          ))}
+          </select>
+          <label className="proces-label">Procès-verbal *</label>
+            <input
                   className="input proces-input"
                   type="date"
                   min="1980-01-01"
@@ -355,7 +402,6 @@ const UniFormulaire = ({base64, parentcallback}) => {
                   value={dateProces}
                   onChange={(e) => setDateProces(e.target.value)}
                 />
-            </label>
           </div>
           
         )}
@@ -371,9 +417,9 @@ const UniFormulaire = ({base64, parentcallback}) => {
                 value={soutenancePV}
                 onChange={(e) => setSoutenancePV(e.target.value)}
               />
-          <label className="proces-label">Procès-verbal *
-                  <input
-                  className="input proces-input"
+            <label className="proces-label-a">Procès-verbal *</label>
+            <input
+                  className="input proces-input-a"
                   type="date"
                   min="1980-01-01"
                   max="2050-12-31"
@@ -381,14 +427,17 @@ const UniFormulaire = ({base64, parentcallback}) => {
                   value={dateProces}
                   onChange={(e) => setDateProces(e.target.value)}
                 />
-            </label>
           </div>
         )}
       </div>
       <div>
         <label className="duplicata-label-L">Duplicata</label>
-        <input type="checkbox" className="duplicata-input-L" onClick={handleChangeDuplicata} disabled={disableInput} checked={checkedDuplicata} />
-
+          <Checkbox
+            className="duplicata-input-L"
+            onClick={handleChangeDuplicata}
+            disabled={disableInput}
+            checked={checkedDuplicata}
+          />
       </div>
 
  
@@ -400,22 +449,7 @@ const UniFormulaire = ({base64, parentcallback}) => {
   
           {/* Action Buttons */}
           <div className="buttons-container">
-          <QrHandling
-            firstName={firstName}
-            lastName={lastName}
-            id={id}
-            Year={Year}
-            soutenancePV={soutenancePV}
-            date={date}
-            dateProces={dateProces}
-            LastYear={LastYear}
-            academicFullYear={academicFullYear}
-            Diploma={Diploma}
-            mention={mention}
-            naissance={naissance}
-            duplicate={checkedDuplicata}
-            //specialtyEN={specialtyEN}
-            /*mentionEn={mentionEn}*/></QrHandling>
+
             <button type="button" className={ base64 ? "generate-button-disabled" : "generate-button"}>
               Visualiser Diplôme
             </button>

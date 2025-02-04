@@ -16,7 +16,7 @@ import TableBody from "@material-ui/core/TableBody";
 // import TablePagination from "@material-ui/core/TablePagination";
 import TableHead from "@material-ui/core/TableHead";
 import Formulaire from './Formulaire';
-import CircularStatic from './Progressbar'
+import CircularStatic from '../components/Progressbar'
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';

@@ -8,6 +8,7 @@ import passwordHideIcon from "../resources/password_hide_icon_white.png";
 import Alert from "@material-ui/lab/Alert";
 import Loading from "./Loading";
 import configData from "../helpers/config.json";
+import Main from "./Main.js"
 /*login.js is the component that give to user the access to the application*/
 const Login = () => {
   // Initialize a boolean state
@@ -23,38 +24,15 @@ const Login = () => {
     // inverse the boolean state of passwordShown
     setPasswordShown(!passwordShown);
   };
-  //const history = useHistory();
   const submitHandler = async (e) => {
-    // const {data} = await axios.post("/api/users/login",
-    // {}
-    // ,config
-    // )
-    // var body = {
-    //     name: name,
-    //     password: password
-    // }
 
-    // make axios post request
     e.preventDefault();
 
     if (name === configData.USER_1.LOGIN && password === configData.USER_1.PASSWORD) {
       setLoading(true);
       setError(false);
     } else setError(true);
-    //   try{
-    //          await axios({
-    //         method: "post",
-    //         url: "/api/users/login",
-    //         data: body,
-    //         headers: {
-    //             'Accept': 'application/json, text/plain, */*',
-    //             'Content-Type': 'application/json'
-    //           },
-    //       })
-    //       //navigate('/formulaire');
-    //      // history.push("/formulaire");
-    //       //     setError(false)
-    //   }
+
   };
   return (
     <>
@@ -64,11 +42,9 @@ const Login = () => {
         </Alert>
       )}
 
-      {/* {error && <ErrorMessage variant="danger">{error}</ErrorMessage>} */}
 
-      {/* <div className="login-section"> */}
       {loading ? (
-        <Loading></Loading>
+        <Main></Main>
       ) : (
         <>
           <section className="split left">
@@ -107,7 +83,6 @@ const Login = () => {
                   Se connecter
                 </button>
               </form>
-              {/* </div> */}
             </div>
           </section>
         </>

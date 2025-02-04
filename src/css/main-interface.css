@@ -361,6 +361,21 @@ input::placeholder {
 
 }
 
+.proces-label-a{
+  top: 283px;
+  position: absolute;
+  width: 175px;
+  height: 11px;
+  left: 5%;
+  font-family: 'Poppins';
+  font-style: normal;
+   font-weight: 350;
+  font-size: 14px;
+  line-height: 18px;
+  color: #4A4A4A;
+
+}
+
 .soutenancePV-label {
   top: 320px;
   position: absolute;
@@ -379,11 +394,16 @@ input::placeholder {
   top: 243px;
 
 }
+
 .mention-input {
-  top: 351px;
+  top: 365px;
 }
 
 .specialty-input {
+  top: 283px;
+}
+
+.proces-input-a {
   top: 283px;
 }
 
@@ -408,7 +428,7 @@ input::placeholder {
   /* position: relative; */
   }  
   .duplicata-label-L {
-    top: 387px;
+    top: 417px;
     position: absolute;
     width: 149px;
     height: 11px;
@@ -423,7 +443,7 @@ input::placeholder {
   }
   
   .duplicata-input-L {
-    top: 387px;
+    top: 405px;
     left: 24%;
     /* position: relative; */
     }  
@@ -481,9 +501,24 @@ input::placeholder {
   color: #4A4A4A;
 
 }
+.speciality-label {
+  top: 285px;
+  position: absolute;
+  width: 149px;
+  height: 11px;
+  left: 5%;
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 350;
+  font-size: 14px;
+  line-height: 18px;
+  color: #4A4A4A;
+
+}
+
 
 .proces-label {
-  top: 280px;
+  top: 325px;
   position: absolute;
   width: 149px;
   height: 11px;
@@ -603,7 +638,7 @@ input::placeholder {
 }
 
 .mention-label {
-  top: 351px;
+  top: 365px;
   position: absolute;
   width: 149px;
   height: 11px;
@@ -691,7 +726,7 @@ input::placeholder {
   border: 1px solid #BFBFBF;
   border-radius: 5px;
   left: 25%;
-  top: 320px;
+  top: 325px;
 }
 .moyennes-input9 {
   top: 420px;

@@ -5,9 +5,9 @@ import "../css/main-interface.css";
 import { useState, useRef,useEffect } from "react";
 import refreshImage from "../resources/refresh_blue.png";
 import Loading, { NumberContext } from "./Loading";
-import IngFormulaire from "./IngFormulaire";
+/*import IngFormulaire from "./IngFormulaire";
 import LicenceFormulaire from "./LicenceFormulaire";
-import ArchitectureFormulaire from "./ArchitectureFormulaire";
+import ArchitectureFormulaire from "./ArchitectureFormulaire";*/
 import UndoIcon from "@material-ui/icons/Undo";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import { Button } from "@material-ui/core";
@@ -15,6 +15,7 @@ import Login from "./Login";
 import Modal from "@material-ui/core/Modal";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
+import UniFormulaire from "../components/UniFormulaire";
 const ipc = window.require("electron").ipcRenderer;
 
 const MainInterface = ({ props }) => {
@@ -148,21 +149,21 @@ const MainInterface = ({ props }) => {
               </Box>
             </Modal>}
           {value.value === "1" ? (
-            <LicenceFormulaire
+            <UniFormulaire
               parentcallback={callback}
               base64={loading || base64 === ""}
               specialityDiploma={value.specialité}
             />
           ) 
           : value.value === "2" ? (
-            <ArchitectureFormulaire
+            <UniFormulaire
               parentcallback={callback}
               base64={loading || base64 === ""}
             />
           ) 
        
           :  (
-            <IngFormulaire
+            <UniFormulaire
               parentcallback={callback}
               base64={loading || base64 === ""}
               specialityDiploma={value.specialité}

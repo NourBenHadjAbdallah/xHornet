@@ -56,22 +56,36 @@ const IngFormulaire = ({ base64, parentcallback, specialityDiploma }) => {
     new Date().getFullYear().toString() +
     "-" +
     (new Date().getFullYear() - 1).toString();
-    const conditionI = () => {
-      return (naissance && lieu && firstName && lastName && Diploma && id && dateProces && Year.length === 4 && LastYear.length === 4);
-  };
+  var conditionI =
+    naissance.trim().length !== 0 &&
+    lieu.trim().length !== 0 &&
+    firstName.trim().length !== 0 &&
+    lastName.trim().length !== 0 &&
+    Diploma.trim().length !== 0 &&
+    id.trim().length !== 0 &&
+    dateProces.trim().length !== 0 &&
+    Year.trim().length === 4 &&
+    LastYear.trim().length === 4;
     useEffect(function () {
       isComponentMounted.current = true;
       return function () {
          isComponentMounted.current = false;
       };
     }, []);
-    useEffect(() => {
-      if (conditionI() && !enabledhide) {
-          setEnabled(false);
-      } else {
-          setEnabled(true);
-      }
-  }, [conditionI, enabledhide]);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    if (conditionI && !enabledhide) {
+      setEnabled(false);
+    } else {
+      setEnabled(true);
+    }
+
+    return () => {
+      // 👇️ when the component unmounts
+      setEnabled(true);
+    };
+  }, [academicYear,conditionI, enabledhide]);
 
   async function createFolder() {
     ipc.send(
@@ -183,182 +197,133 @@ const IngFormulaire = ({ base64, parentcallback, specialityDiploma }) => {
     setSpeciality(specialityNamesArray[div1.selectedIndex - 1])
   
   }
-   async function modifyPdf(type, data){
-     switch (type) {
-       case "licence":
-         // Logic for Licence PDF modification
-         console.log("Modifying Licence PDF", {
-           firstName,
-           lastName,
-           id,
-           naissance,
-           lieu,
-           mention,
-           academicYear,
-         });
-         await handlePdfModification();
-         break;
- 
-         case "ingénieur":
-           // Logic for Ingénieur PDF modification
-           console.log("Modifying Ingénieur PDF", {
-             firstName,
-             lastName,
-             id,
-             naissance,
-             lieu,
-             speciality,
-             academicYear,
-           });
-           await handlePdfModification();
-           break;
+  async function modifyPdf(
+    lastName,
+    firstName,
+    id,
+    naissance,
+    lieu,
+    dateProces
+  ) {
+    //Procès verbal date
+    let dateProcesFR = reverseDateFrench(dateProces);
+    let monthProcesFR = toMonthNameFrenchPV(dateProces.substring(5, 7));
    
-         case "architecture":
-           // Logic for Architecture PDF modification
-           console.log("Modifying Architecture PDF", {
-             firstName,
-             lastName,
-             id,
-             naissance,
-             lieu,
-             academicYear,
-           });
-           await handlePdfModification();
-           break;
-   
-         default:
-           console.warn("Unknown form type for PDF modification");
-       }
- 
-   }
-   const handlePdfModification = async () => {
-     // Procès verbal date
-     let dateProcesFR = reverseDateFrench(naissance);
-     let monthProcesFR = toMonthNameFrenchPV(naissance.substring(5, 7));
- 
-     let procesVerbal = dateProcesFR.replace(/-/g, " ");
-     procesVerbal =
-       procesVerbal[0] +
-       procesVerbal[1] +
-       " " +
-       monthProcesFR +
-       " " +
-       procesVerbal[6] +
-       procesVerbal[7] +
-       procesVerbal[8] +
-       procesVerbal[9];
- 
-     let month = toMonthNameFrenchPV(date.substring(3, 5));
-     let datePermutation = date.replace(/\//g, " ");
-     datePermutation =
-       datePermutation[0] +
-       datePermutation[1] +
-       " " +
-       month +
-       " " +
-       datePermutation[6] +
-       datePermutation[7] +
-       datePermutation[8] +
-       datePermutation[9];
- 
-     let birthEtudiantFR = reverseDateFrench(naissance);
-     const diplomeName = getDiplome();
- 
-     const url = "./assets/" + diplomeName;
-     const existingPdfBytes = await fetch(url).then((res) => res.arrayBuffer());
- 
-     const pdfDoc = await PDFDocument.load(existingPdfBytes);
-     pdfDoc.registerFontkit(fontkit);
- 
-     const timesNewRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
-     const timesNewRomanBoldFont = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
- 
-     const pages = pdfDoc.getPages();
-     const firstPage = pages[0];
- 
-     const base64Image = imageQR64;
-     const base64Icon = `data:image/png;base64,${base64Image}`;
-     const pngImage = await pdfDoc.embedPng(base64Icon);
- 
-     firstPage.drawImage(pngImage, {
-       x: 366,
-       y: 26,
-       width: pngImage.width / 1.4,
-       height: pngImage.height / 1.4,
-     });
- 
-     firstPage.drawText("Application Mobile:QrCheckMobile", {
-       x: 359,
-       y: 30,
-       size: 8,
-       font: timesNewRomanFont,
-       color: rgb(0, 0, 0),
-     });
- 
-     firstPage.drawText(`${LastYear}-${Year}`, {
-       x: 371,
-       y: 375.5,
-       size: 9,
-       font: timesNewRomanFont,
-       color: rgb(0, 0, 0),
-     });
- 
-     firstPage.drawText(procesVerbal, {
-       x: 547,
-       y: 375.5,
-       size: 9,
-       font: timesNewRomanFont,
-       color: rgb(0, 0, 0),
-     });
- 
-     firstPage.drawText(`${lastName} ${firstName}`, {
-       x: 110,
-       y: 178,
-       size: 14,
-       font: timesNewRomanBoldFont,
-       color: rgb(0, 0, 0),
-     });
- 
-     firstPage.drawText(birthEtudiantFR, {
-       x: 114,
-       y: 153.5,
-       size: 14,
-       font: timesNewRomanBoldFont,
-       color: rgb(0, 0, 0),
-     });
- 
-     firstPage.drawText(lieu, {
-       x: 211,
-       y: 154,
-       size: 14,
-       font: timesNewRomanBoldFont,
-       color: rgb(0, 0, 0),
-     });
- 
-     firstPage.drawText(id, {
-       x: 226,
-       y: 130,
-       size: 14,
-       font: timesNewRomanBoldFont,
-       color: rgb(0, 0, 0),
-     });
- 
-     firstPage.drawText(datePermutation, {
-       x: 667,
-       y: 130.7,
-       size: 14,
-       font: timesNewRomanFont,
-       color: rgb(0, 0, 0),
-     });
- 
-     const pdfBytes = await pdfDoc.save();
-     const blob = new Blob([pdfBytes], { type: "application/pdf" });
-     const blobUrl = URL.createObjectURL(blob);
- 
-     const _PDF_DOC = await PDFJS.getDocument({ url: blobUrl });
-     setPdf(_PDF_DOC);
-     setPdfBytes(pdfBytes);
-   };
+    let procesVerbal = dateProcesFR.replace(/-/g, " ");
+    procesVerbal =
+    procesVerbal[0] +
+    procesVerbal[1] +
+      " " +
+      monthProcesFR +
+      " " +
+      procesVerbal[6] +
+      procesVerbal[7] +
+      procesVerbal[8] +
+      procesVerbal[9];
+    //Current Date French
+    let month = toMonthNameFrenchPV(date.substring(3, 5));
+    let datePermutation = date.replace(/\//g, " ");
+    datePermutation = datePermutation[0] + datePermutation[1]
+     + " " +
+      month +
+      " " +
+      datePermutation[6] +
+      datePermutation[7] +
+      datePermutation[8] +
+      datePermutation[9];
+  
+    let birthEtudiantFR = reverseDateFrench(naissance);
+    const diplomeName= getDiplome();
+    const url = "./assets/" + diplomeName;
+    // const url = "./assets/ing_electrique.pdf";
+    const existingPdfBytes = await fetch(url).then((res) => res.arrayBuffer());
+    // Load a PDFDocument from the existing PDF bytes
+    const pdfDoc = await PDFDocument.load(existingPdfBytes);
+    pdfDoc.registerFontkit(fontkit);
+    // Embed times new roman font
+    const timesNewRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+    // Embed times new roman bold font
+    const timesNewRomanBoldFont = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
+    // Get the first page of the document
+    const pages = pdfDoc.getPages();
+    const firstPage = pages[0];
+    const base64Image = imageQR64;
+    var base64Icon = `data:image/png;base64,${base64Image}`;
+    const pngImage = await pdfDoc.embedPng(base64Icon);
+    //Draw an image
+    firstPage.drawImage(pngImage, {
+      x: 366,
+      y:  26,
+      width: pngImage.width  / 1.4,
+      height: pngImage.height  / 1.4,
+    });
+    firstPage.drawText("Application Mobile:QrCheckMobile", {
+      x: 359,
+      y:  30,
+      size: 8,
+      font: timesNewRomanFont,
+      color: rgb(0, 0, 0),
+    });
+    firstPage.drawText(`${LastYear}-${Year}`, {
+      x: 369,
+      y: 324.5,
+      size: 9,
+      font: timesNewRomanFont,
+      color: rgb(0, 0, 0),
+    });
+    firstPage.drawText(procesVerbal, {
+      x: 550,
+      y: 324.5,
+      size: 9,
+      font: timesNewRomanFont,
+      color: rgb(0, 0, 0),
+    });
+    firstPage.drawText(lastName + " " + firstName, {
+      x: 110,
+      y: 178,
+      size: 14,
+      font: timesNewRomanBoldFont,
+      color: rgb(0, 0, 0),
+    });
+
+    firstPage.drawText(birthEtudiantFR, {
+      x: 110,
+      y: 154,
+      size: 14,
+      font: timesNewRomanBoldFont,
+      color: rgb(0, 0, 0),
+    });
+    firstPage.drawText(lieu, {
+      x: 207,
+      y: 154.5,
+      size: 14,
+      font: timesNewRomanBoldFont,
+      color: rgb(0, 0, 0),
+    });
+    firstPage.drawText(id, {
+      x: 225,
+      y: 130.5,
+      size: 14,
+      font: timesNewRomanBoldFont,
+      color: rgb(0, 0, 0),
+    });
+    firstPage.drawText(datePermutation, {
+      x: 650,
+      y: 131,
+      size: 14,
+      font: timesNewRomanFont,
+      color: rgb(0, 0, 0),
+    });
+
+    // Serialize the PDFDocument to bytes (a Uint8Array)
+    const pdfBytes = await pdfDoc.save();
+    const blob = new Blob([pdfBytes], { type: "application/pdf" });
+    const blobUrl = URL.createObjectURL(blob);
+
+    var _PDF_DOC = await PDFJS.getDocument({ url: blobUrl });
+    setPdf(_PDF_DOC);
+    setPdfBytes(pdfBytes);
+  }
 
   async function renderPage() {
 
