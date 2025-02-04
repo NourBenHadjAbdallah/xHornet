@@ -15,7 +15,7 @@ import Login from "./Login";
 import Modal from "@material-ui/core/Modal";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
-import UniFormulaire from "../components/UniFormulaire";
+import UniFormulaire from "../components/Form/UniFormulaire";
 const ipc = window.require("electron").ipcRenderer;
 
 const MainInterface = ({ props }) => {

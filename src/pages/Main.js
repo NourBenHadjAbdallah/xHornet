@@ -10,7 +10,7 @@ import ExcelHandling from "./excelHandling";
 import Modal from "@material-ui/core/Modal";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
-import UniFormulaire from "../components/UniFormulaire";
+import UniFormulaire from "../components/Form/UniFormulaire.js";
 const ipc = window.require("electron").ipcRenderer;
 
 const MainInterface = ({ props }) => {

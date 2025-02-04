@@ -56,7 +56,7 @@ const Login = () => {
 
               <form>
                 <input
-                  className="username-field input"
+                  className="username-field"
                   type="text"
                   name="username"
                   placeholder="Nom de l'utilisateur"
@@ -65,7 +65,7 @@ const Login = () => {
                   onChange={(e) => setName(e.target.value)}
                 />
                 <input
-                  className="password-field input"
+                  className="password-field"
                   type={passwordShown ? "text" : "password"}
                   name="password"
                   placeholder="Mot de passe"

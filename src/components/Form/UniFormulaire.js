@@ -1,14 +1,14 @@
 import React from "react";
 import { useContext, useState, useEffect,useRef } from "react";
-import "../css/main-interface.css";
-import { api } from "../api.js";
+import "../Form/uniForm.css";
+import { api } from "../../api.js";
 import { Checkbox } from "@material-ui/core";
-import { NumberContext } from '../pages/Loading.js';
-import configData from "../helpers/config.json";
+import { NumberContext } from '../../pages/Loading.js';
+import configData from "../../helpers/config.json";
 import { PDFDocument, rgb,StandardFonts } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { xmlFake } from "../helpers/utils.js";
+import { xmlFake } from "../../helpers/utils.js";
 
 
 const ipc = window.require("electron").ipcRenderer;
@@ -178,7 +178,7 @@ const UniFormulaire = ({base64, parentcallback}) => {
         <>
           {show === false ? (
             <section className="form-section">
-              <h3 className="form-title">Formulaire</h3>
+              <h3 className="form-title">Formulaire</h3>   
               <div className="reload-icon">
                 {" "}
                 <button className="btn" onClick={reset}>
@@ -188,7 +188,8 @@ const UniFormulaire = ({base64, parentcallback}) => {
               </div>
               <hr className="first-line" />
               <form>
-          <div className="div-scroll">
+                <div className="form-wrapper">
+                <div className="div-scroll">
             {/* University Input */}
             <div className="form-group">
               <label className="university-label">
@@ -298,6 +299,28 @@ const UniFormulaire = ({base64, parentcallback}) => {
                 />
               </div>
             </div>
+            <div>
+            <label className="academicYear-label">Année Universitaire*</label>
+              <br />
+              <input
+                className="input academicYear-input"
+                type="number"
+                maxLength="4"
+                disabled={disableInput}
+                value={LastYear}
+                onChange={handleChangeFirstAcademicYear}
+              />
+              <label className="academicYear1-label"> / </label>
+              <br />
+              <input
+                className="input academicYear1-input"
+                type="number"
+                maxLength="4"
+                disabled={disableInput}
+                value={Year}
+                onChange={handleChangeSecondAcademicYear}
+              />
+            </div>
   
             {/* Diploma Dropdown */}
             <div className="form-group">
@@ -310,7 +333,7 @@ const UniFormulaire = ({base64, parentcallback}) => {
                 value={Diploma}
                 onChange={(handleDiplomaChange) => setDiploma(handleDiplomaChange.target.value)}
               >
-                <option value="" disabled>Sélectionner un diplôme</option>
+                <option value={""} name="" disabled>Sélectionner un diplôme</option>
                 {diplomas.map((diploma) => (
                   <option key={diploma.value} value={diploma.value}>
                     {diploma.label}
@@ -319,133 +342,132 @@ const UniFormulaire = ({base64, parentcallback}) => {
               </select>
             </div>
             {/* Conditionally render input fields based on selected diploma */}
-            <div className="mt-4">
-        {Diploma === "Bachelors" && (
-          <div>
-          <lable className="speciality-label">Specialité *</lable>
-          <select
-          id="specialty"
-          className="input specialty-input"
-          value={specialties}
-          onChange={(e) => setSpecialties(e.target.value)}
-        >
-          <option value="">
-            {!Diploma 
-              ? "Sélectionnez d'abord un diplôme" 
-              : specialtieOptions[Diploma]?.length 
-                ? "Choisir une spécialité"
-                : "Aucune spécialité disponible"}
-          </option>
-          {specialtieOptions[Diploma]?.map((specialty) => (
-            <option key={specialty} value={specialty}>
-              {specialty}
-            </option>
-          ))}
-        </select>
+              <div className="mt-4">
+              {Diploma === "Bachelors" && (
+              <div>
+                <lable className="speciality-label">Specialité *</lable>
+                <select
+                  id="speciality"
+                  className="input speciality-input"
+                  value={specialties}
+                  onChange={(e) => setSpecialties(e.target.value)}
+                >
 
+                <option value="">
+                {!Diploma 
+                  ? "Sélectionnez d'abord un diplôme" 
+                  : specialtieOptions[Diploma]?.length 
+                    ? "Choisir une spécialité"
+                    : "Aucune spécialité disponible"}
+                </option>
+                {specialtieOptions[Diploma]?.map((specialty) => (
+                <option key={specialty} value={specialty}>
+                  {specialty}
+                </option>
+              ))}
+          </select>
+
+              <label className="proces-label">Procès-verbal*</label>
+              <input
+                    className="input proces-input"
+                    type="date"
+                    min="1980-01-01"
+                    max="2050-12-31"
+                    disabled={disableInput}
+                    value={dateProces}
+                    onChange={(e) => setDateProces(e.target.value)}
+                  />
+              <label className="mention-label">Mention *</label>
+                <select 
+                  id="mention"
+                  className="input mention-input"
+                  value={mention}
+                  onChange={(e) => setMention(e.target.value)}
+                  disabled={disableInput}
+                >
+                
+                  {mentionOptions.map((opt, index) => (
+                    <option key={index} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+            </div>
+                
+              )}
+              {Diploma === "Engineering" && (
+            <div >
+            <lable className="speciality-label">Specialité *</lable>
+            <select
+            id="speciality"
+            className="input speciality-input"
+            value={specialties}
+            onChange={(e) => setSpecialties(e.target.value)}
+            
+          >
+            <option value="">
+              {!Diploma 
+                ? "Sélectionnez d'abord un diplôme" 
+                : specialtieOptions[Diploma]?.length 
+                  ? "Choisir une spécialité"
+                  : "Aucune spécialité disponible"}
+            </option>
+            {specialtieOptions[Diploma]?.map((specialty) => (
+              <option key={specialty} value={specialty}>
+                {specialty}
+              </option>
+            ))}
+            </select>
             <label className="proces-label">Procès-verbal *</label>
             <input
-                  className="input proces-input"
-                  type="date"
-                  min="1980-01-01"
-                  max="2050-12-31"
-                  disabled={disableInput}
-                  value={dateProces}
-                  onChange={(e) => setDateProces(e.target.value)}
-                />
-            <label className="mention-label">Mention *</label>
-              <select 
-                id="mention"
-                className="input mention-input"
-                value={mention}
-                onChange={(e) => setMention(e.target.value)}
-                disabled={disableInput}
-              >
-              
-                {mentionOptions.map((opt, index) => (
-                  <option key={index} value={opt.value}>{opt.label}</option>
-                ))}
-              </select>
-          </div>
-              
-        )}
-        {Diploma === "Engineering" && (
-          <div >
-          <lable className="speciality-label">Specialité *</lable>
-          <select
-          id="specialty"
-          className="input specialty-input"
-          value={specialties}
-          onChange={(e) => setSpecialties(e.target.value)}
-          
-        >
-          <option value="">
-            {!Diploma 
-              ? "Sélectionnez d'abord un diplôme" 
-              : specialtieOptions[Diploma]?.length 
-                ? "Choisir une spécialité"
-                : "Aucune spécialité disponible"}
-          </option>
-          {specialtieOptions[Diploma]?.map((specialty) => (
-            <option key={specialty} value={specialty}>
-              {specialty}
-            </option>
-          ))}
-          </select>
-          <label className="proces-label">Procès-verbal *</label>
-            <input
-                  className="input proces-input"
-                  type="date"
-                  min="1980-01-01"
-                  max="2050-12-31"
-                  disabled={disableInput}
-                  value={dateProces}
-                  onChange={(e) => setDateProces(e.target.value)}
-                />
-          </div>
-          
-        )}
-        {Diploma === "Architecture" && (
-          <div>
-          <label className="soutenancePV-label">Procès-verbal Soutenance*</label>
-              <input
-                className="input soutenancePV-input"
-                type="date"
-                min="1980-01-01"
-                max="2050-12-31"
-                disabled={disableInput}
-                value={soutenancePV}
-                onChange={(e) => setSoutenancePV(e.target.value)}
-              />
-            <label className="proces-label-a">Procès-verbal *</label>
-            <input
-                  className="input proces-input-a"
-                  type="date"
-                  min="1980-01-01"
-                  max="2050-12-31"
-                  disabled={disableInput}
-                  value={dateProces}
-                  onChange={(e) => setDateProces(e.target.value)}
-                />
-          </div>
-        )}
-      </div>
-      <div>
-        <label className="duplicata-label-L">Duplicata</label>
-          <Checkbox
-            className="duplicata-input-L"
-            onClick={handleChangeDuplicata}
-            disabled={disableInput}
-            checked={checkedDuplicata}
-          />
-      </div>
+                    className="input proces-input"
+                    type="date"
+                    min="1980-01-01"
+                    max="2050-12-31"
+                    disabled={disableInput}
+                    value={dateProces}
+                    onChange={(e) => setDateProces(e.target.value)}
+                  />
 
- 
-  
-
-
+            </div>
             
-          </div>
+              )}
+              {Diploma === "Architecture" && (
+              <div>
+                <label className="soutenancePV-label">Procès-verbal Soutenance*</label>
+                  <input
+                    className="input soutenancePV-input"
+                    type="date"
+                    min="1980-01-01"
+                    max="2050-12-31"
+                    disabled={disableInput}
+                    value={soutenancePV}
+                    onChange={(e) => setSoutenancePV(e.target.value)}
+                  />
+                <label className="proces-label-a">Procès-verbal *</label>
+                  <input
+                    className="input proces-input-a"
+                    type="date"
+                    min="1980-01-01"
+                    max="2050-12-31"
+                    disabled={disableInput}
+                    value={dateProces}
+                    onChange={(e) => setDateProces(e.target.value)}
+                  />
+                </div>
+              )}
+              </div>
+
+            <div className="form-duplicata">
+              <label className="duplicata-label-L">Duplicata</label>
+              <Checkbox
+                className="duplicata-input-L"
+                onClick={handleChangeDuplicata}
+                disabled={disableInput}
+                checked={checkedDuplicata}
+              />
+            </div> 
+      </div>
+  </div>
+
   
           {/* Action Buttons */}
           <div className="buttons-container">
@@ -455,6 +477,7 @@ const UniFormulaire = ({base64, parentcallback}) => {
             </button>
           </div>
         </form>
+
             </section>
           ) : (
             <section className="form-section">
