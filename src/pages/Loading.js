@@ -341,6 +341,7 @@ const style = {
   p: 4,
 };
 let conditionSpeciality = value ==="2"?true:specialité !=='';
+
 //console.log("ErrorForm",errorForm,print,open,progress)
   return (
     <>

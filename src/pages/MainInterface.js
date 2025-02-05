@@ -72,6 +72,7 @@ const MainInterface = ({ props }) => {
     setAcademicFullYear(academicFullYear);
   };
 
+
   const undoConfirm = () => {
     setUndo(true);
   };
@@ -92,6 +93,7 @@ const MainInterface = ({ props }) => {
     <>
       {!undo ? (
         <>
+        
           <header className="main-header">
             <div className="rect-header" />
 

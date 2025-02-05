@@ -90,6 +90,7 @@ const LicenceFormulaire = ({ base64, parentcallback,specialityDiploma }) => {
       false
     );
   }
+
   async function writeLog() {
     ipc.send("logFile", id, Diploma, academicFullYear, checkedDuplicata);
   }
@@ -410,6 +411,8 @@ firstPage.drawText(conversionMentionFrench(mention), {
     
     return inputMap[input] ;
   }
+
+
   const generatedata = () => {
     const mentionEn = conversionMentionEnglish(mention)
     const specialtyEN = speciality===""?getspecialtyeEN(Diploma):speciality
