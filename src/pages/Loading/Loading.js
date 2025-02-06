@@ -5,12 +5,12 @@ import Alert from '@material-ui/lab/Alert';
 import { read, utils } from 'xlsx';
 import { parse, format } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
-import applicationLogo from '../resources/application_logo.png';
-import algocodLogo from '../resources/powered-by.png';
-import MainInterface from './MainInterface';
-import Formulaire from './Formulaire';
-import CircularStatic from '../components/Progressbar';
-import '../css/loading.css';
+import applicationLogo from '../../resources/application_logo.png';
+import algocodLogo from '../../resources/powered-by.png';
+import MainInterface from '../Main/MainInterface';
+import Formulaire from '../Formulaire';
+import CircularStatic from '../../components/Progressbar';
+import '../Loading/LoadingStyle.css';
 
 export const NumberContext = React.createContext({});
 

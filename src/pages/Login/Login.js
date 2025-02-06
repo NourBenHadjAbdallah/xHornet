@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 /*import css file*/
-import applicationLogo from "../resources/application_logo.png";
-import "../css/login.css";
+import applicationLogo from "../../resources/application_logo.png";
+import "../Login/loginStyle.css";
 /*import icons from resources*/
-import passwordShowIcon from "../resources/password_show_icon_white.png";
-import passwordHideIcon from "../resources/password_hide_icon_white.png";
+import passwordShowIcon from "../../resources/password_show_icon_white.png";
+import passwordHideIcon from "../../resources/password_hide_icon_white.png";
 import Alert from "@material-ui/lab/Alert";
-import Loading from "./Loading";
-import configData from "../helpers/config.json";
-import Main from "./Main.js"
+import Loading from "../Loading/Loading";
+import configData from "../../helpers/config.json";
 /*login.js is the component that give to user the access to the application*/
 const Login = () => {
   // Initialize a boolean state

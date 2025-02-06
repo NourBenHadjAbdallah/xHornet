@@ -19,6 +19,12 @@
     border-radius: 8px;
 }
 
+.first-line {
+    width: 100%;
+    top: 31px;
+  
+  }
+
 .form-title {
     position: absolute;
     width: auto; /* Make title width flexible */
