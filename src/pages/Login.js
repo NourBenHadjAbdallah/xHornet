@@ -44,7 +44,7 @@ const Login = () => {
 
 
       {loading ? (
-        <Main></Main>
+        <Loading></Loading>
       ) : (
         <>
           <section className="split left">

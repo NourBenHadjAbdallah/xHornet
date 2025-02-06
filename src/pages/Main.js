@@ -1,46 +1,54 @@
-import React, { useContext, useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "../css/main-interface.css";
-import { Grid, Checkbox, FormControlLabel, Button, RadioGroup, Radio } from "@material-ui/core";
-import refreshImage from "../resources/refresh_blue.png";
-import Loading, { NumberContext } from "./Loading";
+import {
+  Grid,
+  Button,
+  RadioGroup,
+  Radio,
+  FormControl,
+  FormControlLabel,
+  Select,
+  MenuItem,
+  Box,
+  Typography,
+  Modal,FormLabel
+} from "@material-ui/core";
 import UndoIcon from "@material-ui/icons/Undo";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import Login from "./Login";
-import ExcelHandling from "./excelHandling";
-import Modal from "@material-ui/core/Modal";
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
 import UniFormulaire from "../components/Form/UniFormulaire.js";
-const ipc = window.require("electron").ipcRenderer;
+import Formulaire from "./Formulaire.js"; // New import for the "lot" method
 
-const MainInterface = ({ props }) => {
-  const [selectedDiplomaType, setSelectedDiplomaType] = useState(null);
-  const [selectedDegree, setSelectedDegree] = useState(null);
+const MainInterface = () => {
+  const [selectedDiploma, setSelectedDiploma] = useState(null);
+  const [selectedSpeciality, setSelectedSpeciality] = useState("");
+  const [selectedMethod, setSelectedMethod] = useState(null);
+  const [clickedBatch, setClickedBatch] = useState(false);
+  const [clicked, setClicked] = useState(false);
+  const [checked, setChecked] = useState(false)
+  const [checkedBatch, setCheckedBatch] = useState(false)
   const [onlineStatus, setOnlineStatus] = useState(navigator.onLine);
-  const [undo, setUndo] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
   const [logOut, setLogOut] = useState(false);
+  const [undo, setUndo] = useState(false);
+  const [errorForm, setErrorForm] = useState(false);
+  const [error, setError] = useState(false)
 
-  const ref = useRef(null);
   useEffect(() => {
     const handleOnline = () => setOnlineStatus(true);
     const handleOffline = () => setOnlineStatus(false);
 
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
 
     return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
     };
   }, []);
 
   const undoConfirm = () => {
-    if (selectedDiplomaType !== null) {
-      setSelectedDiplomaType(null);
-      setSelectedDegree(null);
-    } else {
-      setUndo(true);
-    }
+    setUndo(true);
   };
 
   const quit = () => {
@@ -48,12 +56,70 @@ const MainInterface = ({ props }) => {
     setUndo(true);
   };
 
+  const handleFormError = (error) => {
+    setErrorForm(error);
+  };
+
+  const handleConfirm = () => {
+    if (selectedDiploma && (selectedDiploma === "Architecture" || selectedSpeciality) && selectedMethod !== null) {
+      setConfirmed(true);
+    }
+  };
+
+  const onConfirm = () => {
+    if (selectedDiploma !== ''  &&(checked || checkedBatch)) {
+      if (checked)
+        setClicked(true)
+      else if (checkedBatch)
+        setClickedBatch(true)
+       
+    }
+    else
+      setError(true)
+    //setClickedBatch(false)
+  }
+
+  const specialityOptions = {
+    Engineering: [
+      "Génie Informatique",
+      "Génie Informatique de Gestion",
+      "Génie Télécommunications & Réseaux",
+      "Génie Electrique et Automatique",
+      "Génie Electromécanique",
+      "Génie Mécanique",
+      "Génie Biotechnologique",
+      "Génie Civil",
+    ],
+    Bachelors: ["Business Intelligence", "Génie Logiciel et système d'information"],
+  };
+
+  // If the user has confirmed, display the appropriate form
+  if (confirmed) {
+    if (selectedMethod === "unite") {
+      return (
+        <UniFormulaire diploma={selectedDiploma} speciality={selectedSpeciality} />
+      );
+    } else if (selectedMethod === "lot") {
+      return (
+        <Formulaire diploma={selectedDiploma} speciality={selectedSpeciality} />
+      );
+    }
+  }
+
+  // Handle logout navigation
+  if (logOut) {
+    return <Login />;
+  }
+
   return (
     <>
-      {!undo ? (
+      {/* Header with undo and quit buttons */}
+      {!undo && (
+        
         <>
           <header className="main-header">
             <div className="rect-header" />
+
             <div className="button-header">
               <Button
                 variant="contained"
@@ -72,14 +138,18 @@ const MainInterface = ({ props }) => {
                 Quitter
               </Button>
             </div>
+
             <hr className="line-header" />
           </header>
 
-          {onlineStatus ? null : (
+          {/* Modal for offline status */}
+          {!onlineStatus && (
             <Modal
               disablePortal
               disableEnforceFocus
               disableAutoFocus
+              aria-labelledby="simple-modal-title"
+              aria-describedby="simple-modal-description"
               open
               sx={{
                 display: "flex",
@@ -95,10 +165,11 @@ const MainInterface = ({ props }) => {
                   bgcolor: "#F44336",
                   border: "2px solid #F44336",
                   color: "white",
+                  padding: 2,
                 }}
               >
                 <Typography id="server-modal-title" variant="h6" component="h2">
-                  Problème Connexion
+                  Problème de Connexion
                 </Typography>
                 <Typography component="span">
                   Veuillez vérifier votre connexion Internet
@@ -107,67 +178,76 @@ const MainInterface = ({ props }) => {
             </Modal>
           )}
 
-          {selectedDiplomaType === null ? (
-            <Grid container spacing={2} style={{ padding: 20 }}>
-              <Grid item>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={selectedDiplomaType === true}
-                      onChange={() => setSelectedDiplomaType(true)}
-                    />
-                  }
-                  label="Diplôme par unité"
-                />
-              </Grid>
-              <Grid item>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={selectedDiplomaType === false}
-                      onChange={() => setSelectedDiplomaType(false)}
-                    />
-                  }
-                  label="Diplôme par lot"
-                />
-              </Grid>
-            </Grid>
-          ) : selectedDiplomaType ? (
-            <UniFormulaire />
-          ) : selectedDegree === null ? (
-            <Grid container spacing={2} style={{ padding: 20 }}>
-              <Grid item>
-                <RadioGroup
-                  value={selectedDegree}
-                  onChange={(e) => setSelectedDegree(e.target.value)}
-                >
-                  <FormControlLabel
-                    value="engineering"
-                    control={<Radio />}
-                    label="Ingenieur"
-                  />
-                  <FormControlLabel
-                    value="bachelors"
-                    control={<Radio />}
-                    label="Licence"
-                  />
-                </RadioGroup>
-              </Grid>
-            </Grid>
-          ) : (
-            <ExcelHandling diploma={selectedDegree} />
-          )}
 
-          {selectedDiplomaType !== null && (
-            <section className="display-qr-section">
-              {/* ... existing QR section content ... */}
-            </section>
-          )}
+          <h2 >Générer Diplôme</h2>
+            <div className='Loading-menu'>
+            <FormLabel>Veuillez choisir un diplôme</FormLabel>
+
+          <Grid container spacing={2} style={{ padding: 20 }}>
+            {/* Diploma selection */}
+            <Grid item xs={12}>
+
+              <FormControl component="fieldset">
+                <RadioGroup
+                  value={selectedDiploma}
+                  onChange={(e) => {
+                    setSelectedDiploma(e.target.value);
+                    // Reset speciality if the diploma changes
+                    setSelectedSpeciality("");
+                  }}
+                >
+                  <FormControlLabel value="Engineering" control={<Radio />} label="Ingénieur" />
+                  <FormControlLabel value="Bachelors" control={<Radio />} label="Licence" />
+                  <FormControlLabel value="Architecture" control={<Radio />} label="Architecture" />
+                </RadioGroup>
+              </FormControl>
+            </Grid>
+
+            {/* Speciality selection: only for diplomas that require it */}
+            {selectedDiploma && selectedDiploma !== "Architecture" && (
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <Select
+                    value={selectedSpeciality}
+                    onChange={(e) => setSelectedSpeciality(e.target.value)}
+                    displayEmpty
+                  >
+                    <MenuItem value="" disabled>
+                      Choisissez une spécialité
+                    </MenuItem>
+                    {specialityOptions[selectedDiploma]?.map((speciality) => (
+                      <MenuItem key={speciality} value={speciality}>
+                        {speciality}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+            )}
+
+            {/* Method selection: displayed if either Architecture is chosen or a speciality is selected */}
+            {selectedDiploma && (selectedDiploma === "Architecture" || selectedSpeciality) && (
+              <Grid item xs={12}>
+                <FormControl component="fieldset">
+                  <RadioGroup value={selectedMethod} onChange={(e) => setSelectedMethod(e.target.value)}>
+                    <FormControlLabel value="unite" control={<Radio />} label="Diplôme par unité" />
+                    <FormControlLabel value="lot" control={<Radio />} label="Diplôme par lot" />
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
+            )}
+
+            {/* Confirm button appears when a method is selected */}
+            {selectedMethod && (
+              <Grid item xs={12}>
+                <Button variant="contained" id='loading-confirm-button' onClick={onConfirm}>
+                  Confirmer
+                </Button>
+              </Grid>
+            )}
+          </Grid>
+          </div>
         </>
-      ) : logOut ? (
-        <Login />
-      ) : (
-        <ExcelHandling />
       )}
     </>
   );

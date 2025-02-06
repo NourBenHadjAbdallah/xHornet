@@ -16,7 +16,7 @@ var XMLParser = require("react-xml-parser");
 const PDFJS = window.pdfjsLib;
 
 
-const UniFormulaire = ({base64, parentcallback}) => {
+const UniFormulaire = ({base64}) => {
   const [specialties, setSpecialties] = useState([]);
   const [selectedSpecialty, setSelectedSpecialty] = useState("");
   const [Diploma, setDiploma] = useState();
@@ -33,6 +33,7 @@ const UniFormulaire = ({base64, parentcallback}) => {
   const [enabled, setEnabled] = useState(true);
   const [enabledhide, setEnabledhide] = useState(false);
   const [enabledCanvas, setEnabledCanvas] = useState(true);
+  const { specialité, value, selected } = useContext(NumberContext);
 
   const [lieu, setLieu] = useState("");
   const [pdf, setPdf] = useState("");
@@ -51,13 +52,17 @@ const UniFormulaire = ({base64, parentcallback}) => {
 
 
   const handleChangeFirstAcademicYear = (e) => {
-    setLastYear(e.target.value.toString().slice(0, 4));
-    setYear((parseInt(e.target.value) + 1).toString().slice(0, 4));
+    const newYear = e.target.value.slice(0, 4);
+    setLastYear(newYear);
+    setYear((parseInt(newYear) + 1).toString());
   };
+  
   const handleChangeSecondAcademicYear = (e) => {
-    setLastYear((parseInt(e.target.value) - 1).toString().slice(0, 4));
-    setYear(e.target.value.toString().slice(0, 4));
+    const newYear = e.target.value.slice(0, 4);
+    setYear(newYear);
+    setLastYear((parseInt(newYear) - 1).toString());
   };
+  
 
 
 
@@ -97,7 +102,6 @@ const UniFormulaire = ({base64, parentcallback}) => {
         setDiploma("");
         setMention("");
         setNaissance("");
-        parentcallback("", false, "", "", "", "", "", "", "");
         setLastYear(LastYear);
         setYear(Year);
         setLieu("");
@@ -129,49 +133,6 @@ const UniFormulaire = ({base64, parentcallback}) => {
     ],
     Bachelors: ["Business Intelligence", "Génie Logiciel et système d'information"],
   };
-
- /* const getSpecialityName = () => {
-    const diplomaOptionsEn = {
-      Engineering: [
-      "Computer Engineering",
-      "Management Computer Engineering",
-      "Telecommunications et Networks Engineering",
-      "Electrical and Automatic Engineering",
-      "Electromechanical Engineering",
-      "Mechanical Engineering",
-      "Biotechnology Engineering",
-      "Civil Engineering"
-      ],
-      Bachelors: ["Business Intelligence", "Information Systems and Software Engineering"],
-    };
-    const div1 = document.getElementById("diplome-select");
-    //const specialityName= div1.options[div1.selectedIndex].text;
-
-    setSpecialties(diplomaOptionsEn[div1.selectedIndex - 1]);
-  };
-
-  const conversionMentionEnglish = (value) => {
-   
-    let mentions = [
-      "with standard pass",
-      "with honours",
-      "with high honours",
-      "with highest honour"
-     
-    ];
-    return mentions[Number(value) - 1];
-  };
-
-  function getspecialtyeEN(input) {
-    var inputMap = {
-      "10": "Information Systems and Software Engineering",
-      "11": "Business Intelligence",
-
-    };
-  }
-
-  const mentionEn = conversionMentionEnglish(mention)
-  const specialtyEN = specialties===""?getspecialtyeEN(diplomas):specialties*/
 
 
     return (
@@ -331,7 +292,7 @@ const UniFormulaire = ({base64, parentcallback}) => {
                 id="diploma"
                 className="input diplome-input"
                 value={Diploma}
-                onChange={(handleDiplomaChange) => setDiploma(handleDiplomaChange.target.value)}
+                onChange={handleDiplomaChange}
               >
                 <option value={""} name="" disabled>Sélectionner un diplôme</option>
                 {diplomas.map((diploma) => (
