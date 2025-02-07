@@ -1,13 +1,14 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import "../Form/uniForm.css";
 import { api } from "../../api.js";
-import { Checkbox } from "@material-ui/core";
+import { Button, Checkbox } from "@material-ui/core";
 import { NumberContext } from "../../pages/Loading/Loading.js";
 import configData from "../../helpers/config.json";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { xmlFake } from "../../helpers/utils.js";
+import QrHandling from "../QrHandling/QrHandling.js";
 
 const ipc = window.require("electron").ipcRenderer;
 var XMLParser = require("react-xml-parser");
@@ -35,7 +36,6 @@ const UniFormulaire = ({ base64,parentcallback }) => {
   const [image, setImage] = useState("");
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
-  const [imageQR64, setImageQR64] = useState("");
   const [show, setShow] = useState(false);
   const [enabledCanvas, setEnabledCanvas] = useState(true);
   const [enabled, setEnabled] = useState(true);
@@ -60,8 +60,10 @@ const diplomaOptions = {
 };
 
   const specialtiesMapping = {
+    // Bachelors specialties
     "10": "Génie Logiciel et système d'information",
     "11": "Business Intelligence",
+    // Engineering specialties
     "20": "Génie Informatique",
     "21": "Génie Informatique de Gestion",
     "22": "Génie Télécommunications et Réseaux",
@@ -461,6 +463,27 @@ const diplomaOptions = {
 
             {/* Action Button */}
             <div className="buttons-container">
+              <QrHandling
+                  formData={{
+                    diploma,
+                    selectedSpecialty,
+                    firstName,
+                    lastName,
+                    id,
+                    mention,
+                    dateProces,
+                    naissance,
+                    soutenancePV,
+                    lieu,
+                    checkedDuplicata,
+                    academicYear,
+                    academicFullYear,
+                  }}
+                  parentcallback={parentcallback}
+                  setEnabledhide={setEnabledhide}
+                  disabled={enabled}
+                  enabled={enabled} setDisableInput={setDisableInput}
+              ></QrHandling>
               <button
                 type="button"
                 className={base64 ? "generate-button-disabled" : "generate-button"}
