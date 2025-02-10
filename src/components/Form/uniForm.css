@@ -1,0 +1,154 @@
+.reload-icon {
+    position: absolute;
+    width: 2rem; /* Use relative units */
+    height: 2rem;
+    left: 97%;
+    top: 9px;
+}
+
+.form-section {
+    display: flex;
+    flex-wrap: wrap; /* Allows for flexible wrapping */
+    box-sizing: border-box;
+    position: absolute;
+    width: 70%;
+    height: 88%;
+    left: 2%;
+    top: 65px;
+    border: 2px solid #ECECEC;
+    border-radius: 8px;
+}
+
+.first-line {
+    width: 100%;
+    top: 31px;
+  
+  }
+
+.form-title {
+    position: absolute;
+    width: auto; /* Make title width flexible */
+    height: 24px;
+    left: 12px;
+    top: -9px;
+    font-family: 'Poppins';
+    font-weight: 350;
+    font-size: 1.125rem; /* Use rem for scalability */
+    line-height: 24px;
+    color: #4A4A4A;
+}
+
+.div-scroll {
+    margin-top: 2.6em;
+    position: absolute;
+    height:85%;
+    width:100% ;
+    overflow-y:auto;
+    z-index: 0;
+  }
+
+
+.university-label, .institution-label, .firstname-label, .lastname-label, .diplome-label, .lieu-label, .soutenancePV-label,
+.speciality-label, .date-label, .academicYear-label, .academicYear1-label, .date-label, .duplicata-label-L,
+.id-label {
+    position: absolute;
+    width: 70%;
+    left: 5%;
+    margin: 1rem;
+    font-family: 'Poppins';
+    font-weight: 350;
+    font-size: 0.875rem;
+    line-height: 18px;
+    color: #4A4A4A;
+}
+.proces-label{
+    top: 420px;
+    position: absolute;
+    width: 80%;
+    left: 5%;
+    margin: 1rem;
+    font-family: 'Poppins';
+    font-weight: 350;
+    font-size: 0.875rem;
+    line-height: 18px;
+    color: #4A4A4A;
+}
+.proces-label-a{
+    top: 420px;
+    width: 80%;
+    left: 5%;
+    margin: 1rem;
+    position: absolute;
+    font-family: 'Poppins';
+    font-weight: 350;
+    font-size: 0.875rem;
+    line-height: 18px;
+    color: #4A4A4A;
+}
+.mention-label{
+    top: 460px;
+    width: 80%;
+    left: 5%;
+    margin: 1rem;
+    position: absolute;
+    font-family: 'Poppins';
+    font-weight: 350;
+    font-size: 0.875rem;
+    line-height: 18px;
+    color: #4A4A4A;
+}
+
+
+
+.soutenancePV-input, .university-input, .institution-input, .firstname-input, .lastname-input, .speciality-input, .date-input1,.proces-input,
+.proces-input-a, .diplome-input, .lieu-input1, .id-input, .mention-input{
+    position: relative;
+    width: 100%;
+    max-width: 70%; /* Flexibility for resizing */
+    height: 2rem; /* Fixed height, but scalable */
+    background: #fff;
+    border: 1px solid #BFBFBF;
+    border-radius: 5px;
+    left: 25%;
+    margin:5px;
+}
+
+.academicYear-input{
+    position: absolute;
+    top:300px;
+    left: 25.5%;
+    width:32%;
+    margin-right: 10px;
+    display: inline-block;
+}
+.academicYear1-input {
+    top:300px;
+    width:32%;
+    margin-left: 38%;
+  }
+  .academicYear1-label{
+    top:290px;
+    width:32%;
+    margin-left: 55%;
+  }
+
+.duplicata-input-L{
+    position: relative;
+    left: 24%;
+    font-family: 'Poppins';
+    font-weight: 350;
+    font-size: 0.875rem;
+    line-height: 18px;
+    color: #4A4A4A;
+}
+
+
+
+
+
+
+
+
+
+
+

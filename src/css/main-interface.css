@@ -1,23 +1,4 @@
-.rect-header {
-  position: absolute;
-  width: 23%;
-  height: 76.71px;
-  left: -0.42px;
-  top: -29.61px;
 
-  background: #619BF4;
-  /* transform: rotate(4.17deg); */
-
-}
-
-.line-header {
-  position: absolute;
-  width: 99.8%;
-  height: 0px;
-  left: 0px;
-  top: 37px;
-  border: 1px solid #ECECEC;
-}
 
 .reload-icon {
   position: absolute;
@@ -25,81 +6,13 @@
   height: 24px;
   left: 97%;
   top: 9px;}
-.button-header{
-  position: relative;
-  height: 40px;
-  width: 280px;
-  margin: 0 auto;
-  margin-right: 0;
-  top: 5px;
 
-  }
-.buttons-container {
-  /* top: 94%;
-  width: 100%;*/
-  background-color: white; 
-  bottom: 0;
-  height: 8%;
-  width: 100%;
-  position: absolute;
-  display: inline-block;
-  text-align: center;
-  border-top: 2px solid #ECECEC;
-}
 
-.form-section {
-  box-sizing: border-box;
-  position: absolute;
-  width: 70%;
-  height: 88%;
-  left: 2%;
-  top: 65px;
-  border: 2px solid #ECECEC;
-  border-radius: 8px;
 
-}
 
-.form-title {
-  position: absolute;
-  width: 220px;
-  height: 24px;
-  left: 12px;
-  top: -9px;
-  font-family: 'Poppins';
-  font-style: normal;
-   font-weight: 350;
-  font-size: 18px;
-  line-height: 24px;
-  color: #4A4A4A;
 
-}
 
-.form-title-generatedQR {
-  position: absolute;
-  width: 320px;
-  height: 24px;
-  left: 400px;
-  top: -9px;
-  font-family: 'Poppins';
-  font-style: normal;
-   font-weight: 350;
-  font-size: 18px;
-  line-height: 24px;
-  color: #4A4A4A;
 
-}
-
-.first-line {
-  width: 100%;
-  top: 31px;
-
-}
-
-.last-line {
-  width: 100%;
-  top: 91%;
-
-}
 
 hr {
   position: absolute;
@@ -137,416 +50,12 @@ hr {
 
 } 
 
-#diplome-select {
-  box-sizing: border-box;
-  position: absolute;
-  width: 70%;
-  height: 28px;
-  background: #FFFFFF;
-  border: 1px solid #BFBFBF;
-  border-radius: 5px;
-  left: 25%;
-  top: 240px;
-
-}
-.soutenancePV-input {
-  box-sizing: border-box;
-  position: absolute;
-  width: 70%;
-  height: 28px;
-  background: #FFFFFF;
-  border: 1px solid #BFBFBF;
-  border-radius: 5px;
-  left: 25%;
-  top: 240px;
-
-}
-#mention-select {
-  box-sizing: border-box;
-  position: absolute;
-  width: 70%;
-  height: 28px;
-  background: #FFFFFF;
-  border: 1px solid #BFBFBF;
-  border-radius: 5px;
-  left: 25%;
-  top: 348px;
-
-}
-/* difference betwwen inputs and labels is 52px */
-.university-label {
-  top: 27px;
-  position: absolute;
-  width: 149px;
-  height: 11px;
-  left: 5%;
-  font-family: 'Poppins';
-  font-style: normal;
-   font-weight: 350;
-  font-size: 14px;
-  line-height: 18px;
-  color: #4A4A4A;
-
-}
-
-.university-input {
-  top: 24px;
 
 
-}
 
-.institution-label {
-  top: 63px;
-  position: absolute;
-  width: 149px;
-  height: 11px;
-  left: 5%;
-  font-family: 'Poppins';
-  font-style: normal;
-   font-weight: 350;
-  font-size: 14px;
-  line-height: 18px;
-  color: #4A4A4A;
-
-}
-
-.institution-input {
-  top: 60px;
-
-}
-.firstname-label {
-  top: 99px;
-  position: absolute;
-  width: 149px;
-  height: 11px;
-  left: 5%;
-  font-family: 'Poppins';
-  font-style: normal;
-   font-weight: 350;
-  font-size: 14px;
-  line-height: 18px;
-  color: #4A4A4A;
-
-}
-input::placeholder {
-  color: red;
-}
-.firstnameAR-input {
-  top: 96px;
-  width:32%;
-  margin-right: 10px;
-  display: inline-block;
-
-}
-.firstnameAR-input::placeholder {
- 
-  opacity: .8;
-  color: grey;
-}
-.firstnameFR-input {
-  top: 96px;
-  width:32%;
-  margin-left: 38%;
-  display: inline-block;
-}
-.firstnameFR-input::placeholder {
- 
-  opacity: .8;
-  color: grey;
-}
-.firstname-input {
-  top: 96px;
-}
-.lastname-label {
-  top: 135px;
-  position: absolute;
-  width: 149px;
-  height: 11px;
-  left: 5%;
-  font-family: 'Poppins';
-  font-style: normal;
-   font-weight: 350;
-  font-size: 14px;
-  line-height: 18px;
-  color: #4A4A4A;
-
-}
-.lastnameAR-input {
-  top: 132px;
-  width:32%;
-  margin-right: 10px;
-  display: inline-block;
-}
-.lastnameAR-input::placeholder {
- 
-  opacity: .8;
-  color: grey;
-}
-.lastnameFR-input {
-  top: 132px;
-  width:32%;
-  margin-left: 38%;
-  display: inline-block;
-}
-.lastnameFR-input::placeholder {
- 
-  opacity: .8;
-  color: grey;
-}
-.lastname-input {
-  top: 132px;
-
-}
-
-.id-label {
-  top: 171px;
-  position: absolute;
-  width: 149px;
-  height: 11px;
-  left: 5%;
-  font-family: 'Poppins';
-  font-style: normal;
-   font-weight: 350;
-  font-size: 14px;
-  line-height: 18px;
-  color: #4A4A4A;
-
-}
-
-.id-input {
-  top: 168px;
-
-}
-
-.diplome-label {
-  top: 243px;
-  position: absolute;
-  width: 149px;
-  height: 11px;
-  left: 5%;
-  font-family: 'Poppins';
-  font-style: normal;
-   font-weight: 350;
-  font-size: 14px;
-  line-height: 18px;
-  color: #4A4A4A;
-
-}
-.soutenancePV-label {
-  top: 243px;
-  position: absolute;
-  width: 175px;
-  height: 11px;
-  left: 5%;
-  font-family: 'Poppins';
-  font-style: normal;
-   font-weight: 350;
-  font-size: 14px;
-  line-height: 18px;
-  color: #4A4A4A;
-
-}
-.diplome-input {
-  top: 243px;
-
-}
-
-.duplicata-label {
-  top: 354px;
-  position: absolute;
-  width: 149px;
-  height: 11px;
-  left: 5%;
-  font-family: 'Poppins';
-  font-style: normal;
-   font-weight: 350;
-  font-size: 14px;
-  line-height: 18px;
-  color: #4A4A4A;
-
-}
-
-.duplicata-input {
-  top: 108px;
-  left: 24%;
-  /* position: relative; */
-  }  
-  .duplicata-label-L {
-    top: 387px;
-    position: absolute;
-    width: 149px;
-    height: 11px;
-    left: 5%;
-    font-family: 'Poppins';
-    font-style: normal;
-     font-weight: 350;
-    font-size: 14px;
-    line-height: 18px;
-    color: #4A4A4A;
-  
-  }
-  
-  .duplicata-input-L {
-    top: 120px;
-    left: 24%;
-    /* position: relative; */
-    }  
-    .duplicata-label-M {
-      top: 459px;
-      position: absolute;
-      width: 149px;
-      height: 11px;
-      left: 5%;
-      font-family: 'Poppins';
-      font-style: normal;
-       font-weight: 350;
-      font-size: 14px;
-      line-height: 18px;
-      color: #4A4A4A;
-    
-    }
-    
-    .duplicata-input-M {
-      top: 150px;
-      left: 24%;
-      /* position: relative; */
-      } 
-      .duplicata-label-D {
-        top: 207px;
-        position: absolute;
-        width: 149px;
-        height: 11px;
-        left: 5%;
-        font-family: 'Poppins';
-        font-style: normal;
-         font-weight: 350;
-        font-size: 14px;
-        line-height: 18px;
-        color: #4A4A4A;
-      
-      }
-      
-      .duplicata-input-D {
-        top: 90px;
-        left: 24%;
-        /* position: relative; */
-        }  
-.date-label {
-  top: 207px;
-  position: absolute;
-  width: 149px;
-  height: 11px;
-  left: 5%;
-  font-family: 'Poppins';
-  font-style: normal;
-   font-weight: 350;
-  font-size: 14px;
-  line-height: 18px;
-  color: #4A4A4A;
-
-}
-
-.proces-label {
-  top: 280px;
-  position: absolute;
-  width: 149px;
-  height: 11px;
-  left: 5%;
-  font-family: 'Poppins';
-  font-style: normal;
-   font-weight: 350;
-  font-size: 14px;
-  line-height: 18px;
-  color: #4A4A4A;
-
-}
-
-.date-input1{
- top: 204px;
-  width:32%;
-  margin-right: 10px;
-  display: inline-block;
-}
-.lieu-label {
-  top: 207px;
-  width:15%;
-  margin-left: 53%;
-  display: inline-block;
-  position: absolute;
-  width: 149px;
-  height: 11px;
-  left: 5%;
-  font-family: 'Poppins';
-  font-style: normal;
-   font-weight: 350;
-  font-size: 14px;
-  line-height: 18px;
-  color: #4A4A4A;
-}
-
-.academicYear1-input {
-  /* top: 243px; */
-  width:15%;
-  margin-left: 53.5%;
-  display: inline-block;
-}
-.lieu-input1 {
-  top: 204px;
-  width:32%;
-  margin-left: 38%;
-  display: inline-block;
-}
-.lieu-input1::placeholder {
-
-  opacity: .8;
-  color: grey;
-}
-.academicYear-label {
-  top: 317px;
-  position: absolute;
-  width: 149px;
-  height: 11px;
-  left: 5%;
-  font-family: 'Poppins';
-  font-style: normal;
-   font-weight: 350;
-  font-size: 14px;
-  line-height: 18px;
-  color: #4A4A4A;
-  /* font-size: 14px; */
-
-}
-.academicYear1-label {
-  top: 317px;
-  width:15%;
-  margin-left: 54.5%;
-  font-weight: bolder;
-  position: absolute;
-  width: 149px;
-  height: 11px;
-  left: 5%;
-  font-family: 'Poppins';
-  font-style: normal;
-   font-weight: 350;
-  font-size: 14px;
-  line-height: 18px;
-  color: #4A4A4A;
-}
-.academicYear-input {
-  top: 312px;
-  width:32%;
-  margin-right: 10px;
-  display: inline-block;
-}
-.academicYear1-input {
-  top: 312px;
-  width:32%;
-  margin-left: 38%;
-  display: inline-block;
-}
 
 .degreeID-label {
-  top: 315px;
+  top: 325px;
   position: absolute;
   width: 149px;
   height: 11px;
@@ -562,23 +71,11 @@ input::placeholder {
 }
 
 .degreeID-input {
-  top: 312px;
+  top: 325px;
 
 }
 
-.mention-label {
-  top: 351px;
-  position: absolute;
-  width: 149px;
-  height: 11px;
-  left: 5%;
-  font-family: 'Poppins';
-  font-style: normal;
-   font-weight: 350;
-  font-size: 14px;
-  line-height: 18px;
-  color: #4A4A4A;
-}
+
 
 .moyenne-label {
   top: 423px;
@@ -646,9 +143,7 @@ input::placeholder {
   margin-left: 42.3%;
   display: inline-block;
 }
-.proces-input {
-  top:  276px;
-}
+
 .moyennes-input9 {
   top: 420px;
   width:13.5%;
@@ -791,14 +286,7 @@ input::placeholder {
   color: #4A4A4A;
  
 }
-.div-scroll {
-  margin-top: 2.6em;
-  position: absolute;
-  height:85%;
-  width:100% ;
-  overflow-y:auto;
-  z-index: 0;
-}
+
 /* width */
 ::-webkit-scrollbar {
   width: 8px;
@@ -889,78 +377,11 @@ input::placeholder {
   display: inline-block;
   box-sizing: border-box;
 }
-.cancel-button {
-  padding: 0.7em 2em;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  box-sizing: border-box;
-  padding: 0.7em 2em;
-  right: 5px;
-  background: #609BF4;
-  border-radius: 13px;
-  border: none;
-  font-family: "Poppins", system-ui;
-  font-style: normal;
-   font-weight: 350;
-  font-size: 14px;
-  line-height: 18px;
-  color: white;
-  display: inline-block;
-  box-sizing: border-box;
-}
-.cancel-button-disabled {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  box-sizing: border-box;
-  padding: 0.7em 2em;
-  right: 5px;
-  background: #B3B3B3;
-  border-radius: 13px;
-  border: none;
-  font-family: "Poppins", system-ui;
-  font-style: normal;
-   font-weight: 350;
-  font-size: 14px;
-  line-height: 18px;
-  color: white;
-}
-.cancel-button:active {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  box-sizing: border-box;
-  padding: 0.7em 2em;
-  right: 5px;
-  background: transparent;
-  border-radius: 13px;
-  border: 1px solid#609BF4;
-  font-family: "Poppins", system-ui;
-  font-style: normal;
-   font-weight: 350;
-  font-size: 14px;
-  line-height: 18px;
-  color: #609BF4;
-}
 
-.display-qr-section {
-  box-sizing: border-box;
-  position: absolute;
-  width: 23%;
-  height: 88%;
-  left: 75%;
-  top: 65px;
-  border: 2px solid #ECECEC;
-  border-radius: 8px;
 
-}
 
-.first-qr-line {
-  width: 100%;
-  top: 30px;
 
-}
+
 
 .last-qr-line {
   width: 100%;
@@ -1064,21 +485,9 @@ input::placeholder {
 
 
 
-.refresh-image {
-  position: absolute;
-  width: 40%;
-  height: 40%;
-  left: 30%;
-  top: 25%;
-}
 
-.qr-image {
-  position: absolute;
-  width: 65%;
-  height: 40%;
-  left: 18%;
-  top: 27%;
-}
+
+
 
 .tooltip {
   position: relative;
@@ -1234,3 +643,5 @@ color: white;
       left: 50%;
       margin: -25px 0 0 -25px;
     }
+
+

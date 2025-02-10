@@ -1,0 +1,76 @@
+.react-header {
+    position: absolute;
+    width: 23%;
+    height: 76.71px;
+    left: -0.42px;
+    top: -29.61px;
+  
+    background: #619BF4;
+    /* transform: rotate(4.17deg); */
+  
+  }
+  
+  .line-header {
+    position: absolute;
+    width: 99.8%;
+    height: 0px;
+    left: 0px;
+    top: 37px;
+    border: 1px solid #ECECEC;
+  }
+
+  .button-header{
+    position: relative;
+    height: 40px;
+    width: 280px;
+    margin: 0 auto;
+    margin-right: 0;
+    top: 5px;
+  
+    }
+  .buttons-container {
+    /* top: 94%;
+    width: 100%;*/
+    background-color: white; 
+    bottom: 0;
+    height: 8%;
+    width: 100%;
+    position: absolute;
+    display: inline-block;
+    text-align: center;
+    border-top: 2px solid #ECECEC;
+  }
+
+  .display-qr-section {
+    box-sizing: border-box;
+    position: absolute;
+    width: 23%;
+    height: 88%;
+    left: 75%;
+    top: 65px;
+    border: 2px solid #ECECEC;
+    border-radius: 8px;
+  
+  }
+
+.first-qr-line {
+    width: 100%;
+    top: 30px;
+  
+  }
+
+  .refresh-image {
+    position: absolute;
+    width: 40%;
+    height: 40%;
+    left: 30%;
+    top: 25%;
+  }
+
+  .qr-image {
+    position: absolute;
+    width: 65%;
+    height: 40%;
+    left: 18%;
+    top: 27%;
+  }

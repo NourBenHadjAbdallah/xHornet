@@ -226,14 +226,14 @@ border-radius: 13px;
 
 /*Password input css properties*/
 .password-field {
-    /* position: relative; */
+    position: relative; 
     width: 50%;
     height: 30px;
     /* left: 61rem;
     right: 0; */
     left: 20%;
     margin-left: 5%;
-    margin-top: 140px;
+    margin-top: 50px;
     font-family: 'Poppins', system-ui;
     font-style: normal;
     font-weight: 500;
@@ -257,7 +257,7 @@ border-radius: 13px;
     left: 0;
     right: 0;
     margin: 0 auto;
-    margin-top: 200px;
+    margin-top: 130px;
     /* background: none; */
     border-radius: 13px;
     /* border: none; */
@@ -312,11 +312,11 @@ p:hover {
     height: 482px; */
     /* width: 1200px;
     height: 800px; */
-    background-image: url("../resources/login_background.png");
+    background-image: url("../../resources/login_background.png");
 }
 
 .login-section {
-     position: absolute;
+    position: absolute;
   top: 50%;
   left: 50%;
   -ms-transform: translate(-50%, -50%);
@@ -335,7 +335,7 @@ p:hover {
     /* padding: 10px; */
     position: absolute;
     margin-left: 16%;
-    margin-top: 140px;
+    margin-top: 45px;
     /* margin-right: 300px; */
 
 }
