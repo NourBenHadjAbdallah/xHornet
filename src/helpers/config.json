@@ -17,6 +17,22 @@
   "//comment":"mode 0 for fake xml generation / mode 1 for real xml generation",
   "MODE":0,
   "comment2":"mode 0 for french / mode 1 for english",
-  "LANG":1
+  "LANG":1,
+
+  "DIPLOMAS": {
+    "Bachelors": {
+      "normal": ["licence_Genie_Logiciel", "licence_Business_Intelligence"],
+      "duplicata": ["licence_Genie_LogicielDuplicata", "licence_Business_IntelligenceDuplicata"]
+    },
+    "Engineering": {
+      "normal": ["info", "infoG", "telecom", "electrique", "electro", "mecanique", "bio", "civil"],
+      "duplicata": ["infoDuplicata", "infoGDuplicata", "telecomDuplicata", "electriqueDuplicata", "electroDuplicata", "mecaniqueDuplicata", "bioDuplicata", "civilDuplicata"],
+      "prefix": "ing_"
+    },
+    "Architecture": {
+      "normal": ["architecte"],
+      "duplicata": ["architecteDuplicata"]
+    }
+  }
 
 }

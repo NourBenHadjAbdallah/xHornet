@@ -1,17 +1,15 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import "../Form/uniForm.css";
-import { api } from "../../api.js";
-import { Button, Checkbox } from "@material-ui/core";
+
+import { Checkbox } from "@material-ui/core";
 import { NumberContext } from "../../pages/Loading/Loading.js";
 import configData from "../../helpers/config.json";
-import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
-import fontkit from "@pdf-lib/fontkit";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { xmlFake } from "../../helpers/utils.js";
+
 import QrHandling from "../QrHandling/QrHandling.js";
+import PdfHendling from "../pdfHandling/PdfHendling.js";
 
 const ipc = window.require("electron").ipcRenderer;
-var XMLParser = require("react-xml-parser");
 const PDFJS = window.pdfjsLib;
 
 const UniFormulaire = ({ base64,parentcallback }) => {
@@ -484,12 +482,24 @@ const diplomaOptions = {
                   disabled={enabled}
                   enabled={enabled} setDisableInput={setDisableInput}
               ></QrHandling>
-              <button
-                type="button"
+              <PdfHendling
                 className={base64 ? "generate-button-disabled" : "generate-button"}
-              >
-                Visualiser Diplôme
-              </button>
+                formData={{
+                  firstName,
+                  lastName,
+                  id,
+                  mention,
+                  dateProces,
+                  naissance,
+                  soutenancePV,
+                  lieu,
+                  Year,
+                  LastYear}}
+                checkedDuplicata={checkedDuplicata}
+                diploma={diploma}
+                >
+              </PdfHendling>
+
             </div>
           </form>
         </section>
