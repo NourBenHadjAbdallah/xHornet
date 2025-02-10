@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 /*import css file*/
-import applicationLogo from "../resources/application_logo.png";
-import "../css/login.css";
+import applicationLogo from "../../resources/application_logo.png";
+import "../Login/loginStyle.css";
 /*import icons from resources*/
-import passwordShowIcon from "../resources/password_show_icon_white.png";
-import passwordHideIcon from "../resources/password_hide_icon_white.png";
+import passwordShowIcon from "../../resources/password_show_icon_white.png";
+import passwordHideIcon from "../../resources/password_hide_icon_white.png";
 import Alert from "@material-ui/lab/Alert";
-import Loading from "./Loading";
-import configData from "../helpers/config.json";
+import Loading from "../Loading/Loading";
+import configData from "../../helpers/config.json";
 /*login.js is the component that give to user the access to the application*/
 const Login = () => {
   // Initialize a boolean state
@@ -23,38 +23,15 @@ const Login = () => {
     // inverse the boolean state of passwordShown
     setPasswordShown(!passwordShown);
   };
-  //const history = useHistory();
   const submitHandler = async (e) => {
-    // const {data} = await axios.post("/api/users/login",
-    // {}
-    // ,config
-    // )
-    // var body = {
-    //     name: name,
-    //     password: password
-    // }
 
-    // make axios post request
     e.preventDefault();
 
     if (name === configData.USER_1.LOGIN && password === configData.USER_1.PASSWORD) {
       setLoading(true);
       setError(false);
     } else setError(true);
-    //   try{
-    //          await axios({
-    //         method: "post",
-    //         url: "/api/users/login",
-    //         data: body,
-    //         headers: {
-    //             'Accept': 'application/json, text/plain, */*',
-    //             'Content-Type': 'application/json'
-    //           },
-    //       })
-    //       //navigate('/formulaire');
-    //      // history.push("/formulaire");
-    //       //     setError(false)
-    //   }
+
   };
   return (
     <>
@@ -64,9 +41,7 @@ const Login = () => {
         </Alert>
       )}
 
-      {/* {error && <ErrorMessage variant="danger">{error}</ErrorMessage>} */}
 
-      {/* <div className="login-section"> */}
       {loading ? (
         <Loading></Loading>
       ) : (
@@ -80,7 +55,7 @@ const Login = () => {
 
               <form>
                 <input
-                  className="username-field input"
+                  className="username-field"
                   type="text"
                   name="username"
                   placeholder="Nom de l'utilisateur"
@@ -89,7 +64,7 @@ const Login = () => {
                   onChange={(e) => setName(e.target.value)}
                 />
                 <input
-                  className="password-field input"
+                  className="password-field"
                   type={passwordShown ? "text" : "password"}
                   name="password"
                   placeholder="Mot de passe"
@@ -107,7 +82,6 @@ const Login = () => {
                   Se connecter
                 </button>
               </form>
-              {/* </div> */}
             </div>
           </section>
         </>

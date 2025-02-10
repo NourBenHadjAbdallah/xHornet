@@ -1,0 +1,414 @@
+#radio-group{
+    display: inline-block;
+    margin: 0 auto;
+    padding: 3px;
+    color: white;
+  
+  }
+  .loading-section {
+    text-align: center;
+    width: 500PX;
+   margin: 0 auto;
+   position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  border: 2px solid white ;
+  }
+  
+  .title-style-loading {
+      position: relative;
+      /* left: 16%; */
+      /* right: 0; */
+      margin-right: auto;
+      margin-left: auto;
+      text-align: center;
+      font-family: 'Poppins', system-ui;
+      font-style: normal;
+      font-weight: 700;
+      font-size: 36px;
+      line-height: 54px;
+      color: white;
+  
+      padding-bottom: 5px;
+  }
+  .title-style-batch {
+  
+    position: relative;
+  
+    /* width: 190px; */
+  
+    /* left: 16%; */
+  
+    /* margin-top: 18%; */
+  
+    /* right: 0; */
+  
+    margin-right: auto;
+  
+    margin-left: auto;
+  
+    text-align: center;
+  
+    font-family: 'Poppins', system-ui;
+  
+    font-style: normal;
+  
+    /* font-weight: 700; */
+  
+    font-size: 24px;
+  
+    /* line-height: 54px; */
+  
+    color: #4A4A4A;
+  
+    border-bottom: 4px solid white;
+  
+    padding-bottom: 5px;
+  
+  }
+  #checkbox-group{
+    display: inline-block;
+    margin: 0 auto;
+    margin-left: 0px;
+    padding: 3px;
+    color: white;
+  
+  }
+  #checkbox{
+    display: inline-block;
+    margin: 0 auto;
+    margin-left: 20px;
+    padding: 3px;
+    color: white;
+  
+  }
+  .control-form{
+   background-color: black;
+   height: 200px;
+   position: relative;
+   width: 100%;
+  
+  }
+  #loading-confirm-button{
+   
+      display: block;
+    margin: 0 auto;
+    margin-right: 12px;
+    margin-bottom: 5px;
+    padding: 3px;
+    background-color: white;
+    color: #609BF4;
+    border-radius: 13px;
+  }
+  #loading-confirm-button:disabled{
+  
+    
+  
+    display: block;
+  
+    margin: 0 auto;
+  
+    margin-right: 12px;
+  
+    margin-bottom: 5px;
+  
+    padding: 3px;
+  
+    background-color: #E0E0E0;
+  
+    color: #A8A8A8;
+  
+    border-radius: 13px;
+  
+    font-weight: 700;
+  
+    font-Size:'14px' 
+  
+  }
+  
+  #csv-button{
+  
+  
+  
+    display: inline-block;
+  
+    margin: 0 auto;
+  
+    margin-right: 20px;
+  
+    margin-bottom: 5px;
+  
+    padding: 2px;
+  
+    background-color:white;
+  
+    color:#609BF4;
+  
+    border-radius: 13px;
+  
+    font-weight: 700;
+  
+    font-Size:'14px' 
+  
+  }
+  
+  #csv-button:disabled{
+  
+  
+  
+    display: inline-block;
+  
+    margin: 0 auto;
+  
+    margin-right: 20px;
+  
+    margin-bottom: 5px;
+  
+    padding: 2px;
+  
+    background-color:#E0E0E0;
+  
+    color:#A8A8A8;
+  
+    border-radius: 13px;
+  
+    font-weight: 700;
+  
+    font-Size:'14px' 
+  
+  }
+  
+  
+  
+  .csv-file-input {
+  
+    color: transparent;
+  
+    border-radius: 13px;
+  
+    width:50%;
+  
+    margin: 0 auto;
+  
+    display: inline-block;
+  
+    margin-left: 10%;
+  
+    margin-bottom: 5px;
+  
+    padding: 2px;
+  
+    font-weight: 700;
+  
+    font-Size:'14px' 
+  
+  }
+  
+  .csv-file-input::-webkit-file-upload-button {
+  
+    visibility: hidden;
+  
+  }
+  
+  .csv-file-input::before {
+  
+    content: 'CHOISIR UN FICHIER';
+  
+    color: white;
+  
+    display: inline-block;
+  
+    background: #609BF4;
+  
+    border-radius: 13px;
+  
+    padding: 7px ;
+  
+    outline: none;
+  
+    white-space: nowrap;
+  
+    cursor: pointer;
+  
+    font-weight: 700;
+  
+  font-Size:'14px' 
+  
+  }
+  
+  .csv-file-input:hover::before {
+  
+    border-color: black;
+  
+  }
+  
+  .csv-file-input:active {
+  
+    outline: 0;
+  
+  }
+  
+  .csv-file-input:active::before {
+  
+    background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9); 
+  
+  }
+  
+  
+  
+  .csv-file-input-hidden {
+  
+    color: transparent;
+  
+    border-radius: 13px;
+  
+    width:50%;
+  
+    margin: 0 auto;
+  
+    display: inline-block;
+  
+    margin-left: 10%;
+  
+    margin-bottom: 5px;
+  
+    padding: 2px;
+  
+    font-weight: 700;
+  
+    font-Size:'14px' 
+  
+  }
+  
+  .csv-file-input-hidden::-webkit-file-upload-button {
+  
+    visibility: hidden;
+  
+  }
+  
+  .csv-file-input-hidden::before {
+  
+    content: 'CHOISIR UN FICHIER';
+  
+   
+  
+    display: inline-block;
+  
+    background-color:#E0E0E0;
+  
+    color:#A8A8A8;
+  
+    border-radius: 13px;
+  
+    padding: 7px ;
+  
+    outline: none;
+  
+    white-space: nowrap;
+  
+    cursor: pointer;
+  
+    font-weight: 700;
+  
+  font-Size:'14px' 
+  
+  }
+  
+  .csv-file-input-hidden:hover::before {
+  
+    border-color: black;
+  
+  }
+  
+  .csv-file-input-hidden:active {
+  
+    outline: 0;
+  
+  }
+  
+  .csv-file-input-hidden:active::before {
+  
+    background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9); 
+  
+  }
+  .algocod-logo {
+      position: absolute;
+      top: 90%;
+      left: 50%;
+      width: 230px;
+      transform: translate(-50%, -50%);
+  }
+  .algocod-text {
+    position: absolute;
+    top: 87%;
+    left: 30%;
+    font-family: 'Poppins', system-ui;
+    font-style: normal;
+  }
+  .row td {
+  
+    border-top: thin solid #B3B3B3; 
+  
+    border-bottom: thin solid #B3B3B3;
+  
+    height: 10%;
+  
+  }
+  
+  
+  
+  .row  td:first-child {
+  
+    border-left: thin solid #B3B3B3;
+  
+  }
+  
+  
+  
+  .row  td:last-child {
+  
+    border-right: thin solid #B3B3B3;
+  
+  }
+  
+  .table-show {
+  
+    overflow-x: auto;
+  
+    border-spacing : 0;
+  
+    border-collapse : collapse;
+  
+    padding:0; 
+  
+    position: absolute;
+  
+  }
+  
+  #formulaire{
+  
+    background-color: #B3B3B3;
+  
+   position: absolute;
+  
+    height: 100%;
+  
+    width: 100%;
+  
+    display: flex;
+  
+    align-items: center;
+  
+    justify-content: center; 
+  
+  opacity: 0.7; }
+  
+  #demo-multiple-name{
+  
+  color: #f9f9f9;
+  
+  }
+  
+  

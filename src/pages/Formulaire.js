@@ -5,7 +5,7 @@ import { api } from '../api'
 import configData from "../helpers/config.json";
 import { xmlFake } from "../helpers/utils.js";
 import { PDFDocument, rgb,StandardFonts } from 'pdf-lib';
-import { NumberContext } from './Loading';
+import { NumberContext } from './Loading/Loading.js';
 import fontkit from '@pdf-lib/fontkit';
 const _ = require("lodash");
 const ipc = window.require('electron').ipcRenderer;
