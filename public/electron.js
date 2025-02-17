@@ -44,6 +44,7 @@ function createWindow() {
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
 
+
   // Spécifiez le chemin absolu vers le dossier de l'extension
   const extensionPath = path.join(__dirname, 'react-devtools'); // mettez à jour ce chemin selon votre structure
 

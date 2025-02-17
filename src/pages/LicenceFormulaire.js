@@ -62,7 +62,6 @@ const LicenceFormulaire = ({ base64, parentcallback,specialityDiploma }) => {
     id.trim().length !== 0 &&
     Year.trim().length === 4 &&
     LastYear.trim().length === 4;
-
   useEffect(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     if (conditionL && !enabledhide) {
@@ -90,6 +89,7 @@ const LicenceFormulaire = ({ base64, parentcallback,specialityDiploma }) => {
       false
     );
   }
+
   async function writeLog() {
     ipc.send("logFile", id, Diploma, academicFullYear, checkedDuplicata);
   }
@@ -411,6 +411,8 @@ firstPage.drawText(conversionMentionFrench(mention), {
     
     return inputMap[input] ;
   }
+
+
   const generatedata = () => {
     const mentionEn = conversionMentionEnglish(mention)
     const specialtyEN = speciality===""?getspecialtyeEN(Diploma):speciality

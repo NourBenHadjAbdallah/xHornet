@@ -1,20 +1,19 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import "../Form/uniForm.css";
-import { api } from "../../api.js";
-import { Button, Checkbox } from "@material-ui/core";
+
+import { Checkbox } from "@material-ui/core";
 import { NumberContext } from "../../pages/Loading/Loading.js";
 import configData from "../../helpers/config.json";
-import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
-import fontkit from "@pdf-lib/fontkit";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { xmlFake } from "../../helpers/utils.js";
+
 import QrHandling from "../QrHandling/QrHandling.js";
+import PdfHandling from "../pdfHandling/PdfHandling.js";
+
 
 const ipc = window.require("electron").ipcRenderer;
-var XMLParser = require("react-xml-parser");
 const PDFJS = window.pdfjsLib;
 
-const UniFormulaire = ({ base64,parentcallback }) => {
+const UniFormulaire = ({base64, parentcallback }) => {
   // Form-related states
   const [diploma, setDiploma] = useState("");
   const [availableSpecialties, setAvailableSpecialties] = useState([]);
@@ -29,6 +28,12 @@ const UniFormulaire = ({ base64,parentcallback }) => {
   const [lieu, setLieu] = useState("");
   const [checkedDuplicata, setCheckedDuplicata] = useState(false);
   const [disableInput, setDisableInput] = useState(false);
+  const [selectedSpecialtyIndex, setSelectedSpecialtyIndex] = useState(null);
+  const [imageQR64, setImageQR64] = useState(null);
+  const handleQRCodeUpdate = (qrCode) => {
+    setImageQR64(qrCode);
+  };
+
 
   // PDF/Preview-related states
   const [pdfBytes, setPdfBytes] = useState("");
@@ -41,6 +46,7 @@ const UniFormulaire = ({ base64,parentcallback }) => {
   const [enabled, setEnabled] = useState(true);
   const [enabledhide, setEnabledhide] = useState(false);
 
+
   // Academic year states
   const currentYear = new Date().getFullYear();
   const previousYear = currentYear - 1;
@@ -51,6 +57,7 @@ const UniFormulaire = ({ base64,parentcallback }) => {
 
   // Retrieve parent's selected degree (and speciality) from context
   const { selectedDegree, speciality } = useContext(NumberContext);
+
 
 
 const diplomaOptions = {
@@ -123,7 +130,12 @@ const diplomaOptions = {
 
   // Handler for specialty selection.
   const handleSpecialtyChange = (e) => {
-    setSelectedSpecialty(e.target.value);
+    const selectedOption = e.target.value;
+    setSelectedSpecialty(selectedOption);
+  
+    // Get the index of the selected specialty
+    const selectedIndex = e.target.selectedIndex;
+    setSelectedSpecialtyIndex(selectedIndex);
   };
 
   // Handlers for academic year changes
@@ -188,7 +200,7 @@ const diplomaOptions = {
                   : "Aucune spécialité disponible"
                 : "Sélectionnez d'abord un diplôme"}
             </option>
-            {specialtieOptions[diploma]?.map((specialty) => (
+            {specialtieOptions[diploma]?.map((specialty, index) => (
               <option key={specialty} value={specialty}>
                 {specialty}
               </option>
@@ -479,17 +491,40 @@ const diplomaOptions = {
                     academicYear,
                     academicFullYear,
                   }}
+                  callback={handleQRCodeUpdate}
                   parentcallback={parentcallback}
                   setEnabledhide={setEnabledhide}
                   disabled={enabled}
                   enabled={enabled} setDisableInput={setDisableInput}
               ></QrHandling>
-              <button
+              <PdfHandling
+                disabled={base64 ? true : false}
                 type="button"
-                className={base64 ? "generate-button-disabled" : "generate-button"}
-              >
-                Visualiser Diplôme
-              </button>
+                onClick={() => {
+                  setShow((show) => !show);
+                }}
+
+              index={selectedSpecialtyIndex}
+              selectedSpecialty={selectedSpecialty}
+                
+                formData={{
+                  firstName,
+                  lastName,
+                  id,
+                  mention,
+                  dateProces,
+                  naissance,
+                  soutenancePV,
+                  lieu,
+                  Year,
+                  LastYear}}
+                checkedDuplicata={checkedDuplicata}
+                diploma={diploma}
+                parentcallback={parentcallback}
+                imageQR64={imageQR64}
+                >
+              </PdfHandling>
+
             </div>
           </form>
         </section>

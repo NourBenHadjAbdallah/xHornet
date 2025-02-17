@@ -69,6 +69,7 @@ const Formulaire = forwardRef((props, ref) => {
     
     return inputMap[input] ;
 }
+console.log(ref)
 function getspecialtyeEN(input) {
   var inputMap = {
     "10": "Information Systems and Software Engineering",

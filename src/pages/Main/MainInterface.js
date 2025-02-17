@@ -24,6 +24,7 @@ const MainInterface = () => {
   const [academicFullYear, setAcademicFullYear] = useState("");
   const [onlineStatus, setOnlineStatus] = useState(navigator.onLine);
 
+
   // Retrieve context values from Loading component
   const { selectedDegree, speciality } = useContext(NumberContext);
 
@@ -62,6 +63,7 @@ const MainInterface = () => {
     setLogOut(true);
     setUndo(true);
   };
+
 
 
   const downloadImage = () => {
@@ -136,7 +138,7 @@ const MainInterface = () => {
 
           <UniFormulaire
             parentcallback={callback}
-            base64={loading || base64 === ""}
+            
             specialityDiploma={selectedDegree.speciality}
           />
 
@@ -146,7 +148,7 @@ const MainInterface = () => {
             {loading || base64 === "" ? (
               <img className="refresh-image" src={refreshImage} alt="Loading" />
             ) : (
-              <img className="qr-image" ref={qrRef} src={base64Icon} alt="QR Code" />
+              <img className="qr-image" qrRef={qrRef} src={base64Icon} alt="QR Code" />
             )}
             <div className="buttons-container">
               <button
