@@ -1,23 +1,21 @@
-import React, { useState } from 'react';
-import "../QrHandling/QrButtonStyle.css";
-import configData from '../../helpers/config.json';
+import React, { useState } from "react";
+import configData from "../../helpers/config.json";
 import { api } from "../../api";
 import { xmlFake } from "../../helpers/utils.js";
 const ipc = window.require("electron").ipcRenderer;
 var XMLParser = require("react-xml-parser");
 
+function QrHandling({ formData, parentcallback, setEnabledhide, isDisabled, setQrHandlingInitiated }) {
+  const [imageQR64, setImageQR64] = useState("");
 
-
-function QrHandling({formData,parentcallback,setEnabledhide, enabled }) {
-    const [imageQR64, setImageQR64] = useState("");
   const {
-    diploma,
-    selectedSpecialty,
+    Diploma,
+    specialty,
     lastName,
     firstName,
     mention,
     id,
-    date,
+    naissance,
     LastYear,
     Year,
     dateProces,
@@ -27,19 +25,21 @@ function QrHandling({formData,parentcallback,setEnabledhide, enabled }) {
   } = formData;
 
   async function createFolder() {
-    ipc.send("createFolder", id, selectedSpecialty, diploma, academicFullYear,false);
-   
+    ipc.send("createFolder", id, specialty, Diploma, academicFullYear, false);
   }
+  console.log("QR",  id, specialty, Diploma, academicFullYear, )
 
   async function writeLog() {
-    ipc.send("logFile", id, diploma, academicFullYear, checkedDuplicata);
+    ipc.send("logFile", id, Diploma, academicFullYear, checkedDuplicata);
   }
 
-  console.log("Received form data:", formData);
   const generateData = () => {
+    // Disable the button after the first click
+    setQrHandlingInitiated(true);
+
     let xmlsFR;
-    switch (diploma){
-      case "Bachelors":
+    switch (Diploma) {
+      case "Licence":
         xmlsFR = `<?xml version="1.0" encoding="UTF-8"?>
     <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.soap.progress.com/">
     <soapenv:Header/>
@@ -74,13 +74,13 @@ function QrHandling({formData,parentcallback,setEnabledhide, enabled }) {
                 <!--Optional:-->
                 <code>PN</code>
                 <!--Optional:-->
-                <value>${date}</value>
+                <value>${naissance}</value>
              </item>
              <item>
                 <!--Optional:-->
                 <code>18</code>
                 <!--Optional:-->
-                <value>${selectedSpecialty}</value>
+                <value>${specialty}</value>
              </item>
              <item>
              <!--Optional:-->
@@ -104,10 +104,10 @@ function QrHandling({formData,parentcallback,setEnabledhide, enabled }) {
        </ws:signatureWs>
     </soapenv:Body>
  </soapenv:Envelope>`;
- break;
+        break;
 
- case "Engineering":
-  xmlsFR = `<?xml version="1.0" encoding="UTF-8"?>
+      case "Ingénieur":
+        xmlsFR = `<?xml version="1.0" encoding="UTF-8"?>
 <soapenv:Envelope 
   xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
   xmlns:ws="http://ws.soap.progress.com/">
@@ -134,7 +134,7 @@ function QrHandling({formData,parentcallback,setEnabledhide, enabled }) {
         </item>
         <item>
           <code>CC</code>
-          <value>${date}</value>
+          <value>${naissance}</value>
         </item>
         <item>
           <code>CE</code>
@@ -152,10 +152,10 @@ function QrHandling({formData,parentcallback,setEnabledhide, enabled }) {
     </ws:signatureWs>
   </soapenv:Body>
 </soapenv:Envelope>`;
-break;
+        break;
 
-case "Architecture":
-  xmlsFR = `<?xml version="1.0" encoding="UTF-8"?>
+      case "Architecture":
+        xmlsFR = `<?xml version="1.0" encoding="UTF-8"?>
 <soapenv:Envelope 
 xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
 xmlns:ws="http://ws.soap.progress.com/">
@@ -182,7 +182,7 @@ xmlns:ws="http://ws.soap.progress.com/">
   </item>
   <item>
     <code>PN</code>
-    <value>${date}</value>
+    <value>${naissance}</value>
   </item>
   <item>
     <code>ZX</code>
@@ -200,13 +200,13 @@ xmlns:ws="http://ws.soap.progress.com/">
 </ws:signatureWs>
 </soapenv:Body>
 </soapenv:Envelope>`;
-break;
+        break;
 
-default:
-  console.log("Diploma type not found");
-  break;
-
+      default:
+        console.log("Diploma type not found");
+        break;
     }
+
     // Send XML payload to the API
     api
       .post("", xmlsFR)
@@ -224,12 +224,8 @@ default:
               item.value,
               false,
               id,
-              firstName,
-              lastName,
-              selectedSpecialty,
-              mention,
-              date,
-              diploma,
+              specialty,
+              Diploma,
               academicFullYear
             );
           }
@@ -251,19 +247,16 @@ default:
       });
   };
 
-
   return (
     <button
-      className={enabled ? "cancel-button-disabled" : "cancel-button"} 
-      
+      className={isDisabled ? "cancel-button-disabled" : "cancel-button"}
+      disabled={isDisabled}
       type="button"
-      onClick={() => {
-        generateData();
-      }}
+      onClick={generateData}
     >
-    Générer QR
+      Générer QR
     </button>
-  )
+  );
 }
 
-export default QrHandling
+export default QrHandling;

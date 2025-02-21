@@ -229,8 +229,6 @@ border-radius: 13px;
     position: relative; 
     width: 50%;
     height: 30px;
-    /* left: 61rem;
-    right: 0; */
     left: 20%;
     margin-left: 5%;
     margin-top: 50px;
@@ -245,7 +243,6 @@ border-radius: 13px;
     outline: 0;
     border-width: 0 0 2px;
     border-color: white;
-    padding-right:30px;
 
 }
 
@@ -280,13 +277,7 @@ border-radius: 13px;
 
 }
 
-/*Submit text css properties*/
 
-/* form {
-    position: relative;
-    margin-left: auto;
-    margin-right: auto;
-} */
 /*Input form placeholder css properties*/
 input::placeholder {
     color: white;
@@ -303,15 +294,10 @@ p:hover {
 
 /*login screen background css properties*/
 .login-background {
-    /* position: relative; */
+
     background-repeat: no-repeat;
     background-size: contain;
-    /* height: auto;
-    width: 100%; */
-    /* width: 912px;
-    height: 482px; */
-    /* width: 1200px;
-    height: 800px; */
+
     background-image: url("../../resources/login_background.png");
 }
 
@@ -328,15 +314,11 @@ p:hover {
 
 /*Password icon css properties*/
 .password-icon {
-    /* width: 1.2%; */
-    /* position: relative;
-    padding-left: 80%;
-    top: 381px; */
-    /* padding: 10px; */
+
     position: absolute;
     margin-left: 16%;
     margin-top: 45px;
-    /* margin-right: 300px; */
+
 
 }
 

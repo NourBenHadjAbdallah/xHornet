@@ -124,10 +124,10 @@ function getDiplomeName(Diploma) {
   }
   return diplomeNameFolder;
 }
-function createFolder(id,section, Diploma, academicFullYear, checkLot) {
-  let diplomeNameFolder = getDiplomeName(Diploma);
+function createFolder(id,specialty, Diploma, academicFullYear, checkLot) {
+
   if (!fs.existsSync("../../../../../../" + academicFullYear)) {
-    fs.mkdir("../../../../../../" + academicFullYear, (err) => {
+    fs.mkdirSync("../../../../../../" + academicFullYear, (err) => {
       //   if (err) {
           // const messageBoxOptions = {
           //   type: "error",
@@ -140,13 +140,13 @@ function createFolder(id,section, Diploma, academicFullYear, checkLot) {
     
   });
   } 
-if(Diploma!=="architecture"){
+if(Diploma!=="Architecture"){
  
   if(checkLot===true){
-    if (!fs.existsSync( "../../../../../../" + academicFullYear + "/" +section)) 
+    if (!fs.existsSync( "../../../../../../" + academicFullYear + "/" +Diploma)) 
     {
-      fs.mkdir(
-        "../../../../../../" + academicFullYear + "/" + section,
+      fs.mkdirSync(
+        "../../../../../../" + academicFullYear + "/" + Diploma,
         (err) => {
       // if (err) {
       //       const messageBoxOptions = {
@@ -157,13 +157,13 @@ if(Diploma!=="architecture"){
       //       dialog.showMessageBox(messageBoxOptions);
       //     }
         } );}
-    if (!fs.existsSync( "../../../../../../" + academicFullYear +"/" + section + "/" +diplomeNameFolder )) 
+    if (!fs.existsSync( "../../../../../../" + academicFullYear +"/" + Diploma + "/" + specialty)) 
         {
-            fs.mkdir(
+            fs.mkdirSync(
               "../../../../../../" +
                 academicFullYear +
-                "/" + section + "/" +
-                diplomeNameFolder
+                "/" + Diploma + "/" +
+                specialty
                ,
               (err) => {
                 // if (err) {
@@ -182,13 +182,13 @@ if(Diploma!=="architecture"){
                 //   dialog.showMessageBox(messageBoxOptions);
                 // }
               });}
-    if ( !fs.existsSync("../../../../../../" +academicFullYear +"/" + section + "/" +diplomeNameFolder +"/lot")) 
+    if ( !fs.existsSync("../../../../../../" +academicFullYear +"/" + Diploma + "/" +specialty +"/lot")) 
           { 
-                  fs.mkdir(
+                  fs.mkdirSync(
                     "../../../../../../" +
                       academicFullYear +
-                      "/" + section + "/" +
-                      diplomeNameFolder +
+                      "/" + Diploma + "/" +
+                      specialty +
                       "/lot",
                     (err) => {
                       //   if (err) {
@@ -211,10 +211,10 @@ if(Diploma!=="architecture"){
                 }
               }
               else{
-                if (!fs.existsSync( "../../../../../../" + academicFullYear + "/" +section)) 
+                if (!fs.existsSync( "../../../../../../" + academicFullYear + "/" +Diploma)) 
                 {
-                  fs.mkdir(
-                    "../../../../../../" + academicFullYear + "/" + section,
+                  fs.mkdirSync(
+                    "../../../../../../" + academicFullYear + "/" + Diploma,
                     (err) => {
                   // if (err) {
                   //       const messageBoxOptions = {
@@ -225,13 +225,13 @@ if(Diploma!=="architecture"){
                   //       dialog.showMessageBox(messageBoxOptions);
                   //     }
                     } );}
-                if (!fs.existsSync( "../../../../../../" + academicFullYear +"/" + section + "/" +diplomeNameFolder )) 
+                if (!fs.existsSync( "../../../../../../" + academicFullYear +"/" + Diploma + "/" +specialty )) 
                     {
-                        fs.mkdir(
+                        fs.mkdirSync(
                           "../../../../../../" +
                             academicFullYear +
-                            "/" + section + "/" +
-                            diplomeNameFolder
+                            "/" + Diploma + "/" +
+                            specialty
                            ,
                           (err) => {
                             // if (err) {
@@ -250,13 +250,13 @@ if(Diploma!=="architecture"){
                             //   dialog.showMessageBox(messageBoxOptions);
                             // }
                           });}
-                if ( !fs.existsSync("../../../../../../" +academicFullYear +"/" + section + "/" +diplomeNameFolder +"/" +id)) 
+                if ( !fs.existsSync("../../../../../../" +academicFullYear +"/" + Diploma + "/" +specialty +"/" +id)) 
                       { 
-                              fs.mkdir(
+                              fs.mkdirSync(
                                 "../../../../../../" +
                                   academicFullYear +
-                                  "/" + section + "/" +
-                                  diplomeNameFolder +
+                                  "/" + Diploma + "/" +
+                                  specialty +
                                   "/" +
                                   id,
                                 (err) => {
@@ -281,12 +281,12 @@ if(Diploma!=="architecture"){
                           }
               }
 else{
-  if (!fs.existsSync( "../../../../../../" + academicFullYear +"/" + section )) 
+  if (!fs.existsSync( "../../../../../../" + academicFullYear +"/" + Diploma )) 
                 {
-                    fs.mkdir(
+                    fs.mkdirSync(
                       "../../../../../../" +
                         academicFullYear +
-                        "/" + section + "/"
+                        "/" + Diploma + "/"
                        ,
                       (err) => {
                         // if (err) {
@@ -305,12 +305,12 @@ else{
                         //   dialog.showMessageBox(messageBoxOptions);
                         // }
                       });}
-  if ( !fs.existsSync("../../../../../../" +academicFullYear +"/" + section + "/" +id)) 
+  if ( !fs.existsSync("../../../../../../" +academicFullYear +"/" + Diploma + "/" +id)) 
                   { 
-                          fs.mkdir(
+                          fs.mkdirSync(
                             "../../../../../../" +
                               academicFullYear +
-                              "/" + section + "/" +
+                              "/" + Diploma + "/" +
                                id,
                             (err) => {
                               //   if (err) {
@@ -333,9 +333,9 @@ else{
                         }
               }     
  }
-ipcMain.on("createFolder", (event, id, section,Diploma, academicFullYear, checkLot) => {
+ipcMain.on("createFolder", (event, id, specialty,Diploma, academicFullYear, checkLot) => {
 
-  createFolder(id, section,Diploma, academicFullYear, checkLot);
+  createFolder(id, specialty,Diploma, academicFullYear, checkLot);
 });
 
 ipcMain.on(
@@ -497,18 +497,18 @@ ipcMain.on(
   }
 );
 
-ipcMain.on("downloadImage", (event, id,section, Diploma, academicFullYear, blobURL) => {
+ipcMain.on("downloadImage", (event, id,specialty, Diploma, academicFullYear, blobURL) => {
   
   let diplomeNameFolder = getDiplomeName(Diploma);
 
   var base64Data = blobURL.replace(/^data:image\/png;base64,/, "");
-  Diploma!=="architecture"?fs.writeFile(
+  Diploma!=="Architecture"?fs.writeFile(
     "../../../../../../" +
       academicFullYear +
       "/" +
-      section +
+      Diploma +
       "/" +
-      diplomeNameFolder +
+      specialty +
       "/" +
       id +
       "/" +
@@ -532,9 +532,9 @@ ipcMain.on("downloadImage", (event, id,section, Diploma, academicFullYear, blobU
             "C:\\" +
             academicFullYear +
             "\\" +
-            section + 
+            Diploma + 
             "\\" +
-            diplomeNameFolder + 
+            specialty + 
             "\\" +
             id +
             "\\" +
@@ -548,7 +548,7 @@ ipcMain.on("downloadImage", (event, id,section, Diploma, academicFullYear, blobU
     "../../../../../../" +
       academicFullYear +
       "/" +
-      section +
+      Diploma +
       "/" +
       id +
       "/" +
@@ -572,7 +572,7 @@ ipcMain.on("downloadImage", (event, id,section, Diploma, academicFullYear, blobU
             "C:\\" +
             academicFullYear +
             "\\" +
-            section + 
+            Diploma + 
             "\\" +
             id +
             "\\" +

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {Radio,RadioGroup,FormControlLabel,FormControl,FormLabel,FormGroup,Button,Checkbox,TableContainer,TableRow,Table,TableCell,TableBody,TableHead,OutlinedInput,InputLabel,Select,Box,Typography,Modal,
-} from '@material-ui/core';
+  MenuItem} from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import { read, utils } from 'xlsx';
 import { parse, format } from 'date-fns';
@@ -256,13 +256,13 @@ function Loading() {
         input={<OutlinedInput label="Specialité" />}
         MenuProps={MenuProps}
       >
-        <option value="" disabled>
+        <MenuItem value="" disabled>
           Sélectionner une option
-        </option>
+        </MenuItem>
         {options.map((opt) => (
-          <option key={opt.value} value={opt.value}>
+          <MenuItem key={opt.value} value={opt.value}>
             {opt.label}
-          </option>
+          </MenuItem>
         ))}
       </Select>
     );
