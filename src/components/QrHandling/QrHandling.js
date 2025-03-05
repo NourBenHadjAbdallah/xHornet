@@ -5,7 +5,7 @@ import { xmlFake } from "../../helpers/utils.js";
 const ipc = window.require("electron").ipcRenderer;
 var XMLParser = require("react-xml-parser");
 
-function QrHandling({ formData, parentcallback, setEnabledhide, isDisabled, setQrHandlingInitiated }) {
+function QrHandling({ formData, parentcallback, setEnabledhide, isDisabled, setQrHandlingInitiated, callback  }) {
   const [imageQR64, setImageQR64] = useState("");
 
   const {
@@ -27,8 +27,6 @@ function QrHandling({ formData, parentcallback, setEnabledhide, isDisabled, setQ
   async function createFolder() {
     ipc.send("createFolder", id, specialty, Diploma, academicFullYear, false);
   }
-  console.log("QR",  id, specialty, Diploma, academicFullYear, )
-
   async function writeLog() {
     ipc.send("logFile", id, Diploma, academicFullYear, checkedDuplicata);
   }
@@ -228,6 +226,7 @@ xmlns:ws="http://ws.soap.progress.com/">
               Diploma,
               academicFullYear
             );
+            callback(item.value)
           }
         });
 

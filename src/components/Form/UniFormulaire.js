@@ -6,16 +6,41 @@ import configData from "../../helpers/config.json";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import QrHandling from "../QrHandling/QrHandling.js";
 import "../QrHandling/QrButtonStyle.css";
+import DiplomaPreview from "../PdfHandling/DiplomaPreview.js"
+import PdfHandler from "../PdfHandling/pdfHandler.js";
+
+
+const ipc = window.require("electron").ipcRenderer;
 
 const UniFormulaire = ({ base64, parentcallback }) => {
   const { selectedDegree, speciality } = useContext(NumberContext);
   const [enabledhide, setEnabledhide] = useState(false);
-  const [qrHandlingInitiated, setQrHandlingInitiated] = useState(false); // New state to track QR handling initiation
+  const [qrHandlingInitiated, setQrHandlingInitiated] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [id, setId] = useState("");
   const [naissance, setNaissance] = useState("");
   const [lieu, setLieu] = useState("");
+  const [imageQR64, setImageQR64] = useState(null);
+  const [pdf, setPdf] = useState({ height: null, width: null });
+  const [pdfBytes, setPdfBytes] = useState(null);
+  const [image, setImage] = useState("");
+
+
+
+  const handlePdfGenerate = (height,width) => {
+    setPdf({ height, width });
+  }
+  const handleImageGenerate = (image) => {
+    setImage(image)
+  }
+  const handlePdfBytesGenerate = (pdfBytes) => {
+    setPdfBytes(pdfBytes)}
+  
+  
+  const handleQRCodeUpdate = (qrCode) => {
+    setImageQR64(qrCode);
+  };
 
   const initialFormState = {
     Diploma: "",
@@ -23,25 +48,23 @@ const UniFormulaire = ({ base64, parentcallback }) => {
     mention: "",
     dateProces: "",
     soutenancePV: "",
-    checkedDuplicata: false,
     academicYear: "",
     academicFullYear: "",
   };
 
   const [formData, setFormData] = useState(initialFormState);
   const [availableSpecialties, setAvailableSpecialties] = useState([]);
+  const [checkedDuplicata, setCheckedDuplicata] = useState(false);
   const [disableInput, setDisableInput] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
-  const [image, setImage] = useState("");
-  const [width, setWidth] = useState(0);
-  const [height, setHeight] = useState(0);
-
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const currentYear = new Date().getFullYear();
   const previousYear = currentYear - 1;
   const [Year, setYear] = useState(currentYear.toString());
   const [LastYear, setLastYear] = useState(previousYear.toString());
   const academicYear = `${LastYear.slice(-2)}/${Year.slice(-2)}`;
   const academicFullYear = `${currentYear}-${previousYear}`;
+
 
   const diplomaOptions = {
     "1": { value: "Licence", label: "Licence" },
@@ -63,10 +86,10 @@ const UniFormulaire = ({ base64, parentcallback }) => {
   };
 
   const mentionOptions = [
-    { value: "1", label: "Passable" },
-    { value: "2", label: "Assez Bien" },
-    { value: "3", label: "Bien" },
-    { value: "4", label: "Très Bien" },
+    { value: "Passable", label: "Passable" },
+    { value: "Assez Bien", label: "Assez Bien" },
+    { value: "Bien", label: "Bien" },
+    { value: "Très Bien", label: "Très Bien" },
   ];
 
   const specialtieOptions = {
@@ -80,31 +103,62 @@ const UniFormulaire = ({ base64, parentcallback }) => {
       "Génie Biotechnologique",
       "Génie Civil",
     ],
-    Licence: ["Business Intelligence", "Génie Logiciel et système d'information"],
+    Licence: ["Génie Logiciel et système d'information", "Business Intelligence"],
   };
 
   useEffect(() => {
     if (selectedDegree && diplomaOptions[selectedDegree]) {
+      const diplomaValue = diplomaOptions[selectedDegree].value;
+      const contextSpecialty = speciality && specialtiesMapping[speciality] ? specialtiesMapping[speciality] : "";
+      const newSpecialties = specialtieOptions[diplomaValue] || [];
+  
       setFormData((prevState) => ({
         ...prevState,
-        Diploma: diplomaOptions[selectedDegree].value,
-        specialty: speciality && specialtiesMapping[speciality] ? specialtiesMapping[speciality] : "",
+        Diploma: diplomaValue,
+        specialty: contextSpecialty,
       }));
-      setAvailableSpecialties(specialtieOptions[diplomaOptions[selectedDegree].value] || []);
+      setAvailableSpecialties(newSpecialties);
+  
+      // Set the index based on the context specialty
+      const index = contextSpecialty && newSpecialties.includes(contextSpecialty) 
+        ? newSpecialties.indexOf(contextSpecialty) + 1 // +1 for placeholder
+        : 0;
+      setSelectedIndex(index);
     }
   }, [selectedDegree, speciality]);
 
   const handleDiplomaChange = (e) => {
     const selectedDiploma = e.target.value;
+    const newSpecialties = specialtieOptions[selectedDiploma] || [];
+    setAvailableSpecialties(newSpecialties);
+  
+    // Preserve the specialty if it’s valid for the new diploma
+    const currentSpecialty = formData.specialty;
+    const contextSpecialty = speciality && specialtiesMapping[speciality] ? specialtiesMapping[speciality] : "";
+  
+    let preservedSpecialty = "";
+    if (currentSpecialty && newSpecialties.includes(currentSpecialty)) {
+      preservedSpecialty = currentSpecialty; // Keep current specialty if valid
+    } else if (contextSpecialty && newSpecialties.includes(contextSpecialty)) {
+      preservedSpecialty = contextSpecialty; // Restore from context if valid
+    }
+  
     setFormData({
       ...initialFormState,
       Diploma: selectedDiploma,
+      specialty: preservedSpecialty,
     });
-    setAvailableSpecialties(specialtieOptions[selectedDiploma] || []);
+  
+    // Update selectedIndex based on preserved specialty
+    const index = preservedSpecialty ? newSpecialties.indexOf(preservedSpecialty) + 1 : 0; // +1 for placeholder
+    setSelectedIndex(index);
   };
 
   const handleSpecialtyChange = (e) => {
-    setFormData({ ...formData, specialty: e.target.value });
+    const newSpecialty = e.target.value;
+    setFormData({ ...formData, specialty: newSpecialty });
+    const index = e.target.selectedIndex;
+    setSelectedIndex(index);
   };
 
   const handleChangeFirstAcademicYear = (e) => {
@@ -120,7 +174,7 @@ const UniFormulaire = ({ base64, parentcallback }) => {
   };
 
   const handleChangeDuplicata = (event) => {
-    setFormData({ ...formData, checkedDuplicata: event.target.checked });
+    setCheckedDuplicata(event.target.checked);
   };
 
   const resetForm = () => {
@@ -130,14 +184,13 @@ const UniFormulaire = ({ base64, parentcallback }) => {
     setId("");
     setNaissance("");
     setLieu("");
+    setImageQR64(null);
     setAvailableSpecialties([]);
     setDisableInput(false);
     setShowPreview(false);
-    setImage("");
-    setWidth(0);
-    setHeight(0);
+    setCheckedDuplicata(false);
     setEnabledhide(false);
-    setQrHandlingInitiated(false); // Reset QR handling state
+    setQrHandlingInitiated(false);
     parentcallback("", false, "", "", "", "", "", "", "");
     setLastYear(previousYear.toString());
     setYear(currentYear.toString());
@@ -161,6 +214,23 @@ const UniFormulaire = ({ base64, parentcallback }) => {
     }
   };
 
+
+  async function downloadPDF() {
+
+    ipc.send(
+      "downloadPDF",
+      id,
+      formData.specialty,
+      formData.Diploma,
+      checkedDuplicata,
+      academicFullYear,
+      pdfBytes,
+      false
+    );
+  }
+
+
+
   const renderDiplomaSpecificFields = () => {
     switch (formData.Diploma) {
       case "Licence":
@@ -174,8 +244,8 @@ const UniFormulaire = ({ base64, parentcallback }) => {
               onChange={handleSpecialtyChange}
             >
               <option value="" disabled>Choisir une spécialité</option>
-              {availableSpecialties.map((specialty) => (
-                <option key={specialty} value={specialty}>
+              {availableSpecialties.map((specialty, index) => (
+                <option key={index} value={specialty}>
                   {specialty}
                 </option>
               ))}
@@ -220,8 +290,8 @@ const UniFormulaire = ({ base64, parentcallback }) => {
               onChange={handleSpecialtyChange}
             >
               <option value="" disabled>Choisir une spécialité</option>
-              {availableSpecialties.map((specialty) => (
-                <option key={specialty} value={specialty}>
+              {availableSpecialties.map((specialty, index) => (
+                <option key={index} value={specialty}>
                   {specialty}
                 </option>
               ))}
@@ -427,7 +497,7 @@ const UniFormulaire = ({ base64, parentcallback }) => {
                     className="duplicata-input-L"
                     onClick={handleChangeDuplicata}
                     disabled={disableInput}
-                    checked={formData.checkedDuplicata}
+                    checked={checkedDuplicata}
                   />
                 </div>
               </div>
@@ -435,7 +505,7 @@ const UniFormulaire = ({ base64, parentcallback }) => {
 
             <div className="buttons-container">
               <QrHandling
-
+                callback={handleQRCodeUpdate}
                 isDisabled={!isActiveFieldsValid() || qrHandlingInitiated} // Disable after first click
                 formData={{
                   ...formData,
@@ -447,43 +517,35 @@ const UniFormulaire = ({ base64, parentcallback }) => {
                 setEnabledhide={setEnabledhide}
                 setQrHandlingInitiated={setQrHandlingInitiated} // Pass the setter function
               />
-              <button
-                type="button"
-                className={base64 ? "generate-button-disabled" : "generate-button"}
-                disabled={!isActiveFieldsValid()}
-              >
-                Visualiser Diplôme
-              </button>
+              <PdfHandler
+                  formData={{
+                    ...formData,
+                    academicYear,
+                    academicFullYear,
+                    id,naissance,lastName,firstName,lieu,
+                }}
+                handlePdfBytesGenerate={handlePdfBytesGenerate}
+                isActiveFieldsValid={isActiveFieldsValid}
+                base64={base64}
+                setShowPreview={setShowPreview}
+                index={selectedIndex}
+                imageQR64={imageQR64}
+                pdfCallBack={handlePdfGenerate}
+                image={handleImageGenerate}
+                checkedDuplicata={checkedDuplicata}
+
+              />
             </div>
           </form>
         </section>
       ) : (
-        <section className="form-section">
-          <h3 className="form-title">Aperçu Diplôme</h3>
-          <hr className="first-line" />
-          <div className="div-position">
-            {image ? (
-              <img src={image} alt="pdfImage" className="div-scroll" />
-            ) : (
-              <CircularProgress className="loader" />
-            )}
-            <canvas id="pdf-canvas" width={width} height={height}></canvas>
-          </div>
-          <div className="buttons-container">
-            <button
-              className="cancel-button"
-              type="button"
-              onClick={() => setShowPreview(!showPreview)}
-            >
-              Retour au formulaire
-            </button>
-            {image && (
-              <button className="telecharger-button" type="button">
-                Télécharger Diplôme
-              </button>
-            )}
-          </div>
-        </section>
+        <DiplomaPreview
+          imageSrc={image || base64}
+          onBackToForm={() => setShowPreview(false)}
+          onDownload={downloadPDF}
+          isLoading={!image && !base64} 
+          dimensions={pdf}
+        />
       )}
     </>
   );

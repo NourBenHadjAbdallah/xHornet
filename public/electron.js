@@ -340,16 +340,16 @@ ipcMain.on("createFolder", (event, id, specialty,Diploma, academicFullYear, chec
 
 ipcMain.on(
   "downloadPDF",
-  (event, id,section, Diploma, checkedDuplicata, academicFullYear, blobURL, checkLot) => {
+  (event, id,specialty, Diploma, checkedDuplicata, academicFullYear, blobURL, checkLot) => {
     let diplomeNameFolder = getDiplomeName(Diploma);
     let pdfName = checkedDuplicata ? id + "_duplicata.pdf" : id + ".pdf";
     Diploma!=="architecture"?checkLot===true?fs.writeFile(
       "../../../../../../" +
         academicFullYear +
         "/" +
-        section +
+        Diploma +
         "/" +
-        diplomeNameFolder +
+        specialty +
         "/lot/" +
         pdfName,
       blobURL,
@@ -370,9 +370,9 @@ ipcMain.on(
       "../../../../../../" +
         academicFullYear +
         "/" +
-        section +
+        Diploma +
         "/" +
-        diplomeNameFolder +
+        specialty +
         "/" +
         id +
         "/" +
@@ -398,9 +398,9 @@ ipcMain.on(
               "C:\\" +
               academicFullYear +
               "\\" +
-              section +
+              Diploma +
               "\\" +
-              diplomeNameFolder +
+              specialty +
               "\\" +
               id +
               "\\" +
@@ -418,9 +418,9 @@ ipcMain.on(
                 "file:/../../../../../../" +
                   academicFullYear +
                   "/" +
-                  section +
+                  Diploma +
                   "/" +
-                  diplomeNameFolder +
+                  specialty +
                   "/" +
                   id +
                   "/" +
@@ -435,7 +435,7 @@ ipcMain.on(
       "../../../../../../" +
         academicFullYear +
         "/" +
-        section +
+        Diploma +
         "/" +
         id +
         "/" +
@@ -460,7 +460,7 @@ ipcMain.on(
               "C:\\" +
               academicFullYear +
               "\\" +
-              section +
+              Diploma +
               "\\" +
               id +
               "\\" +
@@ -481,7 +481,7 @@ ipcMain.on(
               "file:/../../../../../../" +
                 academicFullYear +
                 "/" +
-                section +
+                Diploma +
                 "/" +
                 id +
                 "/" +
