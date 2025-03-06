@@ -1,15 +1,19 @@
 import React, { useContext, useState, useEffect } from "react";
 import "../Form/uniForm.css";
-
-import { Button, Checkbox } from "@material-ui/core";
+import { Checkbox } from "@material-ui/core";
 import { NumberContext } from "../../pages/Loading/Loading.js";
 import configData from "../../helpers/config.json";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import QrHandling from "../QrHandling/QrHandling.js";
 import "../QrHandling/QrButtonStyle.css";
-import DiplomaPreview from "../PdfHandling/DiplomaPreview.js"
+import DiplomaPreview from "../PdfHandling/DiplomaPreview.js";
 import PdfHandler from "../PdfHandling/pdfHandler.js";
-
+import { 
+  diplomaOptions, 
+  specialtiesMapping, 
+  specialtieOptions, 
+  mentionOptions, 
+  getAcademicYears 
+} from "../../helpers/diplomaUtils.js";
 
 const ipc = window.require("electron").ipcRenderer;
 
@@ -27,22 +31,25 @@ const UniFormulaire = ({ base64, parentcallback }) => {
   const [imageQR64, setImageQR64] = useState(null);
   const [pdf, setPdf] = useState({ height: null, width: null });
   const [pdfBytes, setPdfBytes] = useState(null);
-
   const [image, setImage] = useState("");
 
+  const academicFullYear = getAcademicYears(); 
+  const currentYear = new Date().getFullYear().toString();
+  const previousYear = (currentYear - 1).toString();
+  const [Year, setYear] = useState(currentYear);
+  const [LastYear, setLastYear] = useState(previousYear);
+  const academicYear = `${LastYear.slice(-2)}/${Year.slice(-2)}`;
 
-
-
-  const handlePdfGenerate = (height,width) => {
+  const handlePdfGenerate = (height, width) => {
     setPdf({ height, width });
-  }
+  };
   const handleImageGenerate = (image) => {
-    setImage(image)
-  }
+    setImage(image);
+  };
   const handlePdfBytesGenerate = (pdfBytes) => {
-    setPdfBytes(pdfBytes)}
-  
-  
+    setPdfBytes(pdfBytes);
+  };
+
   const handleQRCodeUpdate = (qrCode) => {
     setImageQR64(qrCode);
   };
@@ -53,8 +60,8 @@ const UniFormulaire = ({ base64, parentcallback }) => {
     mention: "",
     dateProces: "",
     soutenancePV: "",
-    academicYear: "",
-    academicFullYear: "",
+    academicYear: academicYear,
+    academicFullYear: academicFullYear,
   };
 
   const [formData, setFormData] = useState(initialFormState);
@@ -64,72 +71,21 @@ const UniFormulaire = ({ base64, parentcallback }) => {
   const [showPreview, setShowPreview] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const currentYear = new Date().getFullYear();
-  const previousYear = currentYear - 1;
-  const [Year, setYear] = useState(currentYear.toString());
-  const [LastYear, setLastYear] = useState(previousYear.toString());
-  const academicYear = `${LastYear.slice(-2)}/${Year.slice(-2)}`;
-  const academicFullYear = `${currentYear}-${previousYear}`;
-
-
-
-  const diplomaOptions = {
-    "1": { value: "Licence", label: "Licence" },
-    "3": { value: "Ingénieur", label: "Ingénieur" },
-    "2": { value: "Architecture", label: "Architecture" },
-  };
-
-
-  const specialtiesMapping = {
-    "10": "Génie Logiciel et système d'information",
-    "11": "Business Intelligence",
-    "20": "Génie Informatique",
-    "21": "Génie Informatique de Gestion",
-    "22": "Génie Télécommunications et Réseaux",
-    "23": "Génie Electrique et Automatique",
-    "24": "Génie Electromécanique",
-    "25": "Génie Mécanique",
-    "26": "Génie Biotechnologique",
-    "27": "Génie Civil",
-  };
-
-  const mentionOptions = [
-    { value: "Passable", label: "Passable" },
-    { value: "Assez Bien", label: "Assez Bien" },
-    { value: "Bien", label: "Bien" },
-    { value: "Très Bien", label: "Très Bien" },
-  ];
-
-  const specialtieOptions = {
-    Ingénieur: [
-      "Génie Informatique",
-      "Génie Informatique de Gestion",
-      "Génie Télécommunications et Réseaux",
-      "Génie Electrique et Automatique",
-      "Génie Electromécanique",
-      "Génie Mécanique",
-      "Génie Biotechnologique",
-      "Génie Civil",
-    ],
-    Licence: ["Génie Logiciel et système d'information", "Business Intelligence"],
-  };
-
   useEffect(() => {
     if (selectedDegree && diplomaOptions[selectedDegree]) {
       const diplomaValue = diplomaOptions[selectedDegree].value;
       const contextSpecialty = speciality && specialtiesMapping[speciality] ? specialtiesMapping[speciality] : "";
       const newSpecialties = specialtieOptions[diplomaValue] || [];
-  
+
       setFormData((prevState) => ({
         ...prevState,
         Diploma: diplomaValue,
         specialty: contextSpecialty,
       }));
       setAvailableSpecialties(newSpecialties);
-  
-      // Set the index based on the context specialty
+
       const index = contextSpecialty && newSpecialties.includes(contextSpecialty) 
-        ? newSpecialties.indexOf(contextSpecialty) + 1 // +1 for placeholder
+        ? newSpecialties.indexOf(contextSpecialty) + 1 
         : 0;
       setSelectedIndex(index);
     }
@@ -139,36 +95,31 @@ const UniFormulaire = ({ base64, parentcallback }) => {
     const selectedDiploma = e.target.value;
     const newSpecialties = specialtieOptions[selectedDiploma] || [];
     setAvailableSpecialties(newSpecialties);
-  
-    // Preserve the specialty if it’s valid for the new diploma
+
     const currentSpecialty = formData.specialty;
     const contextSpecialty = speciality && specialtiesMapping[speciality] ? specialtiesMapping[speciality] : "";
-  
     let preservedSpecialty = "";
     if (currentSpecialty && newSpecialties.includes(currentSpecialty)) {
-      preservedSpecialty = currentSpecialty; // Keep current specialty if valid
+      preservedSpecialty = currentSpecialty;
     } else if (contextSpecialty && newSpecialties.includes(contextSpecialty)) {
-      preservedSpecialty = contextSpecialty; // Restore from context if valid
+      preservedSpecialty = contextSpecialty;
     }
-  
+
     setFormData({
       ...initialFormState,
       Diploma: selectedDiploma,
       specialty: preservedSpecialty,
     });
-  
-    // Update selectedIndex based on preserved specialty
-    const index = preservedSpecialty ? newSpecialties.indexOf(preservedSpecialty) + 1 : 0; // +1 for placeholder
+
+    const index = preservedSpecialty ? newSpecialties.indexOf(preservedSpecialty) + 1 : 0;
     setSelectedIndex(index);
   };
 
   const handleSpecialtyChange = (e) => {
-
     const newSpecialty = e.target.value;
     setFormData({ ...formData, specialty: newSpecialty });
     const index = e.target.selectedIndex;
     setSelectedIndex(index);
-
   };
 
   const handleChangeFirstAcademicYear = (e) => {
@@ -202,11 +153,10 @@ const UniFormulaire = ({ base64, parentcallback }) => {
     setEnabledhide(false);
     setQrHandlingInitiated(false);
     parentcallback("", false, "", "", "", "", "", "", "");
-    setLastYear(previousYear.toString());
-    setYear(currentYear.toString());
+    setLastYear(previousYear);
+    setYear(currentYear);
   };
 
-  // Check if the active fields are filled
   const isActiveFieldsValid = () => {
     switch (formData.Diploma) {
       case "Licence":
@@ -224,9 +174,7 @@ const UniFormulaire = ({ base64, parentcallback }) => {
     }
   };
 
-
   async function downloadPDF() {
-
     ipc.send(
       "downloadPDF",
       id,
@@ -239,10 +187,7 @@ const UniFormulaire = ({ base64, parentcallback }) => {
     );
   }
 
-
-
   const renderDiplomaSpecificFields = () => {
-
     switch (formData.Diploma) {
       case "Licence":
         return (
@@ -279,10 +224,7 @@ const UniFormulaire = ({ base64, parentcallback }) => {
               onChange={(e) => setFormData({ ...formData, mention: e.target.value })}
               disabled={disableInput}
             >
-              <option value="" disabled>
-                Sélectionner une mention
-
-              </option>
+              <option value="" disabled>Sélectionner une mention</option>
               {mentionOptions.map((opt, index) => (
                 <option key={index} value={opt.value}>
                   {opt.label}
@@ -375,11 +317,8 @@ const UniFormulaire = ({ base64, parentcallback }) => {
                     readOnly
                   />
                 </div>
-
                 <div className="form-group">
-                  <label htmlFor="institution" className="institution-label">
-                    Établissement *
-                  </label>
+                  <label htmlFor="institution" className="institution-label">Établissement *</label>
                   <input
                     id="institution"
                     className="input institution-input"
@@ -388,10 +327,9 @@ const UniFormulaire = ({ base64, parentcallback }) => {
                     readOnly
                   />
                 </div>
-
                 <div className="name-group">
                   <div className="form-group">
-                  <label className="firstname-label">Nom Étudiant *</label>
+                    <label className="firstname-label">Nom Étudiant *</label>
                     <input
                       id="lastname"
                       className="input firstname-input"
@@ -402,9 +340,8 @@ const UniFormulaire = ({ base64, parentcallback }) => {
                       onChange={(e) => setLastName(e.target.value)}
                     />
                   </div>
-
                   <div className="form-group">
-                  <label className="lastname-label">Prénom Étudiant *</label>
+                    <label className="lastname-label">Prénom Étudiant *</label>
                     <input
                       id="firstname"
                       className="input lastname-input"
@@ -416,7 +353,6 @@ const UniFormulaire = ({ base64, parentcallback }) => {
                     />
                   </div>
                 </div>
-
                 <div className="form-group">
                   <label className="id-label">Matricule *</label>
                   <input
@@ -429,7 +365,6 @@ const UniFormulaire = ({ base64, parentcallback }) => {
                     onChange={(e) => setId(e.target.value)}
                   />
                 </div>
-
                 <div className="birth-group">
                   <div className="form-group">
                     <label className="date-label">Date de naissance *</label>
@@ -444,10 +379,8 @@ const UniFormulaire = ({ base64, parentcallback }) => {
                       onChange={(e) => setNaissance(e.target.value)}
                     />
                   </div>
-
                   <div className="form-group">
                     <label className="lieu-label">Lieu *</label>
-
                     <input
                       id="birthPlace"
                       className="input lieu-input1"
@@ -458,7 +391,6 @@ const UniFormulaire = ({ base64, parentcallback }) => {
                     />
                   </div>
                 </div>
-
                 <div>
                   <label className="academicYear-label">Année Universitaire *</label>
                   <br />
@@ -481,7 +413,6 @@ const UniFormulaire = ({ base64, parentcallback }) => {
                     onChange={handleChangeSecondAcademicYear}
                   />
                 </div>
-
                 <div className="form-group">
                   <label className="diplome-label">Diplôme *</label>
                   <select
@@ -490,9 +421,7 @@ const UniFormulaire = ({ base64, parentcallback }) => {
                     value={formData.Diploma}
                     onChange={handleDiplomaChange}
                   >
-                    <option value="" disabled>
-                      Sélectionner un diplôme
-                    </option>
+                    <option value="" disabled>Sélectionner un diplôme</option>
                     {Object.values(diplomaOptions).map((dip) => (
                       <option key={dip.value} value={dip.value}>
                         {dip.label}
@@ -500,9 +429,7 @@ const UniFormulaire = ({ base64, parentcallback }) => {
                     ))}
                   </select>
                 </div>
-
                 {renderDiplomaSpecificFields()}
-
                 <div className="form-duplicata">
                   <label className="duplicata-label-L">Duplicata</label>
                   <Checkbox
@@ -514,28 +441,26 @@ const UniFormulaire = ({ base64, parentcallback }) => {
                 </div>
               </div>
             </div>
-
             <div className="buttons-container">
               <QrHandling
                 callback={handleQRCodeUpdate}
-                isDisabled={!isActiveFieldsValid() || qrHandlingInitiated} // Disable after first click
+                isDisabled={!isActiveFieldsValid() || qrHandlingInitiated}
                 formData={{
                   ...formData,
                   academicYear,
                   academicFullYear,
-                  id,naissance,lastName,firstName,lieu
+                  id, naissance, lastName, firstName, lieu
                 }}
                 parentcallback={parentcallback}
                 setEnabledhide={setEnabledhide}
-                setQrHandlingInitiated={setQrHandlingInitiated} // Pass the setter function
+                setQrHandlingInitiated={setQrHandlingInitiated}
               />
               <PdfHandler
-                  formData={{
-                    ...formData,
-                    academicYear,
-                    academicFullYear,
-
-                    id,naissance,lastName,firstName,lieu,
+                formData={{
+                  ...formData,
+                  academicYear,
+                  academicFullYear,
+                  id, naissance, lastName, firstName, lieu,
                 }}
                 handlePdfBytesGenerate={handlePdfBytesGenerate}
                 isActiveFieldsValid={isActiveFieldsValid}
@@ -546,9 +471,7 @@ const UniFormulaire = ({ base64, parentcallback }) => {
                 pdfCallBack={handlePdfGenerate}
                 image={handleImageGenerate}
                 checkedDuplicata={checkedDuplicata}
-
               />
-
             </div>
           </form>
         </section>
@@ -557,7 +480,7 @@ const UniFormulaire = ({ base64, parentcallback }) => {
           imageSrc={image || base64}
           onBackToForm={() => setShowPreview(false)}
           onDownload={downloadPDF}
-          isLoading={!image && !base64} 
+          isLoading={!image && !base64}
           dimensions={pdf}
         />
       )}

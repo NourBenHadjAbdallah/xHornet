@@ -1,36 +1,20 @@
-import React, { useState, useRef, useEffect } from 'react';
-import {Radio,RadioGroup,FormControlLabel,FormControl,FormLabel,FormGroup,Button,Checkbox,TableContainer,TableRow,Table,TableCell,TableBody,TableHead,OutlinedInput,InputLabel,Select,Box,Typography,Modal,
-  MenuItem} from '@material-ui/core';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  Radio, RadioGroup, FormControlLabel, FormControl,FormLabel, FormGroup, Button, Checkbox, OutlinedInput, InputLabel,
+  Select, Box, Typography, Modal, MenuItem
+} from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
-import { read, utils } from 'xlsx';
-import { parse, format } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
 import applicationLogo from '../../resources/application_logo.png';
 import algocodLogo from '../../resources/powered-by.png';
 import MainInterface from '../Main/MainInterface';
 import Formulaire from '../Formulaire';
 import CircularStatic from '../../components/Progressbar';
+import Batch from '../../components/Batch/Batch';
 import '../Loading/LoadingStyle.css';
+import { specialtyOptions } from '../../helpers/diplomaUtils.js'; 
 
 export const NumberContext = React.createContext({});
-
-// Define specialty options in a constant
-const SPECIALITY_OPTIONS = {
-  '3': [
-    { value: '20', label: 'Génie Informatique' },
-    { value: '21', label: 'Génie Informatique de Gestion' },
-    { value: '22', label: 'Génie Télécommunications et Réseaux' },
-    { value: '23', label: 'Génie Electrique et Automatique' },
-    { value: '24', label: 'Génie Electromécanique' },
-    { value: '25', label: 'Génie Mécanique' },
-    { value: '26', label: 'Génie Biotechnologique' },
-    { value: '27', label: 'Génie Civil' },
-  ],
-  '1': [
-    { value: '10', label: 'Génie Logiciel et système d\'information' },
-    { value: '11', label: 'Business Intelligence' },
-  ],
-};
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -63,21 +47,14 @@ function Loading() {
   const [isDiplomaByUnit, setIsDiplomaByUnit] = useState(false);
   const [isDiplomaByBatch, setIsDiplomaByBatch] = useState(false);
   const [error, setError] = useState(false);
-  const [array, setArray] = useState([]);
-  const [show, setShow] = useState(false);
-  const [showCSVContent, setShowCSVContent] = useState(false);
-  const [selectedRows, setSelectedRows] = useState([]);
   const [print, setPrint] = useState(false);
   const [progress, setProgress] = useState(0);
   const [speciality, setSpeciality] = useState('');
   const [errorForm, setErrorForm] = useState(false);
   const [open, setOpen] = useState(true);
   const [onlineStatus, setOnlineStatus] = useState(navigator.onLine);
-
-  const fileReader = useRef(new FileReader());
   const formRef = useRef();
 
-  // online/offline status
   useEffect(() => {
     const handleOnline = () => setOnlineStatus(true);
     const handleOffline = () => setOnlineStatus(false);
@@ -89,7 +66,6 @@ function Loading() {
     };
   }, []);
 
-  // Reset state when progress reaches 100
   useEffect(() => {
     if (progress === 100) {
       setIsDiplomaByUnit(false);
@@ -97,8 +73,6 @@ function Loading() {
       setSelectedDegree('');
       setClicked(false);
       setClickedBatch(false);
-      setShowCSVContent(false);
-      setShow(false);
       setOpen(true);
       setErrorForm(false);
       setTimeout(() => {
@@ -106,89 +80,24 @@ function Loading() {
         setPrint(false);
       }, 3000);
     }
-  }, [progress, print, isDiplomaByUnit, isDiplomaByBatch, selectedDegree, clicked, clickedBatch, show, showCSVContent]);
-
+  }, [progress, print, isDiplomaByUnit, isDiplomaByBatch, selectedDegree, clicked, clickedBatch]);
 
   const handleMenuItemClick = (event) => {
     const newValue = event.target.getAttribute('value');
     setSelectedDegree((prev) => (prev === newValue ? '' : newValue));
     setSpeciality('');
-    setShow(false);
-    setShowCSVContent(false);
   };
 
-  function onSubmit(progress) {
-    setProgress(progress)
-  }
-  function getErrorState(errorStateBatch) {
-    setErrorStateBatch(errorStateBatch)
-  }
-
-  const handleOnChange = (e) => {
-    e.preventDefault();
-    const files = e.target.files;
-    if (!files.length) return;
-
-    const file = files[0];
-    const extension = file.name.split('.').pop();
-    if (extension !== 'xlsx') {
-      alert('Vérifier le type du document');
-      setShow(false);
-      return;
+  const onSubmit = (progressOrRows) => {
+    if (Array.isArray(progressOrRows)) {
+      setPrint(true);
+      if (formRef.current) formRef.current.createFolder(progressOrRows);
+    } else {
+      setProgress(progressOrRows);
     }
-
-    fileReader.current.onload = (event) => {
-      const workbook = read(event.target.result);
-      const sheets = workbook.SheetNames;
-      if (!sheets.length) return;
-
-      const rows = utils.sheet_to_json(workbook.Sheets[sheets[0]], {
-        dateNF: 'dd/mm/yyyy;@',
-        cellDates: true,
-        raw: false,
-      });
-
-      // Expected headers for validation
-      const headersForLicence = [
-        'Prénom NOM',
-        'date de naissance',
-        'lieu de naissance',
-        'CIN',
-        'Mention',
-        'PV',
-      ];
-      const headersForEngineer = [
-        'Prénom NOM',
-        'date de naissance',
-        'lieu de naissance',
-        'CIN',
-        'PV',
-      ];
-
-      const headers = Object.keys(rows[0] || {});
-      const isValid =
-        (selectedDegree === '3' &&
-          JSON.stringify(headers) === JSON.stringify(headersForEngineer)) ||
-        (selectedDegree === '1' &&
-          JSON.stringify(headers) === JSON.stringify(headersForLicence));
-
-      if (isValid) {
-        setArray(rows);
-        setSelectedRows(rows);
-        setShow(true);
-      } else {
-        setShow(false);
-        alert('Vérifier le contenu du document');
-      }
-    };
-    fileReader.current.readAsArrayBuffer(file);
-    if (showCSVContent) setShowCSVContent(false);
   };
 
-  const handleOnSubmit = (e) => {
-    e.preventDefault();
-    setShowCSVContent(true);
-  };
+  const getErrorState = (errorStateBatch) => setErrorStateBatch(errorStateBatch);
 
   const handleDiplomaByUnitChange = (e) => {
     setIsDiplomaByUnit(e.target.checked);
@@ -200,9 +109,9 @@ function Loading() {
     setIsDiplomaByUnit(false);
   };
 
-  const handlePrint = () => {
-    setPrint(true);
-    if (formRef.current) formRef.current.createFolder();
+  const handleFormError = (err) => {
+    console.log('Form error:', err);
+    setErrorForm(err);
   };
 
   const onConfirm = () => {
@@ -214,32 +123,9 @@ function Loading() {
     }
   };
 
-  const handleFormError = (err) => setErrorForm(err);
-
-  const headerKeys = Object.keys(array[0] || {});
-
-  const handleCheckboxClick = (event, row) => {
-    event.stopPropagation();
-    setSelectedRows((prevSelected) => {
-      const index = prevSelected.indexOf(row);
-      if (index === -1) {
-        return [...prevSelected, row];
-      } else {
-        return prevSelected.filter((_, i) => i !== index);
-      }
-    });
-  };
-
-  const isSelected = (row) => selectedRows.indexOf(row) !== -1;
-
-  const handleSelectAllClick = (event) => {
-    setSelectedRows(event.target.checked ? [...array] : []);
-  };
-
-  // Render the speciality select using the constant options
   const renderSpecialitySelect = () => {
     if (selectedDegree === '2') return null;
-    const options = SPECIALITY_OPTIONS[selectedDegree];
+    const options = specialtyOptions[selectedDegree];
     if (!options) return null;
 
     return (
@@ -248,11 +134,7 @@ function Loading() {
         id="speciality-select"
         value={speciality}
         disabled={!selectedDegree}
-        onChange={(e) => {
-          setSpeciality(e.target.value);
-          setShow(false);
-          setShowCSVContent(false);
-        }}
+        onChange={(e) => setSpeciality(e.target.value)}
         input={<OutlinedInput label="Specialité" />}
         MenuProps={MenuProps}
       >
@@ -261,14 +143,13 @@ function Loading() {
         </MenuItem>
         {options.map((opt) => (
           <MenuItem key={opt.value} value={opt.value}>
-            {opt.label}
+            {opt.labelFR} 
           </MenuItem>
         ))}
       </Select>
     );
   };
 
-  // Condition to enable the "Confirmer" button
   const conditionSpeciality = selectedDegree === '2' ? true : speciality !== '';
 
   return (
@@ -317,11 +198,7 @@ function Loading() {
                     disablePortal
                     disableEnforceFocus
                     disableAutoFocus
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
+                    sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
                     <Box
                       sx={{
@@ -335,88 +212,19 @@ function Loading() {
                       <Typography variant="h6" component="h2">
                         Problème Connexion
                       </Typography>
-                      <Typography>
-                        Veuillez vérifier votre connexion Internet
-                      </Typography>
+                      <Typography>Veuillez vérifier votre connexion Internet</Typography>
                     </Box>
                   </Modal>
                 )}
-                <h1 className="title-style-batch">Diplômes par lot</h1>
-                <form>
-                  {speciality === '' ? (
-                    <input className="csv-file-input-hidden" type="file" disabled />
-                  ) : (
-                    <input
-                      className="csv-file-input"
-                      type="file"
-                      accept=".xlsx"
-                      onChange={handleOnChange}
-                    />
-                  )}
-                  {showCSVContent ? (
-                    <Button
-                      variant="contained"
-                      id="csv-button"
-                      disabled={show && selectedRows.length !== 0 ? false : true}
-                      onClick={handlePrint}
-                    >
-                      Imprimer le contenu
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="contained"
-                      id="csv-button"
-                      disabled={!show}
-                      onClick={handleOnSubmit}
-                    >
-                      Visualiser le contenu
-                    </Button>
-                  )}
-                </form>
-                <br />
-                {showCSVContent && (
-                  <TableContainer className="table-show">
-                    <Table>
-                      <TableHead>
-                        <TableRow key="header" className="row">
-                          <TableCell>
-                            <Checkbox
-                              checked={selectedRows.length === array.length}
-                              onChange={handleSelectAllClick}
-                            />
-                          </TableCell>
-                          {headerKeys.map((key, index) => (
-                            <TableCell key={index} style={{ fontWeight: 'bold' }}>
-                              {key}
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {array.map((item, index) => (
-                          <TableRow
-                            key={index}
-                            size="small"
-                            role="checkbox"
-                            aria-checked={isSelected(item)}
-                            tabIndex={-1}
-                            selected={isSelected(item)}
-                          >
-                            <TableCell padding="checkbox">
-                              <Checkbox onClick={(event) => handleCheckboxClick(event, item)} checked={isSelected(item)} />
-                            </TableCell>
-                            {Object.values(item).map((val, idx) => (
-                              <TableCell key={idx}>{val}</TableCell>
-                            ))}
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                    <NumberContext.Provider value={{ speciality, selectedDegree, selectedRows }}>
-                      <Formulaire ref={formRef} onSubmit={onSubmit} onError={handleFormError} />
-                    </NumberContext.Provider>
-                  </TableContainer>
-                )}
+                <Batch
+                  speciality={speciality}
+                  selectedDegree={selectedDegree}
+                  onSubmit={onSubmit}
+                  onError={handleFormError}
+                />
+                <NumberContext.Provider value={{ speciality, selectedDegree }}>
+                  <Formulaire ref={formRef} onSubmit={onSubmit} onError={handleFormError} />
+                </NumberContext.Provider>
               </>
             )}
           </section>
@@ -466,13 +274,7 @@ function Loading() {
                 variant="contained"
                 id="loading-confirm-button"
                 onClick={onConfirm}
-                disabled={
-                  !(
-                    showCSVContent !=='' &&
-                    (isDiplomaByUnit || (isDiplomaByBatch && selectedDegree !== '2')) &&
-                    conditionSpeciality
-                  )
-                }
+                disabled={!((isDiplomaByUnit || (isDiplomaByBatch && selectedDegree !== '2')) && conditionSpeciality)}
               >
                 Confirmer
               </Button>
@@ -481,7 +283,7 @@ function Loading() {
         </>
       ) : (
         <NumberContext.Provider value={{ selectedDegree, speciality }}>
-          <MainInterface/>
+          <MainInterface />
         </NumberContext.Provider>
       )}
     </>
