@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import { PDFDocument, StandardFonts } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import configData from "../../helpers/config.json";
 
@@ -109,6 +109,11 @@ function PdfHandler({
       const base64Image = imageQR64;
       const base64Icon = `data:image/png;base64,${base64Image}`;
       const pngImage = await pdfDoc.embedPng(base64Icon);
+      pdfDoc.registerFontkit(fontkit);
+      const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+      const timesNewRomanBoldFont = await pdfDoc.embedFont(
+        StandardFonts.TimesRomanBold
+      );
 
       firstPage.drawImage(pngImage, {
         x: 366,
@@ -118,20 +123,50 @@ function PdfHandler({
       });
 
       const form = pdfDoc.getForm();
-      form.getTextField("QRText").setText("Application Mobile:QrCheckMobile");
-      form.getTextField("FullYear").setText(`${academicFullYear}`);
-      form.getTextField("ProcesVerbal").setText(formatDateForProces(dateProces));
-      form.getTextField("FullName").setText(`${lastName} ${firstName}`);
-      form.getTextField("Birth").setText(formatDateForNaissance(naissance));
-      form.getTextField("Lieu").setText(lieu);
-      form.getTextField("ID").setText(id);
-      form.getTextField("datePermutation").setText(getCurrentDateInFrench());
+
+      const qrTextField = form.getTextField("QRText");
+      qrTextField.setText("Application Mobile:QrCheckMobile");
+
+      const fullYearField = form.getTextField("FullYear");
+      fullYearField.setText(`${academicFullYear}`);
+
+      const procesVerbalField = form.getTextField("ProcesVerbal");
+      procesVerbalField.setText(formatDateForProces(dateProces));
+
+      const fullNameField = form.getTextField("FullName");
+      fullNameField.setText(`${lastName} ${firstName}`);
+
+      const birthField = form.getTextField("Birth");
+      birthField.setText(formatDateForNaissance(naissance));
+
+      const lieuField = form.getTextField("Lieu");
+      lieuField.setText(lieu);
+
+      const idField = form.getTextField("ID");
+      idField.setText(id);
+
+      const datePermutationField = form.getTextField("datePermutation");
+      datePermutationField.setText(getCurrentDateInFrench());
+
+
+      qrTextField.updateAppearances(timesNewRomanBoldFont);
+      fullYearField.updateAppearances(timesNewRomanBoldFont);
+      procesVerbalField.updateAppearances(timesNewRomanBoldFont);
+      fullNameField.updateAppearances(timesNewRomanBoldFont); 
+      birthField.updateAppearances(timesNewRomanBoldFont);
+      lieuField.updateAppearances(timesNewRomanBoldFont);
+      idField.updateAppearances(timesNewRomanBoldFont);
+      datePermutationField.updateAppearances(timesRomanFont);
 
       if (Diploma === "Licence") {
-        form.getTextField("Mention").setText(mention);
+        const mentionField = form.getTextField("Mention");
+        mentionField.setText(mention);
+        mentionField.updateAppearances(timesNewRomanBoldFont);
       }
       if (Diploma === "Architecture") {
-        form.getTextField("SoutenancePV").setText(soutenancePV);
+        const soutenancePVField = form.getTextField("SoutenancePV");
+        soutenancePVField.setText(soutenancePV);
+        soutenancePVField.updateAppearances(timesNewRomanBoldFont); 
       }
 
       const pdfBytes = await pdfDoc.save();
