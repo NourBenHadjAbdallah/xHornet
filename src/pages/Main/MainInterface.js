@@ -68,11 +68,10 @@ const MainInterface = () => {
 
   const downloadImage = () => {
     const base64Icon = `data:image/png;base64,${base64}`;
-    ipc.send("downloadImage", id, section, Diploma, academicFullYear, base64Icon);
+    ipc.send("downloadImage", id, section, Diploma, academicFullYear,base64Icon);
   };
 
   const base64Icon = `data:image/png;base64,${base64}`;
-
   const renderOfflineModal = () => (
     <Modal
       disablePortal
