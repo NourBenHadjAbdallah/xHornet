@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import "../Form/uniForm.css";
+
 import { Button, Checkbox } from "@material-ui/core";
 import { NumberContext } from "../../pages/Loading/Loading.js";
 import configData from "../../helpers/config.json";
@@ -16,15 +17,19 @@ const UniFormulaire = ({ base64, parentcallback }) => {
   const { selectedDegree, speciality } = useContext(NumberContext);
   const [enabledhide, setEnabledhide] = useState(false);
   const [qrHandlingInitiated, setQrHandlingInitiated] = useState(false);
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [id, setId] = useState("");
   const [naissance, setNaissance] = useState("");
   const [lieu, setLieu] = useState("");
+
   const [imageQR64, setImageQR64] = useState(null);
   const [pdf, setPdf] = useState({ height: null, width: null });
   const [pdfBytes, setPdfBytes] = useState(null);
+
   const [image, setImage] = useState("");
+
 
 
 
@@ -58,6 +63,7 @@ const UniFormulaire = ({ base64, parentcallback }) => {
   const [disableInput, setDisableInput] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
+
   const currentYear = new Date().getFullYear();
   const previousYear = currentYear - 1;
   const [Year, setYear] = useState(currentYear.toString());
@@ -66,11 +72,13 @@ const UniFormulaire = ({ base64, parentcallback }) => {
   const academicFullYear = `${currentYear}-${previousYear}`;
 
 
+
   const diplomaOptions = {
     "1": { value: "Licence", label: "Licence" },
     "3": { value: "Ingénieur", label: "Ingénieur" },
     "2": { value: "Architecture", label: "Architecture" },
   };
+
 
   const specialtiesMapping = {
     "10": "Génie Logiciel et système d'information",
@@ -155,10 +163,12 @@ const UniFormulaire = ({ base64, parentcallback }) => {
   };
 
   const handleSpecialtyChange = (e) => {
+
     const newSpecialty = e.target.value;
     setFormData({ ...formData, specialty: newSpecialty });
     const index = e.target.selectedIndex;
     setSelectedIndex(index);
+
   };
 
   const handleChangeFirstAcademicYear = (e) => {
@@ -232,6 +242,7 @@ const UniFormulaire = ({ base64, parentcallback }) => {
 
 
   const renderDiplomaSpecificFields = () => {
+
     switch (formData.Diploma) {
       case "Licence":
         return (
@@ -270,6 +281,7 @@ const UniFormulaire = ({ base64, parentcallback }) => {
             >
               <option value="" disabled>
                 Sélectionner une mention
+
               </option>
               {mentionOptions.map((opt, index) => (
                 <option key={index} value={opt.value}>
@@ -522,6 +534,7 @@ const UniFormulaire = ({ base64, parentcallback }) => {
                     ...formData,
                     academicYear,
                     academicFullYear,
+
                     id,naissance,lastName,firstName,lieu,
                 }}
                 handlePdfBytesGenerate={handlePdfBytesGenerate}
@@ -535,6 +548,7 @@ const UniFormulaire = ({ base64, parentcallback }) => {
                 checkedDuplicata={checkedDuplicata}
 
               />
+
             </div>
           </form>
         </section>

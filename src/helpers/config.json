@@ -21,11 +21,13 @@
   "LANG":1,
 
   "DIPLOMAS": {
+
     "Licence": {
       "normal": ["licence_Genie_Logiciel", "licence_Business_Intelligence"],
       "duplicata": ["licence_Genie_LogicielDuplicata", "licence_Business_IntelligenceDuplicata"]
     },
     "Ingénieur": {
+
       "normal": ["ing_info", "ing_infoG", "ing_telecom", "ing_electrique", "ing_electro", "ing_mecanique", "ing_bio", "ing_civil"],
       "duplicata": ["infoDuplicata", "infoGDuplicata", "telecomDuplicata", "electriqueDuplicata", "electroDuplicata", "mecaniqueDuplicata", "bioDuplicata", "civilDuplicata"]
     },

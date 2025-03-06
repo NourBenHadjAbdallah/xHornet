@@ -8,6 +8,7 @@ var XMLParser = require("react-xml-parser");
 function QrHandling({ formData, parentcallback, setEnabledhide, isDisabled, setQrHandlingInitiated, callback  }) {
   const [imageQR64, setImageQR64] = useState("");
 
+
   const {
     Diploma,
     specialty,
@@ -23,6 +24,9 @@ function QrHandling({ formData, parentcallback, setEnabledhide, isDisabled, setQ
     checkedDuplicata,
     academicFullYear,
   } = formData;
+    const [imageQR64, setImageQR64] = useState("");
+
+
 
   async function createFolder() {
     ipc.send("createFolder", id, specialty, Diploma, academicFullYear, false);
@@ -210,13 +214,13 @@ xmlns:ws="http://ws.soap.progress.com/">
       .post("", xmlsFR)
       .then((res) => {
         setEnabledhide(true); // Hide UI elements if needed
-        const xmol = new XMLParser().parseFromString(
+        var xmol = new XMLParser().parseFromString(
           configData.MODE === 1 ? res.data : xmlFake
         );
 
         // Extract QR code image from the response
         xmol.getElementsByTagName("imageCev").forEach((item) => {
-          setImageQR64(item.value); // Set QR code image in state
+          // Set QR code image in state
           if (parentcallback) {
             parentcallback(
               item.value,
