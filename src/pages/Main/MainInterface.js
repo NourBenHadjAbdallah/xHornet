@@ -13,7 +13,7 @@ import UniFormulaire from "../../components/Form/UniFormulaire.js";
 
 const ipc = window.require("electron").ipcRenderer;
 
-const MainInterface = () => {
+const MainInterface = ({selectedDegree, speciality}) => {
   const [base64, setBase64] = useState("");
   const [loading, setLoading] = useState(true);
   const [id, setId] = useState("");
@@ -25,10 +25,8 @@ const MainInterface = () => {
   const [onlineStatus, setOnlineStatus] = useState(navigator.onLine);
 
 
-  // Retrieve context values from Loading component
-  const { selectedDegree, speciality } = useContext(NumberContext);
 
-  const qrRef = useRef(null);
+
 
   useEffect(() => {
     const updateOnlineStatus = () => setOnlineStatus(navigator.onLine);
@@ -137,8 +135,8 @@ const MainInterface = () => {
 
           <UniFormulaire
             parentcallback={callback}
-            
-            specialityDiploma={selectedDegree.speciality}
+            selectedDegree={selectedDegree}
+            speciality={speciality}
           />
 
           <section className="display-qr-section">
@@ -147,7 +145,7 @@ const MainInterface = () => {
             {loading || base64 === "" ? (
               <img className="refresh-image" src={refreshImage} alt="Loading" />
             ) : (
-              <img className="qr-image" qrRef={qrRef} src={base64Icon} alt="QR Code" />
+              <img className="qr-image" src={base64Icon} alt="QR Code" />
             )}
             <div className="buttons-container">
               <button

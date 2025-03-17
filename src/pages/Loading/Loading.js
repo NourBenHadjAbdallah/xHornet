@@ -222,9 +222,13 @@ function Loading() {
                   onSubmit={onSubmit}
                   onError={handleFormError}
                 />
-                <NumberContext.Provider value={{ speciality, selectedDegree }}>
-                  <Formulaire ref={formRef} onSubmit={onSubmit} onError={handleFormError} />
-                </NumberContext.Provider>
+                <Formulaire
+                  ref={formRef}
+                  onSubmit={onSubmit}
+                  onError={handleFormError}
+                  selectedDegree={selectedDegree}
+                  speciality={speciality}
+                />
               </>
             )}
           </section>
@@ -282,9 +286,7 @@ function Loading() {
           </section>
         </>
       ) : (
-        <NumberContext.Provider value={{ selectedDegree, speciality }}>
-          <MainInterface />
-        </NumberContext.Provider>
+        <MainInterface selectedDegree={selectedDegree} speciality={speciality} />
       )}
     </>
   );

@@ -45,16 +45,7 @@ function createWindow() {
   );
 
 
-  // Spécifiez le chemin absolu vers le dossier de l'extension
-  const extensionPath = path.join(__dirname, 'react-devtools'); // mettez à jour ce chemin selon votre structure
 
-  // Charge l'extension React Developer Tools
-  try {
-    BrowserWindow.addDevToolsExtension(extensionPath);
-    console.log('React Developer Tools loaded successfully.');
-  } catch (err) {
-    console.error('Error loading React Developer Tools:', err);
-  }
 
   mainWindow.webContents.openDevTools();
   var splash = new BrowserWindow({
@@ -76,16 +67,6 @@ function createWindow() {
   }, 5000);
 }
 
-// Spécifiez le chemin absolu vers le dossier de l'extension
-const extensionPath = path.join(__dirname, 'react-devtools'); // mettez à jour ce chemin selon votre structure
-
-// Charge l'extension React Developer Tools
-try {
-  BrowserWindow.addDevToolsExtension(extensionPath);
-  console.log('React Developer Tools loaded successfully.');
-} catch (err) {
-  console.error('Error loading React Developer Tools:', err);
-  }
 
 
 function getDiplomeName(Diploma) {
