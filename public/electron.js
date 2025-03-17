@@ -588,7 +588,7 @@ ipcMain.on("downloadImage", (event, id,specialty, Diploma, academicFullYear, blo
 ipcMain.on(
   "logFile",
   (event, id, Diploma, academicFullYear, checkedDuplicata) => {
-    let diplome = Diploma==="architecture"?"architecture":getDiplomeName(Diploma);
+    let diplome = Diploma==="architecture"?"architecture":Diploma;
     let duplicata = checkedDuplicata ? "Diplôme duplicata" : "Diplôme original";
 
     let ts = Date.now();
