@@ -52,6 +52,13 @@ function PdfHandler({
     return `${day} ${months[monthIndex]} ${year}`;
   };
 
+  const formatDateForSoutenancePV = (dateStr) => {
+    if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+    const [year, month, day] = dateStr.split('-');
+    const monthIndex = parseInt(month, 10) - 1;
+    return `${day} ${months[monthIndex]} ${year}`;
+  };
+
   const formatDateForNaissance = (dateStr) => {
     if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
     const [year, month, day] = dateStr.split('-');
@@ -94,6 +101,7 @@ function PdfHandler({
     };
 
     const formatDateFunctions = {
+      formatDateForSoutenancePV: formatDateForSoutenancePV,
       formatProcesVerbal: formatDateForProces,
       formatCurrentDate: (date) => date,
       formatBirthDate: formatDateForNaissance,
