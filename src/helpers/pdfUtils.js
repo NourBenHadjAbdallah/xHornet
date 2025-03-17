@@ -22,7 +22,7 @@ export const modifyPdfTemplate = async ({
     currentDate 
   } = formData;
 
-  const { formatProcesVerbal, formatCurrentDate, formatBirthDate } = formatDateFunctions;
+  const { formatProcesVerbal, formatCurrentDate, formatBirthDate , formatDateForSoutenancePV} = formatDateFunctions;
 
   try {
     const existingPdfBytes = await fetch(pdfUrl).then(res => res.arrayBuffer());
@@ -71,7 +71,7 @@ export const modifyPdfTemplate = async ({
     }
     if (diplomaType === 'Architecture' || diplomaType === '2') {
       const soutenancePVField = form.getTextField("SoutenancePV");
-      soutenancePVField.setText(soutenancePV);
+      soutenancePVField.setText(formatDateForSoutenancePV ? formatDateForSoutenancePV(soutenancePV): soutenancePV);
       soutenancePVField.updateAppearances(timesRomanBoldFont);
     }
 
