@@ -16,10 +16,9 @@ import {
 
 const ipc = window.require("electron").ipcRenderer;
 
-const UniFormulaire = ({ base64, parentcallback,selectedDegree, speciality }) => {
-
+const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) => {
   const [enabledhide, setEnabledhide] = useState(false);
-  const [qrHandlingInitiated, setQrHandlingInitiated] = useState(false);
+  const [qrGenerated, setQrGenerated] = useState(false);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -51,6 +50,7 @@ const UniFormulaire = ({ base64, parentcallback,selectedDegree, speciality }) =>
 
   const handleQRCodeUpdate = (qrCode) => {
     setImageQR64(qrCode);
+    setQrGenerated(true);
   };
 
   const initialFormState = {
@@ -66,7 +66,6 @@ const UniFormulaire = ({ base64, parentcallback,selectedDegree, speciality }) =>
   const [formData, setFormData] = useState(initialFormState);
   const [availableSpecialties, setAvailableSpecialties] = useState([]);
   const [checkedDuplicata, setCheckedDuplicata] = useState(false);
-  const [disableInput, setDisableInput] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -146,11 +145,10 @@ const UniFormulaire = ({ base64, parentcallback,selectedDegree, speciality }) =>
     setLieu("");
     setImageQR64(null);
     setAvailableSpecialties([]);
-    setDisableInput(false);
     setShowPreview(false);
     setCheckedDuplicata(false);
     setEnabledhide(false);
-    setQrHandlingInitiated(false);
+    setQrGenerated(false);
     parentcallback("", false, "", "", "", "", "", "", "");
     setLastYear(previousYear);
     setYear(currentYear);
@@ -216,6 +214,7 @@ const UniFormulaire = ({ base64, parentcallback,selectedDegree, speciality }) =>
               className="input speciality-input"
               value={formData.specialty}
               onChange={handleSpecialtyChange}
+              disabled={qrGenerated}
             >
               <option value="" disabled>Choisir une spécialité</option>
               {availableSpecialties.map((specialty, index) => (
@@ -230,7 +229,7 @@ const UniFormulaire = ({ base64, parentcallback,selectedDegree, speciality }) =>
               type="date"
               min="1980-01-01"
               max="2050-12-31"
-              disabled={disableInput}
+              disabled={qrGenerated}
               value={formData.dateProces}
               onChange={(e) => setFormData({ ...formData, dateProces: e.target.value })}
             />
@@ -240,7 +239,7 @@ const UniFormulaire = ({ base64, parentcallback,selectedDegree, speciality }) =>
               className="input mention-input"
               value={formData.mention}
               onChange={(e) => setFormData({ ...formData, mention: e.target.value })}
-              disabled={disableInput}
+              disabled={qrGenerated}
             >
               <option value="" disabled>Sélectionner une mention</option>
               {mentionOptions.map((opt, index) => (
@@ -260,6 +259,7 @@ const UniFormulaire = ({ base64, parentcallback,selectedDegree, speciality }) =>
               className="input speciality-input"
               value={formData.specialty}
               onChange={handleSpecialtyChange}
+              disabled={qrGenerated}
             >
               <option value="" disabled>Choisir une spécialité</option>
               {availableSpecialties.map((specialty, index) => (
@@ -274,7 +274,7 @@ const UniFormulaire = ({ base64, parentcallback,selectedDegree, speciality }) =>
               type="date"
               min="1980-01-01"
               max="2050-12-31"
-              disabled={disableInput}
+              disabled={qrGenerated}
               value={formData.dateProces}
               onChange={(e) => setFormData({ ...formData, dateProces: e.target.value })}
             />
@@ -289,7 +289,7 @@ const UniFormulaire = ({ base64, parentcallback,selectedDegree, speciality }) =>
               type="date"
               min="1980-01-01"
               max="2050-12-31"
-              disabled={disableInput}
+              disabled={qrGenerated}
               value={formData.soutenancePV}
               onChange={(e) => setFormData({ ...formData, soutenancePV: e.target.value })}
             />
@@ -299,7 +299,7 @@ const UniFormulaire = ({ base64, parentcallback,selectedDegree, speciality }) =>
               type="date"
               min="1980-01-01"
               max="2050-12-31"
-              disabled={disableInput}
+              disabled={qrGenerated}
               value={formData.dateProces}
               onChange={(e) => setFormData({ ...formData, dateProces: e.target.value })}
             />
@@ -351,7 +351,7 @@ const UniFormulaire = ({ base64, parentcallback,selectedDegree, speciality }) =>
                     <input
                       id="lastname"
                       className="input firstname-input"
-                      disabled={disableInput}
+                      disabled={qrGenerated}
                       value={lastName}
                       type="text"
                       name="lastname"
@@ -363,7 +363,7 @@ const UniFormulaire = ({ base64, parentcallback,selectedDegree, speciality }) =>
                     <input
                       id="firstname"
                       className="input lastname-input"
-                      disabled={disableInput}
+                      disabled={qrGenerated}
                       value={firstName}
                       type="text"
                       name="firstname"
@@ -377,7 +377,7 @@ const UniFormulaire = ({ base64, parentcallback,selectedDegree, speciality }) =>
                     id="studentId"
                     className="input id-input"
                     value={id}
-                    disabled={disableInput}
+                    disabled={qrGenerated}
                     type="text"
                     name="id"
                     onChange={(e) => setId(e.target.value)}
@@ -390,7 +390,7 @@ const UniFormulaire = ({ base64, parentcallback,selectedDegree, speciality }) =>
                       id="birthDate"
                       className="input date-input1"
                       type="date"
-                      disabled={disableInput}
+                      disabled={qrGenerated}
                       min="1980-01-01"
                       max="2050-12-31"
                       value={naissance}
@@ -402,7 +402,7 @@ const UniFormulaire = ({ base64, parentcallback,selectedDegree, speciality }) =>
                     <input
                       id="birthPlace"
                       className="input lieu-input1"
-                      disabled={disableInput}
+                      disabled={qrGenerated}
                       value={lieu}
                       type="text"
                       onChange={(e) => setLieu(e.target.value)}
@@ -416,7 +416,7 @@ const UniFormulaire = ({ base64, parentcallback,selectedDegree, speciality }) =>
                     className="input academicYear-input"
                     type="number"
                     maxLength="4"
-                    disabled={disableInput}
+                    disabled={qrGenerated}
                     value={LastYear}
                     onChange={handleChangeFirstAcademicYear}
                   />
@@ -426,7 +426,7 @@ const UniFormulaire = ({ base64, parentcallback,selectedDegree, speciality }) =>
                     className="input academicYear1-input"
                     type="number"
                     maxLength="4"
-                    disabled={disableInput}
+                    disabled={qrGenerated}
                     value={Year}
                     onChange={handleChangeSecondAcademicYear}
                   />
@@ -438,6 +438,7 @@ const UniFormulaire = ({ base64, parentcallback,selectedDegree, speciality }) =>
                     className="input diplome-input"
                     value={formData.Diploma}
                     onChange={handleDiplomaChange}
+                    disabled={qrGenerated}
                   >
                     <option value="" disabled>Sélectionner un diplôme</option>
                     {Object.values(diplomaOptions).map((dip) => (
@@ -453,7 +454,7 @@ const UniFormulaire = ({ base64, parentcallback,selectedDegree, speciality }) =>
                   <Checkbox
                     className="duplicata-input-L"
                     onClick={handleChangeDuplicata}
-                    disabled={disableInput}
+                    disabled={qrGenerated}
                     checked={checkedDuplicata}
                   />
                 </div>
@@ -462,7 +463,7 @@ const UniFormulaire = ({ base64, parentcallback,selectedDegree, speciality }) =>
             <div className="buttons-container">
               <QrHandling
                 callback={handleQRCodeUpdate}
-                isDisabled={!isActiveFieldsValid() || qrHandlingInitiated}
+                isDisabled={!isActiveFieldsValid() || qrGenerated}
                 formData={{
                   ...formData,
                   academicYear,
@@ -471,7 +472,7 @@ const UniFormulaire = ({ base64, parentcallback,selectedDegree, speciality }) =>
                 }}
                 parentcallback={parentcallback}
                 setEnabledhide={setEnabledhide}
-                setQrHandlingInitiated={setQrHandlingInitiated}
+                setQrHandlingInitiated={setQrGenerated}
               />
               <PdfHandler
                 formData={{
