@@ -1,4 +1,5 @@
-import { useContext, forwardRef, useImperativeHandle, useState } from "react";
+// src/Formulaire.js
+import { useState, forwardRef, useImperativeHandle } from "react";
 import '../css/main-interface.css';
 import { modifyPdfTemplate } from "../helpers/pdfUtils.js";
 import { generateQrXml, processQrRequest } from "../helpers/xmlUtils.js";
@@ -10,19 +11,15 @@ import {
   formatDateFrench, 
   toMonthNameFrenchPV 
 } from "../helpers/diplomaUtils.js";
-import { NumberContext } from './Loading/Loading';
 const _ = require("lodash");
 const ipc = window.require('electron').ipcRenderer;
 
-const Formulaire = forwardRef((props, ref) => {
+const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }, ref) => {
   const [error, setError] = useState(false);
-  const { speciality, selectedDegree } = useContext(NumberContext);
-  //const diploma = selectedDegree === '3' ? 'National Engineering diploma' : 'National Bachelor Degree';
   const diplomaFR = selectedDegree === '3' ? 'ingénieur' : 'licence';
   const currentDate = new Date();
   const formattedDate = formatDateFrench(currentDate);
   const academicFullYear = getAcademicYears();
-
 
   useImperativeHandle(ref, () => ({
     createFolder(rows) {
@@ -37,7 +34,7 @@ const Formulaire = forwardRef((props, ref) => {
   const modifyPdf = async (rows) => {
     if (!rows || !Array.isArray(rows) || rows.length === 0) {
       setError(true);
-      props.onError(true);
+      onError(true);
       return;
     }
 
@@ -106,11 +103,11 @@ const Formulaire = forwardRef((props, ref) => {
           ipc.send('downloadPDF', result.CIN, specialtyName, diplomaFR, false, academicFullYear, pdfBytes, true);
 
           processedCount += 1;
-          props.onSubmit((processedCount / totalItems) * 100);
+          onSubmit((processedCount / totalItems) * 100);
         } catch (err) {
           console.error("Error processing item:", err);
           setError(true);
-          props.onError(true);
+          onError(true);
           return;
         }
       }

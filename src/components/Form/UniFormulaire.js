@@ -1,7 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import "../Form/uniForm.css";
 import { Checkbox } from "@material-ui/core";
-import { NumberContext } from "../../pages/Loading/Loading.js";
 import configData from "../../helpers/config.json";
 import QrHandling from "../QrHandling/QrHandling.js";
 import "../QrHandling/QrButtonStyle.css";
@@ -17,8 +16,8 @@ import {
 
 const ipc = window.require("electron").ipcRenderer;
 
-const UniFormulaire = ({ base64, parentcallback }) => {
-  const { selectedDegree, speciality } = useContext(NumberContext);
+const UniFormulaire = ({ base64, parentcallback,selectedDegree, speciality }) => {
+
   const [enabledhide, setEnabledhide] = useState(false);
   const [qrHandlingInitiated, setQrHandlingInitiated] = useState(false);
 
@@ -158,6 +157,19 @@ const UniFormulaire = ({ base64, parentcallback }) => {
   };
 
   const isActiveFieldsValid = () => {
+    const commonFieldsValid = (
+      firstName.trim() !== "" &&
+      lastName.trim() !== "" &&
+      id.trim() !== "" &&
+      naissance.trim() !== "" &&
+      lieu.trim() !== "" &&
+      LastYear.trim() !== "" &&
+      Year.trim() !== "" &&
+      formData.Diploma.trim() !== ""
+    );
+
+    if (!commonFieldsValid) return false;
+  
     switch (formData.Diploma) {
       case "Licence":
         return (
@@ -166,9 +178,15 @@ const UniFormulaire = ({ base64, parentcallback }) => {
           formData.mention.trim() !== ""
         );
       case "Ingénieur":
-        return formData.specialty.trim() !== "" && formData.dateProces.trim() !== "";
+        return (
+          formData.specialty.trim() !== "" &&
+          formData.dateProces.trim() !== ""
+        );
       case "Architecture":
-        return formData.soutenancePV.trim() !== "" && formData.dateProces.trim() !== "";
+        return (
+          formData.soutenancePV.trim() !== "" &&
+          formData.dateProces.trim() !== ""
+        );
       default:
         return false;
     }
