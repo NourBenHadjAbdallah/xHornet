@@ -1,5 +1,4 @@
-// diplomaUtils.js
-import configData from "../helpers/config.json"; // Adjust path as per your project structure
+import configData from "../helpers/config.json"; 
 
 export const diplomaOptions = {
   "1": { value: "Licence", label: "Licence" },

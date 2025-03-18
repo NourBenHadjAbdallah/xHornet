@@ -1,5 +1,4 @@
-// xmlUtils.js
-import { api } from '../api'; // Adjust path as per your project structure
+import { api } from '../api'; 
 import configData from "../helpers/config.json";
 import { xmlFake } from "../helpers/utils.js";
 var XMLParser = require('react-xml-parser');
