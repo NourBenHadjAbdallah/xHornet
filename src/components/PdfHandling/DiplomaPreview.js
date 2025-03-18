@@ -5,7 +5,6 @@ import "../Form/uniForm.css";
 const DiplomaPreview = ({ imageSrc, onBackToForm, onDownload, isLoading, dimensions }) => {
   const [hasDownloaded, setHasDownloaded] = useState(false);
 
-  // Reset hasDownloaded when a new imageSrc is provided
   useEffect(() => {
     setHasDownloaded(false);
   }, [imageSrc]);
