@@ -1,4 +1,3 @@
-// src/Formulaire.js
 import { useState, forwardRef, useImperativeHandle } from "react";
 import '../css/main-interface.css';
 import { modifyPdfTemplate } from "../helpers/pdfUtils.js";

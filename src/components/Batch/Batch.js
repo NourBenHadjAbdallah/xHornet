@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@material-ui/core';
 import { read, utils } from 'xlsx';
 import CSVTable from './CSVTable';
@@ -12,6 +12,19 @@ function Batch({ speciality, selectedDegree, onSubmit, onError }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const fileReader = useRef(new FileReader());
+  const fileInputRef = useRef(null); 
+
+
+  useEffect(() => {
+    setArray([]);
+    setShow(false);
+    setShowCSVContent(false);
+    setSelectedRows([]);
+    setError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''; 
+    }
+  }, [selectedDegree, speciality]);
 
   const handleOnChange = (e) => {
     e.preventDefault();
@@ -98,6 +111,7 @@ function Batch({ speciality, selectedDegree, onSubmit, onError }) {
           <input className="csv-file-input-hidden" type="file" disabled />
         ) : (
           <input
+            ref={fileInputRef} 
             className="csv-file-input"
             type="file"
             accept=".xlsx"
@@ -106,9 +120,9 @@ function Batch({ speciality, selectedDegree, onSubmit, onError }) {
           />
         )}
         {loading ? (
-          <div>Loading...</div>
+          <div className="batch-error-message">Chargement...</div>
         ) : error ? (
-          <div style={{ color: 'red' }}>{error}</div>
+          <div className="batch-error-message">{error}</div>
         ) : showCSVContent ? (
           <Button
             variant="contained"
