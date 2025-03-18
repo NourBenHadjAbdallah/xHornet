@@ -15,7 +15,6 @@ function PdfHandler({
   checkedDuplicata,
   handlePdfBytesGenerate,
 }) {
-
   const [loading, setLoading] = useState(false);
   const [pdf, setPdf] = useState("");
 

@@ -149,9 +149,12 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
     setCheckedDuplicata(false);
     setEnabledhide(false);
     setQrGenerated(false);
-    parentcallback("", false, "", "", "", "", "", "", "");
+    setImage("");         
+    setPdf({ height: null, width: null });  
+    setPdfBytes(null);     
     setLastYear(previousYear);
     setYear(currentYear);
+    parentcallback("", false, "", "", "", "", "", "", "");
   };
 
   const isActiveFieldsValid = () => {
