@@ -12,8 +12,7 @@ function Batch({ speciality, selectedDegree, onSubmit, onError }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const fileReader = useRef(new FileReader());
-  const fileInputRef = useRef(null); 
-
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     setArray([]);
@@ -22,9 +21,30 @@ function Batch({ speciality, selectedDegree, onSubmit, onError }) {
     setSelectedRows([]);
     setError(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = ''; 
+      fileInputRef.current.value = '';
     }
   }, [selectedDegree, speciality]);
+
+  const formatDate = (excelDate) => {
+    // If it's already a Date object
+    if (excelDate instanceof Date) {
+      const day = String(excelDate.getDate()).padStart(2, '0');
+      const month = String(excelDate.getMonth() + 1).padStart(2, '0');
+      const year = excelDate.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+    // If it's a string that needs parsing
+    if (typeof excelDate === 'string') {
+      const parts = excelDate.split('/');
+      if (parts.length === 3) {
+        const [day, month, year] = parts;
+        // Handle two-digit year
+        const fullYear = year.length === 2 ? `20${year}` : year;
+        return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${fullYear}`;
+      }
+    }
+    return excelDate; // Return as is if format is unexpected
+  };
 
   const handleOnChange = (e) => {
     e.preventDefault();
@@ -44,7 +64,12 @@ function Batch({ speciality, selectedDegree, onSubmit, onError }) {
 
     fileReader.current.onload = (event) => {
       try {
-        const workbook = read(event.target.result);
+        const workbook = read(event.target.result, {
+          type: 'array',
+          dateNF: 'dd/mm/yyyy', // Specify the date format we expect
+          cellDates: true,     // Ensure dates are parsed as Date objects
+          raw: false           // Process the values instead of using raw data
+        });
         const sheets = workbook.SheetNames;
         if (!sheets.length) {
           setError('Aucune feuille trouvée dans le fichier');
@@ -53,9 +78,8 @@ function Batch({ speciality, selectedDegree, onSubmit, onError }) {
         }
 
         const rows = utils.sheet_to_json(workbook.Sheets[sheets[0]], {
-          dateNF: 'dd/mm/yyyy;@',
-          cellDates: true,
-          raw: false,
+          dateNF: 'dd/mm/yyyy', // Enforce date format
+          raw: false
         });
 
         if (!rows.length) {
@@ -65,16 +89,23 @@ function Batch({ speciality, selectedDegree, onSubmit, onError }) {
           return;
         }
 
+        // Process the rows to ensure correct date formatting
+        const formattedRows = rows.map(row => ({
+          ...row,
+          'date de naissance': formatDate(row['date de naissance']),
+          'PV': row['PV'] ? formatDate(row['PV']) : row['PV']
+        }));
+
         const headersForLicence = ['Prénom NOM', 'date de naissance', 'lieu de naissance', 'CIN', 'Mention', 'PV'];
         const headersForEngineer = ['Prénom NOM', 'date de naissance', 'lieu de naissance', 'CIN', 'PV'];
-        const headers = Object.keys(rows[0]);
+        const headers = Object.keys(formattedRows[0]);
         const isValid =
           (selectedDegree === '3' && JSON.stringify(headers) === JSON.stringify(headersForEngineer)) ||
           (selectedDegree === '1' && JSON.stringify(headers) === JSON.stringify(headersForLicence));
 
         if (isValid) {
-          setArray(rows);
-          setSelectedRows(rows);
+          setArray(formattedRows);
+          setSelectedRows(formattedRows);
           setShow(true);
         } else {
           setError('Les colonnes du fichier ne correspondent pas au diplôme sélectionné');
@@ -111,7 +142,7 @@ function Batch({ speciality, selectedDegree, onSubmit, onError }) {
           <input className="csv-file-input-hidden" type="file" disabled />
         ) : (
           <input
-            ref={fileInputRef} 
+            ref={fileInputRef}
             className="csv-file-input"
             type="file"
             accept=".xlsx"
