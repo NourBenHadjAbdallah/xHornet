@@ -10,10 +10,12 @@ function PdfHandler({
   setShowPreview,
   index,
   imageQR64,
-  image,
+  handleImageGenerate,
   pdfCallBack,
   checkedDuplicata,
   handlePdfBytesGenerate,
+  pdfBytes,
+  isPdfGenerated,
 }) {
   const [loading, setLoading] = useState(false);
   const [pdf, setPdf] = useState("");
@@ -140,22 +142,32 @@ function PdfHandler({
     await page.render(render_context);
     var canvas = document.getElementById("pdf-canvas");
     var img = canvas.toDataURL("image/png");
-    image(img);
+    handleImageGenerate(img);
   }
 
   useEffect(() => {
     if (pdf) renderPage();
   }, [pdf]);
 
+  const handlePreviewClick = async () => {
+    if (isPdfGenerated && pdfBytes) {
+      const blob = new Blob([pdfBytes], { type: "application/pdf" });
+      const blobUrl = URL.createObjectURL(blob);
+      const _PDF_DOC = await PDFJS.getDocument({ url: blobUrl }).promise;
+      setPdf(_PDF_DOC);
+      setShowPreview(true);
+    } else {
+      await modifyPdf();
+      setShowPreview(true);
+    }
+  };
+
   return (
     <button
       type="button"
       className={!imageQR64 ? "generate-button-disabled" : "generate-button"}
       disabled={!isActiveFieldsValid() || !imageQR64}
-      onClick={async () => {
-        await modifyPdf();
-        setShowPreview(true);
-      }}
+      onClick={handlePreviewClick}
     >
       {loading ? "Génération..." : "Visualiser Diplôme"}
     </button>

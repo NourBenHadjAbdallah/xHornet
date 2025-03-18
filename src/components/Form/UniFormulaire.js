@@ -30,6 +30,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
   const [pdf, setPdf] = useState({ height: null, width: null });
   const [pdfBytes, setPdfBytes] = useState(null);
   const [image, setImage] = useState("");
+  const [isPdfGenerated, setIsPdfGenerated] = useState(false);
 
   const academicFullYear = getAcademicYears(); 
   const currentYear = new Date().getFullYear().toString();
@@ -46,6 +47,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
   };
   const handlePdfBytesGenerate = (pdfBytes) => {
     setPdfBytes(pdfBytes);
+    setIsPdfGenerated(true);
   };
 
   const handleQRCodeUpdate = (qrCode) => {
@@ -111,6 +113,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
 
     const index = preservedSpecialty ? newSpecialties.indexOf(preservedSpecialty) + 1 : 0;
     setSelectedIndex(index);
+    setIsPdfGenerated(false);
   };
 
   const handleSpecialtyChange = (e) => {
@@ -118,22 +121,26 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
     setFormData({ ...formData, specialty: newSpecialty });
     const index = e.target.selectedIndex;
     setSelectedIndex(index);
+    setIsPdfGenerated(false);
   };
 
   const handleChangeFirstAcademicYear = (e) => {
     const newYear = e.target.value.slice(0, 4);
     setLastYear(newYear);
     setYear((parseInt(newYear, 10) + 1).toString());
+    setIsPdfGenerated(false);
   };
 
   const handleChangeSecondAcademicYear = (e) => {
     const newYear = e.target.value.slice(0, 4);
     setYear(newYear);
     setLastYear((parseInt(newYear, 10) - 1).toString());
+    setIsPdfGenerated(false);
   };
 
   const handleChangeDuplicata = (event) => {
     setCheckedDuplicata(event.target.checked);
+    setIsPdfGenerated(false);
   };
 
   const resetForm = () => {
@@ -149,9 +156,10 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
     setCheckedDuplicata(false);
     setEnabledhide(false);
     setQrGenerated(false);
-    setImage("");         
-    setPdf({ height: null, width: null });  
-    setPdfBytes(null);     
+    setImage("");
+    setPdf({ height: null, width: null });
+    setPdfBytes(null);
+    setIsPdfGenerated(false);
     setLastYear(previousYear);
     setYear(currentYear);
     parentcallback("", false, "", "", "", "", "", "", "");
@@ -234,14 +242,20 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
               max="2050-12-31"
               disabled={qrGenerated}
               value={formData.dateProces}
-              onChange={(e) => setFormData({ ...formData, dateProces: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, dateProces: e.target.value });
+                setIsPdfGenerated(false);
+              }}
             />
             <label className="mention-label">Mention *</label>
             <select
               id="mention"
               className="input mention-input"
               value={formData.mention}
-              onChange={(e) => setFormData({ ...formData, mention: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, mention: e.target.value });
+                setIsPdfGenerated(false);
+              }}
               disabled={qrGenerated}
             >
               <option value="" disabled>Sélectionner une mention</option>
@@ -279,7 +293,10 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
               max="2050-12-31"
               disabled={qrGenerated}
               value={formData.dateProces}
-              onChange={(e) => setFormData({ ...formData, dateProces: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, dateProces: e.target.value });
+                setIsPdfGenerated(false);
+              }}
             />
           </div>
         );
@@ -294,7 +311,10 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
               max="2050-12-31"
               disabled={qrGenerated}
               value={formData.soutenancePV}
-              onChange={(e) => setFormData({ ...formData, soutenancePV: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, soutenancePV: e.target.value });
+                setIsPdfGenerated(false);
+              }}
             />
             <label className="proces-label">Procès-verbal *</label>
             <input
@@ -304,7 +324,10 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
               max="2050-12-31"
               disabled={qrGenerated}
               value={formData.dateProces}
-              onChange={(e) => setFormData({ ...formData, dateProces: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, dateProces: e.target.value });
+                setIsPdfGenerated(false);
+              }}
             />
           </div>
         );
@@ -341,7 +364,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
                 <div className="form-group">
                   <label htmlFor="institution" className="institution-label">Établissement *</label>
                   <input
-                    id="institution"
+                    id=" erection-input"
                     className="input institution-input"
                     type="text"
                     value={configData.ETABLISSEMENT.FR}
@@ -358,7 +381,10 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
                       value={lastName}
                       type="text"
                       name="lastname"
-                      onChange={(e) => setLastName(e.target.value)}
+                      onChange={(e) => {
+                        setLastName(e.target.value);
+                        setIsPdfGenerated(false);
+                      }}
                     />
                   </div>
                   <div className="form-group">
@@ -370,7 +396,10 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
                       value={firstName}
                       type="text"
                       name="firstname"
-                      onChange={(e) => setFirstName(e.target.value)}
+                      onChange={(e) => {
+                        setFirstName(e.target.value);
+                        setIsPdfGenerated(false);
+                      }}
                     />
                   </div>
                 </div>
@@ -383,7 +412,10 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
                     disabled={qrGenerated}
                     type="text"
                     name="id"
-                    onChange={(e) => setId(e.target.value)}
+                    onChange={(e) => {
+                      setId(e.target.value);
+                      setIsPdfGenerated(false);
+                    }}
                   />
                 </div>
                 <div className="birth-group">
@@ -397,7 +429,10 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
                       min="1980-01-01"
                       max="2050-12-31"
                       value={naissance}
-                      onChange={(e) => setNaissance(e.target.value)}
+                      onChange={(e) => {
+                        setNaissance(e.target.value);
+                        setIsPdfGenerated(false);
+                      }}
                     />
                   </div>
                   <div className="form-group">
@@ -408,7 +443,10 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
                       disabled={qrGenerated}
                       value={lieu}
                       type="text"
-                      onChange={(e) => setLieu(e.target.value)}
+                      onChange={(e) => {
+                        setLieu(e.target.value);
+                        setIsPdfGenerated(false);
+                      }}
                     />
                   </div>
                 </div>
@@ -491,8 +529,10 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
                 index={selectedIndex}
                 imageQR64={imageQR64}
                 pdfCallBack={handlePdfGenerate}
-                image={handleImageGenerate}
+                handleImageGenerate={handleImageGenerate}
                 checkedDuplicata={checkedDuplicata}
+                pdfBytes={pdfBytes}
+                isPdfGenerated={isPdfGenerated}
               />
             </div>
           </form>
