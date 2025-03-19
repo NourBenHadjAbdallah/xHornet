@@ -1,7 +1,7 @@
-import React, { useContext, useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "../Main/MainInterfaceStyle.css";
 import refreshImage from "../../resources/refresh_blue.png";
-import Loading, { NumberContext } from "../Loading/Loading.js";
+import Loading from "../Loading/Loading.js";
 import UndoIcon from "@material-ui/icons/Undo";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import { Button } from "@material-ui/core";

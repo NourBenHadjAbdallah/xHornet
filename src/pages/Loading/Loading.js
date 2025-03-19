@@ -4,7 +4,6 @@ import {
   Select, Box, Typography, Modal, MenuItem
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
-import { utcToZonedTime } from 'date-fns-tz';
 import applicationLogo from '../../resources/application_logo.png';
 import algocodLogo from '../../resources/powered-by.png';
 import MainInterface from '../Main/MainInterface';
@@ -40,7 +39,7 @@ const modalStyle = {
 };
 
 function Loading() {
-  const [errorStateBatch, setErrorStateBatch] = useState(false);
+  const [setErrorStateBatch] = useState(false);
   const [clicked, setClicked] = useState(false);
   const [clickedBatch, setClickedBatch] = useState(false);
   const [selectedDegree, setSelectedDegree] = useState('');
@@ -97,7 +96,6 @@ function Loading() {
     }
   };
 
-  const getErrorState = (errorStateBatch) => setErrorStateBatch(errorStateBatch);
 
   const handleDiplomaByUnitChange = (e) => {
     setIsDiplomaByUnit(e.target.checked);

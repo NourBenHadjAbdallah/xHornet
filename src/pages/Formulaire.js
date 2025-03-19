@@ -14,7 +14,7 @@ const _ = require("lodash");
 const ipc = window.require('electron').ipcRenderer;
 
 const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }, ref) => {
-  const [error, setError] = useState(false);
+  const [ setError] = useState(false);
   const diplomaFR = selectedDegree === '3' ? 'ingénieur' : 'licence';
   const currentDate = new Date();
   const formattedDate = formatDateFrench(currentDate);
