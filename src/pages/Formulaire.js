@@ -15,7 +15,9 @@ const _ = require("lodash");
 const ipc = window.require('electron').ipcRenderer;
 
 const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }, ref) => {
+
   const [setError] = useState(false);
+
   const currentDate = new Date();
   const formattedDate = formatDateFrench(currentDate);
   const academicFullYear = getAcademicYears();
