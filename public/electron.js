@@ -47,7 +47,7 @@ function createWindow() {
 
 
 
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
   var splash = new BrowserWindow({
     width: 950,
     height: 500,
@@ -69,42 +69,7 @@ function createWindow() {
 
 
 
-function getDiplomeName(Diploma) {
-  let diplomeNameFolder;
-  switch (Diploma) {
-    case "20":
-      diplomeNameFolder = "Génie Informatique";
-      break;
-    case "21":
-      diplomeNameFolder = " Génie Informatique de Gestion";
-      break;
-    case "22":
-      diplomeNameFolder = "Génie Télécommunications et Réseaux";
-      break;
-    case "23":
-      diplomeNameFolder = "Génie Electrique et Automatique";
-      break;
-    case "24":
-      diplomeNameFolder = "Génie Electromécanique";
-      break;
-    case "25":
-      diplomeNameFolder = "Génie Mécanique";
-      break;
-    case "26":
-      diplomeNameFolder = "Génie Biotechnologique";
-      break;
-    case "27":
-      diplomeNameFolder = "Génie Civil";
-      break;
-    case "10":
-      diplomeNameFolder = "Génie Logiciel et système d'information";
-      break;
-    case "11":
-      diplomeNameFolder = "Business Intelligence";
-      break;
-  }
-  return diplomeNameFolder;
-}
+
 function createFolder(id,specialty, Diploma, academicFullYear, checkLot) {
 
   if (!fs.existsSync("../../../../../../" + academicFullYear)) {
@@ -322,7 +287,7 @@ ipcMain.on("createFolder", (event, id, specialty,Diploma, academicFullYear, chec
 ipcMain.on(
   "downloadPDF",
   (event, id,specialty, Diploma, checkedDuplicata, academicFullYear, blobURL, checkLot) => {
-    let diplomeNameFolder = getDiplomeName(Diploma);
+
     let pdfName = checkedDuplicata ? id + "_duplicata.pdf" : id + ".pdf";
     Diploma!=="architecture"?checkLot===true?fs.writeFile(
       "../../../../../../" +
@@ -480,7 +445,7 @@ ipcMain.on(
 
 ipcMain.on("downloadImage", (event, id,specialty, Diploma, academicFullYear, blobURL) => {
   
-  let diplomeNameFolder = getDiplomeName(Diploma);
+
 
   var base64Data = blobURL.replace(/^data:image\/png;base64,/, "");
   Diploma!=="Architecture"?fs.writeFile(
