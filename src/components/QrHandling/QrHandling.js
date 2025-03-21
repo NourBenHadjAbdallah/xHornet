@@ -18,7 +18,6 @@ function QrHandling({ formData, parentcallback, setEnabledhide, isDisabled, setQ
     checkedDuplicata,
     academicFullYear,
   } = formData;
-
   async function createFolder() {ipc.send("createFolder", id, specialty, Diploma, academicFullYear, false);}
   async function writeLog() {ipc.send("logFile", id, Diploma, academicFullYear, checkedDuplicata);}
 

@@ -18,6 +18,8 @@ export const generateQrXml = ({
 
   switch (diplomaType) {
     case "Licence":
+    case "Doctorat": 
+    case "Mastère":
       xmlsFR = `<?xml version="1.0" encoding="UTF-8"?>
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.soap.progress.com/">
   <soapenv:Header/>

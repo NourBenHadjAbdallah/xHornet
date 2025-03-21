@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { modifyPdfTemplate } from "../../helpers/pdfUtils.js";
 import configData from "../../helpers/config.json";
-const ipc = window.require("electron").ipcRenderer;
 const PDFJS = window.pdfjsLib;
 
 function PdfHandler({
