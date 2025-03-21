@@ -81,13 +81,8 @@ function PdfHandler({
   async function modifyPdf() {
     setLoading(true);
     const diplomeName = getDiplomaFile(formData.Diploma, checkedDuplicata, index);
-    if (!diplomeName) {
-      alert("Diplôme introuvable !");
-      setLoading(false);
-      return;
-    }
+    const url = `./assets/${diplomeName}`;
 
-    const url = `../../assets/${diplomeName}`;
 
     const formDataForPdf = {
       fullName: `${lastName} ${firstName}`,
