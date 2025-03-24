@@ -110,7 +110,7 @@
 
         "piping": "^1.0.0-rc.4",
 
-        "QR-Diploma": "file:",
+        "Verif": "file:",
 
         "react": "17.0.1",
 

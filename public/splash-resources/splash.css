@@ -3,10 +3,10 @@
 /*Application logo css properties*/
 .app-logo {
     position: absolute;
-    width: 350px;
-    height: 90px;
-    left: 335px;
-    top: 189px;
+    width: 25%;
+    height: 25%;
+    left: 340px;
+    top: 150px;
 }
 
 /*Institute logo css properties*/
@@ -42,8 +42,8 @@
     position: absolute;
     width: 50px;
     height: 25px;
-    left: 628px;
-    top: 253px;
+    left: 608px;
+    top: 263px;
 
     /* font-family: 'Poppins'; */
     font-style: normal;
