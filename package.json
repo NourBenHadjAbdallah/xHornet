@@ -138,9 +138,9 @@
 
     "build": {
 
-        "appId": "QR-Diploma",
+        "appId": "Verif",
 
-        "productName": "QR-Diploma",
+        "productName": "Verif",
 
         "win": {
 
