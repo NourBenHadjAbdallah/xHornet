@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "../Form/uniForm.css";
 import { Checkbox } from "@material-ui/core";
 import configData from "../../helpers/config.json";
@@ -14,23 +14,22 @@ import {
   getAcademicYears 
 } from "../../helpers/diplomaUtils.js";
 
-const ipc = window.require("electron").ipcRenderer;
+const ipc = window.require ? window.require("electron").ipcRenderer : null;
 
 const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) => {
   const [enabledhide, setEnabledhide] = useState(false);
   const [qrGenerated, setQrGenerated] = useState(false);
-
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [id, setId] = useState("");
   const [naissance, setNaissance] = useState("");
   const [lieu, setLieu] = useState("");
-
   const [imageQR64, setImageQR64] = useState(null);
   const [pdf, setPdf] = useState({ height: null, width: null });
   const [pdfBytes, setPdfBytes] = useState(null);
   const [image, setImage] = useState("");
   const [isPdfGenerated, setIsPdfGenerated] = useState(false);
+  const [hasDownloaded, setHasDownloaded] = useState(false);
 
   const academicFullYear = getAcademicYears(); 
   const currentYear = new Date().getFullYear().toString();
@@ -63,6 +62,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
     soutenancePV: "",
     academicYear: academicYear,
     academicFullYear: academicFullYear,
+    checkedDuplicata: false // Added to initial state
   };
 
   const [formData, setFormData] = useState(initialFormState);
@@ -81,6 +81,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
         ...prevState,
         Diploma: diplomaValue,
         specialty: contextSpecialty,
+        checkedDuplicata: checkedDuplicata // Ensure it's included
       }));
       setAvailableSpecialties(newSpecialties);
 
@@ -89,7 +90,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
         : 0;
       setSelectedIndex(index);
     }
-  }, [selectedDegree, speciality]);
+  }, [selectedDegree, speciality, checkedDuplicata]); // Added checkedDuplicata to dependencies
 
   const handleDiplomaChange = (e) => {
     const selectedDiploma = e.target.value;
@@ -108,11 +109,11 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
     setFormData({
       ...initialFormState,
       Diploma: selectedDiploma,
-      specialty: preservedSpecialty,
+      specialty: "",
+      checkedDuplicata: checkedDuplicata // Preserve checkbox state
     });
 
-    const index = preservedSpecialty ? newSpecialties.indexOf(preservedSpecialty) + 1 : 0;
-    setSelectedIndex(index);
+    setSelectedIndex(0);
     setIsPdfGenerated(false);
   };
 
@@ -139,7 +140,9 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
   };
 
   const handleChangeDuplicata = (event) => {
-    setCheckedDuplicata(event.target.checked);
+    const isChecked = event.target.checked;
+    setCheckedDuplicata(isChecked);
+    setFormData(prev => ({ ...prev, checkedDuplicata: isChecked })); // Update formData
     setIsPdfGenerated(false);
   };
 
@@ -162,6 +165,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
     setIsPdfGenerated(false);
     setLastYear(previousYear);
     setYear(currentYear);
+    setHasDownloaded(false);
     parentcallback("", false, "", "", "", "", "", "", "");
   };
 
@@ -181,6 +185,8 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
   
     switch (formData.Diploma) {
       case "Licence":
+      case "Doctorat":
+      case "Mastère":
         return (
           formData.specialty.trim() !== "" &&
           formData.dateProces.trim() !== "" &&
@@ -202,21 +208,26 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
   };
 
   async function downloadPDF() {
-    ipc.send(
-      "downloadPDF",
-      id,
-      formData.specialty,
-      formData.Diploma,
-      checkedDuplicata,
-      academicFullYear,
-      pdfBytes,
-      false
-    );
+    if (ipc) {
+      ipc.send(
+        "downloadPDF",
+        id,
+        formData.specialty,
+        formData.Diploma,
+        checkedDuplicata,
+        academicFullYear,
+        pdfBytes,
+        false
+      );
+      setHasDownloaded(true);
+    }
   }
 
   const renderDiplomaSpecificFields = () => {
     switch (formData.Diploma) {
       case "Licence":
+      case "Doctorat":
+      case "Mastère":
         return (
           <div className="mt-4">
             <label className="speciality-label">Specialité *</label>
@@ -364,7 +375,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
                 <div className="form-group">
                   <label htmlFor="institution" className="institution-label">Établissement *</label>
                   <input
-                    id=" erection-input"
+                    id="institution-input"
                     className="input institution-input"
                     type="text"
                     value={configData.ETABLISSEMENT.FR}
@@ -494,7 +505,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
                   <label className="duplicata-label-L">Duplicata</label>
                   <Checkbox
                     className="duplicata-input-L"
-                    onClick={handleChangeDuplicata}
+                    onChange={handleChangeDuplicata} // Changed to onChange
                     disabled={qrGenerated}
                     checked={checkedDuplicata}
                   />
@@ -509,7 +520,12 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
                   ...formData,
                   academicYear,
                   academicFullYear,
-                  id, naissance, lastName, firstName, lieu
+                  id,
+                  naissance,
+                  lastName,
+                  firstName,
+                  lieu,
+                  checkedDuplicata // Ensure this is passed
                 }}
                 parentcallback={parentcallback}
                 setEnabledhide={setEnabledhide}
@@ -520,7 +536,12 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
                   ...formData,
                   academicYear,
                   academicFullYear,
-                  id, naissance, lastName, firstName, lieu,
+                  id,
+                  naissance,
+                  lastName,
+                  firstName,
+                  lieu,
+                  checkedDuplicata // Ensure this is passed
                 }}
                 handlePdfBytesGenerate={handlePdfBytesGenerate}
                 isActiveFieldsValid={isActiveFieldsValid}
@@ -544,6 +565,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
           onDownload={downloadPDF}
           isLoading={!image && !base64}
           dimensions={pdf}
+          hasDownloaded={hasDownloaded}
         />
       )}
     </>

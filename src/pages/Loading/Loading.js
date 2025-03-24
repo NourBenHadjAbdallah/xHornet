@@ -246,6 +246,8 @@ function Loading() {
                     <FormControlLabel value="1" control={<Radio onClick={handleMenuItemClick} />} label="Licence" />
                     <FormControlLabel value="3" control={<Radio onClick={handleMenuItemClick} />} label="Ingénieur" />
                     <FormControlLabel value="2" control={<Radio onClick={handleMenuItemClick} />} label="Architecture" />
+                    <FormControlLabel value="4" control={<Radio onClick={handleMenuItemClick} />} label="Mastère" />
+                    <FormControlLabel value="5" control={<Radio onClick={handleMenuItemClick} />} label="Doctorat" />
                   </RadioGroup>
                   {selectedDegree !== '' && selectedDegree !== '2' && (
                     <FormControl required sx={{ m: 1, minWidth: 120 }} size="small">

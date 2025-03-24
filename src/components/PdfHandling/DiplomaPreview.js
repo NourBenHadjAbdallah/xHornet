@@ -2,18 +2,7 @@ import React, { useState, useEffect } from "react";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import "../Form/uniForm.css";
 
-const DiplomaPreview = ({ imageSrc, onBackToForm, onDownload, isLoading, dimensions }) => {
-  const [hasDownloaded, setHasDownloaded] = useState(false);
-
-  useEffect(() => {
-    setHasDownloaded(false);
-  }, [imageSrc]);
-
-  const handleDownload = () => {
-    onDownload();
-    setHasDownloaded(true);
-  };
-
+const DiplomaPreview = ({ imageSrc, onBackToForm, onDownload, isLoading, dimensions, hasDownloaded }) => {
   return (
     <section className="form-section">
       <h3 className="form-title">Aperçu Diplôme</h3>
@@ -41,8 +30,8 @@ const DiplomaPreview = ({ imageSrc, onBackToForm, onDownload, isLoading, dimensi
           <button 
             className={hasDownloaded ? "telecharger-button-disabled" : "telecharger-button"}
             type="button" 
-            onClick={handleDownload}
-            disabled={hasDownloaded}
+            onClick={onDownload}
+            disabled={hasDownloaded} // Disable based on prop
           >
             Télécharger Diplôme
           </button>

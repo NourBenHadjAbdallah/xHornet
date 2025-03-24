@@ -4,6 +4,8 @@ export const diplomaOptions = {
   "1": { value: "Licence", label: "Licence" },
   "3": { value: "Ingénieur", label: "Ingénieur" },
   "2": { value: "Architecture", label: "Architecture" },
+  "4": { value: "Mastère", label: "Mastère" },
+  "5": { value: "Doctorat", label: "Doctorat" },
 };
 
 // Centralized specialty options with both French and English labels
@@ -22,6 +24,15 @@ export const specialtyOptions = {
     { value: "26", labelFR: "Génie Biotechnologique", labelEN: "Biotechnology Engineering" },
     { value: "27", labelFR: "Génie Civil", labelEN: "Civil Engineering" },
   ],
+  "4": [
+    {value: "30", labelFR: "Business Intelligence et Big Data", labelEN: "Business Intelligence and Big Data"},
+    {value: "31", labelFR: "Intelligence Artificielle et Science des Données", labelEN: "Artificial Intelligence and Data Science"},
+  ],
+  "5": [
+    { value: "40", labelFR: "Génie Informatique", labelEN: "Computer Engineering"},
+    { value: "41", labelFR: "Génie Logiciel et système d'information", labelEN: "Information Systems and Software Engineering" },
+    { value: "42", labelFR: "Génie Informatique de Gestion", labelEN: "Management Computer Engineering" },
+  ]
 };
 
 // Derived mappings for backward compatibility
@@ -40,6 +51,8 @@ export const specialtiesMappingEN = Object.fromEntries(
 export const specialtieOptions = {
   Ingénieur: specialtyOptions["3"].map(opt => opt.labelFR),
   Licence: specialtyOptions["1"].map(opt => opt.labelFR),
+  Mastère: specialtyOptions["4"].map(opt => opt.labelFR),
+  Doctorat: specialtyOptions["5"].map(opt => opt.labelFR),
 };
 
 export const mentionOptions = [
@@ -67,6 +80,8 @@ export const getDiplomaFile = (speciality, selectedDegree, isDuplicata = false) 
   const indexMap = {
     '1': speciality - 10, // Licence
     '3': speciality - 20, // Ingénieur
+    '4': speciality - 30, // Mastère
+    '5': speciality - 40, // Doctorat
     '2': 0,               // Architecture (always 0 since only one file)
   };
   const index = indexMap[selectedDegree] ?? -1;

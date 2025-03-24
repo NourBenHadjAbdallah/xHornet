@@ -34,6 +34,28 @@
     "Architecture": {
       "normal": ["architecte"],
       "duplicata": ["architecteDuplicata"]
+    },
+    "Mastère": {
+      "normal": [
+        "master_Business_Intelligence_Big_Data",
+        "master_IA_Science_Donnees"
+      ],
+      "duplicata": [
+        "master_Business_Intelligence_Big_DataDuplicata",
+        "master_IA_Science_DonneesDuplicata"
+      ]
+    },
+    "Doctorat": {
+      "normal": [
+        "doctorat_Genie_Informatique",
+        "doctorat_Genie_Logiciel",
+        "doctorat_Genie_Informatique_Gestion"
+      ],
+      "duplicata": [
+        "doctorat_Genie_InformatiqueDuplicata",
+        "doctorat_Genie_LogicielDuplicata",
+        "doctorat_Genie_Informatique_GestionDuplicata"
+      ]
     }
   }
 

@@ -63,7 +63,7 @@ export const modifyPdfTemplate = async ({
     form.getTextField("datePermutation").updateAppearances(timesRomanFont);
 
     // Diploma-specific fields
-    if (diplomaType === 'Licence' && mention) {
+    if ((diplomaType === 'Licence' || diplomaType === 'Mastère' || diplomaType === 'Doctorat') && mention) {
       const mentionField = form.getTextField("Mention");
       mentionField.setText(mention);
       mentionField.updateAppearances(timesRomanBoldFont);

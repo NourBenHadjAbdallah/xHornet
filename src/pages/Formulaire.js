@@ -3,9 +3,10 @@ import '../css/main-interface.css';
 import { modifyPdfTemplate } from "../helpers/pdfUtils.js";
 import { generateQrXml, processQrRequest } from "../helpers/xmlUtils.js";
 import { 
+  diplomaOptions,
+  specialtiesMappingEN,
+  mentionMappingEN,
   getDiplomaFile, 
-  mentionOptions, 
-  specialtiesMapping, 
   getAcademicYears, 
   formatDateFrench, 
   toMonthNameFrenchPV 
@@ -14,11 +15,17 @@ const _ = require("lodash");
 const ipc = window.require('electron').ipcRenderer;
 
 const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }, ref) => {
-  const [ setError] = useState(false);
-  const diplomaFR = selectedDegree === '3' ? 'ingénieur' : 'licence';
+
+  const [setError] = useState(false);
+
   const currentDate = new Date();
   const formattedDate = formatDateFrench(currentDate);
   const academicFullYear = getAcademicYears();
+
+  // Get diploma configuration from diplomaOptions
+  const diplomaConfig = diplomaOptions[selectedDegree] ;
+  const diplomaName = diplomaConfig.value;
+  const diplomaFR = diplomaName;
 
   useImperativeHandle(ref, () => ({
     createFolder(rows) {
@@ -26,9 +33,8 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
     }
   }));
 
-  const getSpecialtyEN = (input) => specialtiesMapping[input] || '';
-
-  const getMentionEN = (input) => mentionOptions[input.toLowerCase()] || '';
+  const getSpecialtyEN = (input) => specialtiesMappingEN[input] || '';
+  const getMentionEN = (input) => mentionMappingEN[input.toLowerCase()] || '';
 
   const modifyPdf = async (rows) => {
     if (!rows || !Array.isArray(rows) || rows.length === 0) {
@@ -37,8 +43,8 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
       return;
     }
 
-    const diplomeName = getDiplomaFile(speciality, selectedDegree);
-    const url = `./assets/${diplomeName}`;
+    const diplomeFileName = getDiplomaFile(speciality, selectedDegree);
+    const url = `./assets/${diplomeFileName}`;
     const specialtyName = getSpecialtyEN(speciality);
     const arrayOfSelected = _.chunk(rows, 10);
     let processedCount = 0;
@@ -53,7 +59,7 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
           const mention = result.Mention ? getMentionEN(result.Mention) : '';
 
           const xmls = generateQrXml({
-            diplomaType: diplomaFR === 'ingénieur' ? 'Ingénieur' : 'Licence',
+            diplomaType: diplomaName,
             fullName: result.Prénom_NOM,
             id: result.CIN,
             specialty: specialtyName,
@@ -64,9 +70,7 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
           });
 
           const qrImage = await processQrRequest(xmls, {
-            onError: (msg) => {
-              throw new Error(msg);
-            },
+            onError: (msg) => { throw new Error(msg); },
             onQrImage: (image) => image,
           });
 
@@ -91,7 +95,7 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
             pdfUrl: url,
             qrImageBase64: qrImage,
             formData,
-            diplomaType: selectedDegree === '1' ? 'Licence' : selectedDegree === '2' ? '2' : '',
+            diplomaType: diplomaName,
             specialtyName,
             academicFullYear,
             formatDateFunctions,
