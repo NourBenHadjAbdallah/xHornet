@@ -5,6 +5,8 @@ import {
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import applicationLogo from '../../resources/application_logo.png';
+import appLogo from '../../resources/app_logo.png';
+import poweredBy from '../../resources/powered-by-cybots.png';
 import algocodLogo from '../../resources/powered-by.png';
 import MainInterface from '../Main/MainInterface';
 import Formulaire from '../Formulaire';
@@ -185,8 +187,9 @@ function Loading() {
           <section className="split left">
             {(!clickedBatch || progress === 100 || isDiplomaByUnit || selectedDegree === '2') ? (
               <>
-                <img className="application-logo" src={applicationLogo} alt="Application Logo" />
-                <img className="algocod-logo" src={algocodLogo} alt="Algocod Logo" />
+
+                <img className="application-logo" src={appLogo} alt="App Logo" />
+                <img className="cybots-logo" src={poweredBy} alt="Cybots Logo" />
               </>
             ) : (
               <>

@@ -1,90 +1,178 @@
 {
 
-    "name": "QR-Diploma",
-    "version": "1.2.2",
+    "name": "Verif",
+
+    "version": "25.03.01",
+
     "proxy": "http://localhost:5000",
+
     "description": "QR-Diploma application",
+
     "main": "./public/electron.js",
+
     "homepage": "./",
+
     "private": true,
+
     "scripts": {
-      "start": "concurrently \"npm run react-start\" \"npm run server-start\" \"wait-on http://localhost:3000 && npm run electron-dev\"",
-      "react-build": "react-app-rewired build",
-      "react-start": "react-app-rewired start",
-      "server-build": "babel server --out-dir build-server",
-      "server-start": "nodemon --watch server --exec babel-node server/server.js",
-      "electron-dev": "node scripts/dev.js scripts/start.js",
-      "electron-pack": "electron-builder -c.extraMetadata.main=./public/electron.js",
-      "electron-pack-arch32": "npm run electron-pack -- --ia32",
-      "preelectron-pack": "npm run react-build && npm run server-build"
+
+        "start": "concurrently \"npm run react-start\" \"npm run server-start\" \"wait-on http://localhost:3000 && npm run electron-dev\"",
+
+        "react-build": "react-app-rewired build",
+
+        "react-start": "react-app-rewired start",
+
+        "server-build": "babel server --out-dir build-server",
+
+        "server-start": "nodemon --watch server --exec babel-node server/server.js",
+
+        "electron-dev": "node scripts/dev.js scripts/start.js",
+
+        "electron-pack": "electron-builder -c.extraMetadata.main=./public/electron.js",
+
+        "electron-pack-arch32": "npm run electron-pack -- --ia32",
+
+        "preelectron-pack": "npm run react-build && npm run server-build"
 
     },
+
     "author": "CYBOTS",
+
     "devDependencies": {
-      "@babel/cli": "^7.4.4",
-      "@babel/core": "^7.4.4",
-      "@babel/node": "^7.4.5",
-      "@babel/preset-env": "^7.4.4",
-      "concurrently": "^4.1.0",
-      "customize-cra": "^0.2.12",
-      "electron": "^5.0.2",
-      "electron-builder": "^25.1.8",
-      "react-app-rewired": "^2.1.3",
-      "react-scripts": "^3.0.1",
-      "wait-on": "^3.2.0"
+
+        "@babel/cli": "^7.4.4",
+
+        "@babel/core": "^7.4.4",
+
+        "@babel/node": "^7.4.5",
+
+        "@babel/preset-env": "^7.4.4",
+
+        "concurrently": "^4.1.0",
+
+        "customize-cra": "^0.2.12",
+
+        "electron": "^5.0.2",
+
+        "electron-builder": "^25.1.8",
+
+        "react-app-rewired": "^2.1.3",
+
+        "react-scripts": "^3.0.1",
+
+        "wait-on": "^3.2.0"
+
     },
+
     "dependencies": {
-      "@material-ui/core": "^4.12.4",
-      "@material-ui/icons": "^4.11.3",
-      "@material-ui/lab": "^4.0.0-alpha.61",
-      "@pdf-lib/fontkit": "^1.1.1",
-      "app-module-path": "^2.2.0",
-      "axios": "^0.18.0",
-      "copy-image-clipboard": "^2.1.2",
-      "cors": "^2.8.5",
-      "date-fns": "^2.30.0",
-      "date-fns-tz": "^2.0.0",
-      "downloadjs": "^1.4.7",
-      "electron-dl": "^3.3.1",
-      "electron-is-dev": "^1.1.0",
-      "electron-pdf-window": "^1.0.12",
-      "express": "^4.17.1",
-      "nodemon": "^1.19.1",
-      "pdf-image": "2.0.0",
-      "pdf-lib": "^1.17.1",
-      "pdfjs": "^2.4.7",
-      "pdfjs-dist": "2.6.347",
-      "pdfkit": "^0.13.0",
-      "piping": "^1.0.0-rc.4",
-      "QR-Diploma": "file:",
-      "react": "17.0.1",
-      "react-detect-offline": "^2.4.5",
-      "react-dom": "17.0.1",
-      "react-pdf": "^5.7.2",
-      "react-pdf-to-image": "^1.0.2",
-      "react-router-dom": "^5.2.0",
-      "react-scripts": "4.0.0",
-      "react-xml-parser": "^1.1.8",
-      "worker-loader": "3.0.8",
-      "xlsx": "^0.18.5"
+
+        "@material-ui/core": "^4.12.4",
+
+        "@material-ui/icons": "^4.11.3",
+
+        "@material-ui/lab": "^4.0.0-alpha.61",
+
+        "@pdf-lib/fontkit": "^1.1.1",
+
+        "app-module-path": "^2.2.0",
+
+        "axios": "^0.18.0",
+
+        "copy-image-clipboard": "^2.1.2",
+
+        "cors": "^2.8.5",
+
+        "date-fns": "^2.30.0",
+
+        "date-fns-tz": "^2.0.0",
+
+        "downloadjs": "^1.4.7",
+
+        "electron-dl": "^3.3.1",
+
+        "electron-is-dev": "^1.1.0",
+
+        "electron-pdf-window": "^1.0.12",
+
+        "express": "^4.17.1",
+
+        "nodemon": "^1.19.1",
+
+        "pdf-image": "2.0.0",
+
+        "pdf-lib": "^1.17.1",
+
+        "pdfjs": "^2.4.7",
+
+        "pdfjs-dist": "2.6.347",
+
+        "pdfkit": "^0.13.0",
+
+        "piping": "^1.0.0-rc.4",
+
+        "Verif": "file:",
+
+        "react": "17.0.1",
+
+        "react-detect-offline": "^2.4.5",
+
+        "react-dom": "17.0.1",
+
+        "react-pdf": "^5.7.2",
+
+        "react-pdf-to-image": "^1.0.2",
+
+        "react-router-dom": "^5.2.0",
+
+        "react-scripts": "4.0.0",
+
+        "react-xml-parser": "^1.1.8",
+
+        "Verif": "file:",
+
+        "worker-loader": "3.0.8",
+
+        "xlsx": "^0.18.5"
+
     },
+
     "build": {
-      "appId": "QR-Diploma",
-      "productName": "QR-Diploma",
-      "win": {
-        "icon": "build/icon1.png",
-        "target": "nsis"
-      },
-      "files": [
-        "build/**/**/*",
-        "build-server/**/**/*",
-        "public/splash-resources/*",
-        "node_modules/**/*",
-        "./public/electron.js"
-      ],
-      "directories": {
-        "buildResources": "assets"
-      }
+
+        "appId": "Verif",
+
+        "productName": "Verif",
+
+        "win": {
+
+            "icon": "build/icon1.png",
+
+            "target": "nsis"
+
+        },
+
+        "files": [
+
+            "build/**/**/*",
+
+            "build-server/**/**/*",
+
+            "public/splash-resources/*",
+
+            "node_modules/**/*",
+
+            "./public/electron.js"
+
+        ],
+
+        "directories": {
+
+            "buildResources": "assets"
+
+        }
+
     },
+
     "browserslist": []
-  }
+
+}
+

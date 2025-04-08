@@ -337,10 +337,12 @@ p:hover {
 
 .application-logo {
     position: absolute;
-  top: 50%;
-  left: 50%;
-  -ms-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%)
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    width: 45%;    
+    height: 20%;   
 }
 /* @media screen and  (min-width: 1280px), screen and (min-height: 720px){ */
 

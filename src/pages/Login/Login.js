@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 /*import css file*/
 import applicationLogo from "../../resources/application_logo.png";
+import appLogo from "../../resources/app_logo.png";
 import "../Login/loginStyle.css";
 /*import icons from resources*/
 import passwordShowIcon from "../../resources/password_show_icon_white.png";
@@ -47,7 +48,7 @@ const Login = () => {
       ) : (
         <>
           <section className="split left">
-            <img className="application-logo" src={applicationLogo} alt="" />
+            <img className="application-logo" src={appLogo} alt="" />
           </section>
           <section className="split right">
             <div className="login-section">
