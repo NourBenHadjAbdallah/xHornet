@@ -30,7 +30,8 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
   const [image, setImage] = useState("");
   const [isPdfGenerated, setIsPdfGenerated] = useState(false);
   const [hasDownloaded, setHasDownloaded] = useState(false);
-
+  const [diplomaHash, setDiplomaHash] = useState(null);
+  const [diplomaMetadata, setDiplomaMetadata] = useState(null);
   const academicFullYear = getAcademicYears(); 
   const currentYear = new Date().getFullYear().toString();
   const previousYear = (currentYear - 1).toString();
@@ -541,7 +542,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
                   lastName,
                   firstName,
                   lieu,
-                  checkedDuplicata // Ensure this is passed
+                  checkedDuplicata
                 }}
                 handlePdfBytesGenerate={handlePdfBytesGenerate}
                 isActiveFieldsValid={isActiveFieldsValid}
@@ -554,7 +555,13 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
                 checkedDuplicata={checkedDuplicata}
                 pdfBytes={pdfBytes}
                 isPdfGenerated={isPdfGenerated}
+                handleDiplomaHash={(hash, metadata) => {
+                  setDiplomaHash(hash);
+                  setDiplomaMetadata(metadata);
+                }}
+
               />
+
             </div>
           </form>
         </section>
@@ -566,6 +573,8 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
           isLoading={!image && !base64}
           dimensions={pdf}
           hasDownloaded={hasDownloaded}
+          diplomaHash={diplomaHash} // 👈 add this
+          diplomaMetadata={diplomaMetadata} // 👈 and this
         />
       )}
     </>

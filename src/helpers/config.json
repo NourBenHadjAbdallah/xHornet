@@ -15,6 +15,10 @@
     "LOGIN": "admin",
     "PASSWORD": "admin"
   },
+
+  "//comment1": "EVM 0 for testnet / EVM 1 for mainnet",
+  "EVM": 0,
+
   "//comment":"mode 0 for fake xml generation / mode 1 for real xml generation",
   "MODE":0,
   "comment2":"mode 0 for french / mode 1 for english",

@@ -1,6 +1,9 @@
 import React from "react";
 import { generateQrXml, processQrRequest } from "../../helpers/xmlUtils.js";
+import { connectToContract, issueDiploma } from "../../helpers/contract.js";
+import { generateDiplomaHash } from "../../helpers/hashUtils.js";
 const ipc = window.require("electron").ipcRenderer;
+const PRIVATE_KEY = "79fe3fa380c3b5e244c5cba7a6ef0f503f9adf9e486b562eb804ddc761a16c7d";
 
 function QrHandling({ formData, parentcallback, setEnabledhide, isDisabled, setQrHandlingInitiated, callback }) {
   const {
@@ -18,11 +21,39 @@ function QrHandling({ formData, parentcallback, setEnabledhide, isDisabled, setQ
     checkedDuplicata,
     academicFullYear,
   } = formData;
+
+
   async function createFolder() {ipc.send("createFolder", id, specialty, Diploma, academicFullYear, false);}
   async function writeLog() {ipc.send("logFile", id, Diploma, academicFullYear, checkedDuplicata);}
+  const storeDiplomaToBlockchain = async () => {
+    try {
+      const contractConnection = await connectToContract(PRIVATE_KEY);
+
+      const diplomaData = {
+        fullName: `${lastName} ${firstName}`,
+        degree: `${Diploma} ${specialty}`,
+        academicFullYear: academicFullYear,
+      };
+
+      const diplomaHash = generateDiplomaHash(diplomaData);
+      console.log("Generated diploma hash:", diplomaHash);
+
+      await issueDiploma(contractConnection, {
+        ...diplomaData,
+        hash: diplomaHash,
+      });
+
+    } catch (error) {
+      console.error("Blockchain error:", error.message);
+      throw error;
+    }
+  };
+
 
   const generateData = () => {
     setQrHandlingInitiated(true);
+    storeDiplomaToBlockchain();
+
 
     const xmlsFR = generateQrXml({
       diplomaType: Diploma,
