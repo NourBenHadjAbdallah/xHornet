@@ -15,7 +15,6 @@ function PdfHandler({
   handlePdfBytesGenerate,
   pdfBytes,
   isPdfGenerated,
-  diplomaHash
 }) {
   const [loading, setLoading] = useState(false);
   const [pdf, setPdf] = useState("");

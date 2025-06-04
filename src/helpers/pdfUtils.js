@@ -32,17 +32,20 @@ export const modifyPdfTemplate = async ({
     const timesRomanBoldFont = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
 
     const firstPage = pdfDoc.getPages()[0];
-    const pngImage = await pdfDoc.embedPng(`data:image/png;base64,${qrImageBase64}`);
-    firstPage.drawImage(pngImage, {
-      x: 366,
-      y: 26,
-      width: pngImage.width / 1.4,
-      height: pngImage.height / 1.4,
-    });
+    
+    if (qrImageBase64) {
+        const pngImage = await pdfDoc.embedPng(`data:image/png;base64,${qrImageBase64}`);
+        firstPage.drawImage(pngImage, {
+          x: 366,
+          y: 26,
+          width: pngImage.width / 1.4,
+          height: pngImage.height / 1.4,
+        });
+    }
 
     const form = pdfDoc.getForm();
 
-    // Common fields
+
     form.getTextField("QRText").setText("Application Mobile:QrCheckMobile");
     form.getTextField("FullYear").setText(academicFullYear);
     form.getTextField("ProcesVerbal").setText(formatProcesVerbal ? formatProcesVerbal(procesVerbal) : procesVerbal);
@@ -52,7 +55,6 @@ export const modifyPdfTemplate = async ({
     form.getTextField("ID").setText(id);
     form.getTextField("datePermutation").setText(formatCurrentDate ? formatCurrentDate(currentDate) : currentDate);
 
-    // Update appearances
     form.getTextField("QRText").updateAppearances(timesRomanBoldFont);
     form.getTextField("FullYear").updateAppearances(timesRomanBoldFont);
     form.getTextField("ProcesVerbal").updateAppearances(timesRomanBoldFont);
@@ -61,8 +63,7 @@ export const modifyPdfTemplate = async ({
     form.getTextField("Lieu").updateAppearances(timesRomanBoldFont);
     form.getTextField("ID").updateAppearances(timesRomanBoldFont);
     form.getTextField("datePermutation").updateAppearances(timesRomanFont);
-
-    // Diploma-specific fields
+    
     if ((diplomaType === 'Licence' || diplomaType === 'Mastère' || diplomaType === 'Doctorat') && mention) {
       const mentionField = form.getTextField("Mention");
       mentionField.setText(mention);

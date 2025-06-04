@@ -100,6 +100,8 @@
 
         "express": "^4.17.1",
 
+        "lucide-react": "^0.513.0",
+
         "nodemon": "^1.19.1",
 
         "pdf-image": "2.0.0",
