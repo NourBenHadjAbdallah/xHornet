@@ -1,0 +1,54 @@
+.verification-slide {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #007bff;
+  border-radius: 5px;
+  background: #f0f8ff;
+}
+
+.verification-title {
+  margin-top: 0;
+  margin-bottom: 12px;
+  color: #0056b3;
+  border-bottom: 1px solid #bce0ff;
+  padding-bottom: 5px;
+}
+
+.placeholder-text {
+  font-style: italic;
+  color: #555;
+}
+
+.data-item {
+  margin-bottom: 12px;
+}
+
+.data-item:last-child {
+  margin-bottom: 0; /* No extra margin for the last item */
+}
+
+.data-label {
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+.code-block {
+  word-break: break-all;
+  font-size: 0.9em;
+  color: #333;
+  background: #e9ecef;
+  padding: 3px 5px;
+  border-radius: 3px;
+  display: block;
+}
+
+.data-link {
+  word-break: break-all;
+  font-size: 0.9em;
+  color: #007bff;
+  text-decoration: none; /* Optional: better link styling */
+}
+
+.data-link:hover {
+  text-decoration: underline; /* Optional: hover effect */
+}

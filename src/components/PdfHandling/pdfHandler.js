@@ -33,8 +33,8 @@ function PdfHandler({
   } = formData;
 
   const months = [
-    'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+    "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+    "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
   ];
 
   const getCurrentDateInFrench = () => {
@@ -45,21 +45,14 @@ function PdfHandler({
     return `${day} ${month} ${year}`;
   };
 
-  const formatDateForProces = (dateStr) => {
+  const formatDate = (dateStr) => {
     if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
     const [year, month, day] = dateStr.split('-');
     const monthIndex = parseInt(month, 10) - 1;
     return `${day} ${months[monthIndex]} ${year}`;
   };
 
-  const formatDateForSoutenancePV = (dateStr) => {
-    if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
-    const [year, month, day] = dateStr.split('-');
-    const monthIndex = parseInt(month, 10) - 1;
-    return `${day} ${months[monthIndex]} ${year}`;
-  };
-
-  const formatDateForNaissance = (dateStr) => {
+  const formatBirthDate = (dateStr) => {
     if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
     const [year, month, day] = dateStr.split('-');
     return `${day}/${month}/${year}`;
@@ -80,9 +73,8 @@ function PdfHandler({
 
   async function modifyPdf() {
     setLoading(true);
-    const diplomeName = getDiplomaFile(formData.Diploma, checkedDuplicata, index);
+    const diplomeName = getDiplomaFile(Diploma, checkedDuplicata, index);
     const url = `./assets/${diplomeName}`;
-
 
     const formDataForPdf = {
       fullName: `${lastName} ${firstName}`,
@@ -96,10 +88,10 @@ function PdfHandler({
     };
 
     const formatDateFunctions = {
-      formatDateForSoutenancePV: formatDateForSoutenancePV,
-      formatProcesVerbal: formatDateForProces,
+      formatDateForSoutenancePV: formatDate,
+      formatProcesVerbal: formatDate,
       formatCurrentDate: (date) => date,
-      formatBirthDate: formatDateForNaissance,
+      formatBirthDate: formatBirthDate,
     };
 
     try {
@@ -111,6 +103,7 @@ function PdfHandler({
         academicFullYear,
         formatDateFunctions,
       });
+
 
       handlePdfBytesGenerate(pdfBytes);
       const blob = new Blob([pdfBytes], { type: "application/pdf" });
@@ -126,16 +119,16 @@ function PdfHandler({
   }
 
   async function renderPage() {
-    var page = await pdf.getPage(1);
-    var viewport = page.getViewport(1);
-    var render_context = {
+    const page = await pdf.getPage(1);
+    const viewport = page.getViewport(1);
+    const render_context = {
       canvasContext: document.querySelector("#pdf-canvas").getContext("2d"),
-      viewport: viewport,
+      viewport,
     };
     pdfCallBack(viewport.height, viewport.width);
     await page.render(render_context);
-    var canvas = document.getElementById("pdf-canvas");
-    var img = canvas.toDataURL("image/png");
+    const canvas = document.getElementById("pdf-canvas");
+    const img = canvas.toDataURL("image/png");
     handleImageGenerate(img);
   }
 
@@ -155,6 +148,7 @@ function PdfHandler({
       setShowPreview(true);
     }
   };
+
 
   return (
     <button

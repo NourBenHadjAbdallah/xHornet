@@ -47,7 +47,7 @@ function createWindow() {
 
 
 
-  //mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
   var splash = new BrowserWindow({
     width: 950,
     height: 500,

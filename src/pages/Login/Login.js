@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 /*import css file*/
-import applicationLogo from "../../resources/application_logo.png";
 import appLogo from "../../resources/app_logo.png";
 import "../Login/loginStyle.css";
 /*import icons from resources*/
@@ -20,8 +19,6 @@ const Login = () => {
 
   // Password toggle handler
   const togglePassword = () => {
-    // When the handler is invoked
-    // inverse the boolean state of passwordShown
     setPasswordShown(!passwordShown);
   };
   const submitHandler = async (e) => {
