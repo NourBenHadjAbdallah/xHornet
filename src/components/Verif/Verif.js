@@ -1,10 +1,20 @@
-
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
+
+const openExternalLink = (url) => {
+  if (window.require) {
+    const { shell } = window.require('electron');
+    shell.openExternal(url);
+  } else {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+};
 
 
 const VerificationDisplay = ({ metadata }) => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+
+  const diplomaWebAppUrl = "http://127.0.0.1:5173/";
 
   const togglePanel = () => {
     setIsPanelOpen(!isPanelOpen);
@@ -13,8 +23,6 @@ const VerificationDisplay = ({ metadata }) => {
   const {
     onChainHash,
     txHash,
-    ipfsUrl, 
-    ipfsCid, 
     studentFullName,
     degreeName,
     academicFullYear,
@@ -24,20 +32,32 @@ const VerificationDisplay = ({ metadata }) => {
 
   const etherscanBaseTxUrl = "https://sepolia.etherscan.io/tx/";
 
- // const ipfsPinataGateway = "https://white-reasonable-mule-872.mypinata.cloud/ipfs/";
-
-  const hasCoreVerificationData = onChainHash || txHash || ipfsCid || ipfsUrl;
+  const hasCoreVerificationData = onChainHash || txHash;
   const hasStudentData = studentId || studentFullName || degreeName || academicFullYear;
 
-  const panelWidth = 350; 
+  const panelWidth = 350;
+
+  // Construct the full URL with both the diploma hash and transaction hash as query parameters
+  const dynamicDiplomaUrl = onChainHash
+    ? `${diplomaWebAppUrl}?hash=${onChainHash}${txHash ? `&txHash=${txHash}` : ''}`
+    : diplomaWebAppUrl;
+
+  const handleDiplomaLinkClick = (event) => {
+    event.preventDefault();
+    openExternalLink(dynamicDiplomaUrl);
+  };
+  
+  const handleEtherscanLinkClick = (event) => {
+    event.preventDefault();
+    openExternalLink(`${etherscanBaseTxUrl}${txHash}`);
+  };
 
   return (
     <>
-      
       <button
         onClick={togglePanel}
-        className="verification-arrow-toggle" 
-        style={{ left: isPanelOpen ? `${panelWidth}px` : '0px' }} 
+        className="verification-arrow-toggle"
+        style={{ left: isPanelOpen ? `${panelWidth}px` : '0px' }}
       >
         <div className="verification-arrow-toggle-content">
           {isPanelOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
@@ -55,7 +75,6 @@ const VerificationDisplay = ({ metadata }) => {
             <p className="panel-subtitle">Informations blockchain du diplôme</p>
           </div>
 
-          
           <div className="panel-body">
             {!hasCoreVerificationData && !hasStudentData ? (
               <div className="panel-placeholder">
@@ -72,7 +91,7 @@ const VerificationDisplay = ({ metadata }) => {
                     <h5>👤 Informations Étudiant</h5>
                     {studentFullName && (
                       <div className="info-item">
-                        <p className="info-label">Nom Complet:</p>
+                        <p className="info-label">Nom et Prénom:</p>
                         <p className="info-value">{studentFullName}</p>
                       </div>
                     )}
@@ -84,7 +103,7 @@ const VerificationDisplay = ({ metadata }) => {
                     )}
                     {degreeName && (
                       <div className="info-item">
-                        <p className="info-label">Diplôme et Spécialité:</p>
+                        <p className="info-label">Diplôme:</p>
                         <p className="info-value">{degreeName}</p>
                       </div>
                     )}
@@ -96,7 +115,6 @@ const VerificationDisplay = ({ metadata }) => {
                     )}
                   </div>
                 )}
-
                 
                 {hasCoreVerificationData && (
                   <div className="panel-section blockchain-info-section">
@@ -112,8 +130,7 @@ const VerificationDisplay = ({ metadata }) => {
                         <p className="info-label">Transaction Blockchain:</p>
                         <a
                           href={`${etherscanBaseTxUrl}${txHash}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                          onClick={handleEtherscanLinkClick} // Use the custom click handler
                           className="info-link etherscan-link"
                         >
                           🔗 Voir sur Etherscan
@@ -123,9 +140,23 @@ const VerificationDisplay = ({ metadata }) => {
                         </a>
                       </div>
                     )}
-                    
                   </div>
                 )}
+
+                <div className="panel-section web-link-section">
+                  <h5>🔗 Lien Web</h5>
+                  <div className="info-item">
+                    <p className="info-label">Page du Diplôme:</p>
+                    <a
+                      href={dynamicDiplomaUrl}
+                      onClick={handleDiplomaLinkClick} // Use the custom click handler
+                      className="info-link etherscan-link"
+                    >
+                      Voir le diplôme en ligne
+                      <ExternalLink size={16} style={{ marginLeft: '8px' }}/>
+                    </a>
+                  </div>
+                </div>
                 
                 <div className="panel-footer-info">
                   <p>✅ Ce diplôme est sécurisé par la technologie blockchain</p>

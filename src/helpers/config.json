@@ -35,7 +35,7 @@
       "normal": ["ing_info", "ing_infoG", "ing_telecom", "ing_electrique", "ing_electro", "ing_mecanique", "ing_bio", "ing_civil"],
       "duplicata": ["ing_infoDuplicata", "ing_infoGDuplicata", "ing_telecomDuplicata", "ing_electriqueDuplicata", "ing_electroDuplicata", "ing_mecaniqueDuplicata", "ing_bioDuplicata", "ing_civilDuplicata"]
     },
-    "Architecture": {
+    "Architecte": {
       "normal": ["architecte"],
       "duplicata": ["architecteDuplicata"]
     },

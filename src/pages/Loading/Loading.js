@@ -248,7 +248,7 @@ function Loading() {
                   >
                     <FormControlLabel value="1" control={<Radio onClick={handleMenuItemClick} />} label="Licence" />
                     <FormControlLabel value="3" control={<Radio onClick={handleMenuItemClick} />} label="Ingénieur" />
-                    <FormControlLabel value="2" control={<Radio onClick={handleMenuItemClick} />} label="Architecture" />
+                    <FormControlLabel value="2" control={<Radio onClick={handleMenuItemClick} />} label="Architecte" />
                     <FormControlLabel value="4" control={<Radio onClick={handleMenuItemClick} />} label="Mastère" />
                     <FormControlLabel value="5" control={<Radio onClick={handleMenuItemClick} />} label="Doctorat" />
                   </RadioGroup>

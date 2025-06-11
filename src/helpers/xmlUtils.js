@@ -70,7 +70,7 @@ export const generateQrXml = ({
 </soapenv:Envelope>`;
       break;
 
-    case "Architecture":
+    case "Architecte":
       xmlsFR = `<?xml version="1.0" encoding="UTF-8"?>
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.soap.progress.com/">
   <soapenv:Header/>
@@ -84,7 +84,7 @@ export const generateQrXml = ({
       <values>
         <item><code>C2</code><value>${fullName}</value></item>
         <item><code>H8</code><value>${id}</value></item>
-        <item><code>15</code><value>Diplôme national d'architecture</value></item>
+        <item><code>15</code><value>Diplôme national d'architecte</value></item>
         <item><code>PN</code><value>${birthDate}</value></item>
         <item><code>ZX</code><value>${academicFullYear}</value></item>
         <item><code>E6</code><value>${dateProces}</value></item>

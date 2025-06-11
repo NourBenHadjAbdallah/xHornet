@@ -3,7 +3,7 @@ import configData from "../helpers/config.json";
 export const diplomaOptions = {
   "1": { value: "Licence", label: "Licence" },
   "3": { value: "Ingénieur", label: "Ingénieur" },
-  "2": { value: "Architecture", label: "Architecture" },
+  "2": { value: "Architecte", label: "Architecte" },
   "4": { value: "Mastère", label: "Mastère" },
   "5": { value: "Doctorat", label: "Doctorat" },
 };
@@ -82,7 +82,7 @@ export const getDiplomaFile = (speciality, selectedDegree, isDuplicata = false) 
     '3': speciality - 20, // Ingénieur
     '4': speciality - 30, // Mastère
     '5': speciality - 40, // Doctorat
-    '2': 0,               // Architecture (always 0 since only one file)
+    '2': 0,               // Architecte (always 0 since only one file)
   };
   const index = indexMap[selectedDegree] ?? -1;
 
