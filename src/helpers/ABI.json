@@ -60,7 +60,7 @@
 				"type": "string"
 			},
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "address",
 				"name": "issuer",
 				"type": "address"
@@ -101,7 +101,17 @@
 			},
 			{
 				"internalType": "string",
+				"name": "studentId",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
 				"name": "degree",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "speciality",
 				"type": "string"
 			},
 			{
@@ -323,20 +333,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "ISSUER",
-		"outputs": [
-			{
-				"internalType": "bytes32",
-				"name": "",
-				"type": "bytes32"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "OWNER",
+		"name": "ISSUER_ROLE",
 		"outputs": [
 			{
 				"internalType": "bytes32",
@@ -385,7 +382,17 @@
 					},
 					{
 						"internalType": "string",
+						"name": "studentId",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
 						"name": "degree",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "speciality",
 						"type": "string"
 					},
 					{

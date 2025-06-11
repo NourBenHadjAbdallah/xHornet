@@ -62,7 +62,7 @@ function PdfHandler({
     let diplomes = configData.DIPLOMAS[diploma].normal;
     let diplomesDuplicata = configData.DIPLOMAS[diploma].duplicata;
 
-    if (diploma === "Architecture") {
+    if (diploma === "Architecte") {
       return checkedDuplicata ? diplomesDuplicata[0] + ".pdf" : diplomes[0] + ".pdf";
     }
 
