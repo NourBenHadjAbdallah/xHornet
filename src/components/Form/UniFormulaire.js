@@ -17,7 +17,7 @@ import VerificationDisplay from "../Verif/Verif.js";
 
 const ipc = window.require ? window.require("electron").ipcRenderer : null;
 
-const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) => {
+const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality, isGenerating, setIsGenerating }) => {
   const [enabledhide, setEnabledhide] = useState(false);
   const [qrGenerated, setQrGenerated] = useState(false);
   const [firstName, setFirstName] = useState("");
@@ -95,13 +95,13 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
   useEffect(() => {
     if (selectedDegree && diplomaOptions[selectedDegree]) {
       const diplomaValue = diplomaOptions[selectedDegree].value;
-      const contextSpeciality = speciality && specialtiesMapping[speciality] ? specialtiesMapping[speciality] : ""; // Corrected
+      const contextSpeciality = speciality && specialtiesMapping[speciality] ? specialtiesMapping[speciality] : "";
       const newSpecialties = specialtieOptions[diplomaValue] || [];
 
       setFormData((prevState) => ({
         ...initialFormState,
         Diploma: diplomaValue,
-        speciality: contextSpeciality, // Corrected
+        speciality: contextSpeciality,
         checkedDuplicata: checkedDuplicata,
       }));
       setAvailableSpecialties(newSpecialties);
@@ -130,15 +130,15 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
     setFormData({
       ...initialFormState,
       Diploma: selectedDiploma,
-      speciality: "", // Corrected
+      speciality: "",
       checkedDuplicata: checkedDuplicata,
     });
     setSelectedIndex(0);
     commonPdfInvalidatingChangeActions();
   };
 
-  const handleSpecialtyChange = (e) => { // Renamed for clarity, handles speciality
-    setFormData({ ...formData, speciality: e.target.value }); // Corrected
+  const handleSpecialtyChange = (e) => {
+    setFormData({ ...formData, speciality: e.target.value });
     setSelectedIndex(e.target.selectedIndex);
     commonPdfInvalidatingChangeActions();
   };
@@ -212,7 +212,6 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
 
 
   async function downloadPDF() {
-
       const currentAcademicFullYear = getAcademicFullYearString(LastYear, Year);
       if (ipc) {
         ipc.send(
@@ -224,19 +223,13 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
           currentAcademicFullYear, 
           pdfBytes,
           false, 
-
         );
         setHasDownloaded(true); 
-      }/* else {
-        alert("Le mécanisme de téléchargement local (IPC) n'est pas disponible.");
       }
-    } else {
-      alert("Les données du PDF ne sont pas disponibles pour le téléchargement local.");
-    }*/
   }
 
   const renderDiplomaSpecificFields = () => { 
-    const fieldsDisabled = qrGenerated || isUploading;
+    const fieldsDisabled = qrGenerated || isUploading || isGenerating;
     const createChangeHandler = (fieldName) => (e) => {
         setFormData({ ...formData, [fieldName]: e.target.value });
         commonPdfInvalidatingChangeActions(); 
@@ -280,7 +273,6 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
   const createBaseChangeHandler = (setterFunction, fieldName) => (e) => {
     setterFunction(e.target.value);
     commonPdfInvalidatingChangeActions(); 
-    // Update diplomaMetadata for real-time fields like name, if desired, though it's largely set post-hash-gen
     if (fieldName === "lastName" || fieldName === "firstName") {
         setDiplomaMetadata(prev => ({...prev, studentFullName: fieldName === "lastName" ? `${e.target.value} ${firstName}` : `${lastName} ${e.target.value}`}));
     } else if (fieldName === "id") {
@@ -310,36 +302,36 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
             <div className="name-group">
               <div className="form-group">
                 <label className="firstname-label">Nom Étudiant *</label>
-                <input id="lastname" className="input firstname-input" disabled={qrGenerated || isUploading} value={lastName} type="text" name="lastname" onChange={createBaseChangeHandler(setLastName, "lastName")} />
+                <input id="lastname" className="input firstname-input" disabled={qrGenerated || isUploading || isGenerating} value={lastName} type="text" name="lastname" onChange={createBaseChangeHandler(setLastName, "lastName")} />
               </div>
               <div className="form-group">
                 <label className="lastname-label">Prénom Étudiant *</label>
-                <input id="firstname" className="input lastname-input" disabled={qrGenerated || isUploading} value={firstName} type="text" name="firstname" onChange={createBaseChangeHandler(setFirstName, "firstName")} />
+                <input id="firstname" className="input lastname-input" disabled={qrGenerated || isUploading || isGenerating} value={firstName} type="text" name="firstname" onChange={createBaseChangeHandler(setFirstName, "firstName")} />
               </div>
             </div>
             <div className="form-group">
               <label className="id-label">Matricule *</label>
-              <input id="studentId" className="input id-input" value={id} disabled={qrGenerated || isUploading} type="text" name="id" onChange={createBaseChangeHandler(setId, "id")} />
+              <input id="studentId" className="input id-input" value={id} disabled={qrGenerated || isUploading || isGenerating} type="text" name="id" onChange={createBaseChangeHandler(setId, "id")} />
             </div>
             <div className="birth-group">
               <div className="form-group">
                 <label className="date-label">Date de naissance *</label>
-                <input id="birthDate" className="input date-input1" type="date" disabled={qrGenerated || isUploading} min="1980-01-01" max="2050-12-31" value={naissance} onChange={createBaseChangeHandler(setNaissance)} />
+                <input id="birthDate" className="input date-input1" type="date" disabled={qrGenerated || isUploading || isGenerating} min="1980-01-01" max="2050-12-31" value={naissance} onChange={createBaseChangeHandler(setNaissance)} />
               </div>
               <div className="form-group">
                 <label className="lieu-label">Lieu *</label>
-                <input id="birthPlace" className="input lieu-input1" disabled={qrGenerated || isUploading} value={lieu} type="text" onChange={createBaseChangeHandler(setLieu)} />
+                <input id="birthPlace" className="input lieu-input1" disabled={qrGenerated || isUploading || isGenerating} value={lieu} type="text" onChange={createBaseChangeHandler(setLieu)} />
               </div>
             </div>
             <div>
               <label className="academicYear-label">Année Universitaire *</label> <br />
-              <input className="input academicYear-input" type="number" maxLength="4" disabled={qrGenerated || isUploading} value={LastYear} onChange={handleChangeFirstAcademicYear} />
+              <input className="input academicYear-input" type="number" maxLength="4" disabled={qrGenerated || isUploading || isGenerating} value={LastYear} onChange={handleChangeFirstAcademicYear} />
               <label className="academicYear1-label"> / </label> <br />
-              <input className="input academicYear1-input" type="number" maxLength="4" disabled={qrGenerated || isUploading} value={Year} onChange={handleChangeSecondAcademicYear} />
+              <input className="input academicYear1-input" type="number" maxLength="4" disabled={qrGenerated || isUploading || isGenerating} value={Year} onChange={handleChangeSecondAcademicYear} />
             </div>
             <div className="form-group">
               <label className="diplome-label">Diplôme *</label>
-              <select id="diploma" className="input diplome-input" value={formData.Diploma} onChange={handleDiplomaChange} disabled={qrGenerated || isUploading}>
+              <select id="diploma" className="input diplome-input" value={formData.Diploma} onChange={handleDiplomaChange} disabled={qrGenerated || isUploading || isGenerating}>
                 <option value="" disabled>Sélectionner un diplôme</option>
                 {Object.values(diplomaOptions).map((dip) => (<option key={dip.value} value={dip.value}>{dip.label}</option>))}
               </select>
@@ -349,7 +341,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
 
             <div className="form-duplicata">
               <label className="duplicata-label-L">Duplicata</label>
-              <Checkbox className="duplicata-input-L" onChange={handleChangeDuplicata} disabled={qrGenerated || isUploading} checked={checkedDuplicata} />
+              <Checkbox className="duplicata-input-L" onChange={handleChangeDuplicata} disabled={qrGenerated || isUploading || isGenerating} checked={checkedDuplicata} />
             </div>
           </div></div>
 
@@ -357,7 +349,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
               <QrHandling
                 callback={handleQRCodeUpdate}
                 onHashGenerated={handleOnChainHashGenerated} 
-                isDisabled={!isActiveFieldsValid() || qrGenerated || isUploading}
+                isDisabled={!isActiveFieldsValid() || qrGenerated || isUploading || isGenerating}
                 formData={{ 
                     ...formData, 
                     academicYear: getAcademicYearString(LastYear, Year), 
@@ -371,7 +363,9 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
                 }}
                 parentcallback={parentcallback}
                 setEnabledhide={setEnabledhide}
-                setQrHandlingInitiated={setQrGenerated} 
+                setQrHandlingInitiated={setQrGenerated}
+                isGenerating={isGenerating}
+                setIsGenerating={setIsGenerating}
               />
               <PdfHandler
                 formData={{ 
@@ -404,18 +398,14 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality }) =
         <DiplomaPreview
           imageSrc={image || base64}
           onBackToForm={() => { setShowPreview(false); }}
-          //onDownload={localDownloadPDF} 
           onDownload={downloadPDF}
-          //isLoading={isUploading && !ipfsUrl} // IPFS handling
           isLoading={!image && !base64}
           dimensions={pdf}
-          //hasDownloaded={hasDownloaded && !isUploading} 
           hasDownloaded={hasDownloaded}
           isProcessingDownload={isUploading} 
           diplomaHash={onChainDiplomaHash} 
           diplomaMetadata={diplomaMetadata} 
         />
-
       )}
     </>
   );

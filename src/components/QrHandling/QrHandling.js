@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React from "react"; // No longer need useState here
 import { generateQrXml, processQrRequest } from "../../helpers/xmlUtils.js";
 import { connectToContract, issueDiploma } from "../../helpers/contract.js";
 import { generateDiplomaHash } from "../../helpers/hashUtils.js";
-import CircularProgress from "@material-ui/core/CircularProgress"; 
 
 const ipc = window.require ? window.require("electron").ipcRenderer : null;
 const PRIVATE_KEY = "79fe3fa380c3b5e244c5cba7a6ef0f503f9adf9e486b562eb804ddc761a16c7d";
@@ -14,9 +13,11 @@ function QrHandling({
   isDisabled,
   setQrHandlingInitiated,
   callback,
-  onHashGenerated
+  onHashGenerated,
+  setIsGenerating, // New prop for controlling the global loader
+  isGenerating    // New prop to check global state
 }) {
-  const [isLoading, setIsLoading] = useState(false);
+
   const {
     Diploma,
     speciality,
@@ -37,7 +38,6 @@ function QrHandling({
   const storeDiplomaToBlockchain = async () => {
     try {
       const contractConnection = await connectToContract(PRIVATE_KEY);
-
       const diplomaDataForHash = {
         fullName: `${lastName} ${firstName}`,
         studentId: `${id}`,
@@ -45,44 +45,26 @@ function QrHandling({
         speciality: `${speciality}`,
         academicFullYear: academicFullYear,
       };
-
       const onChainDiplomaHash = generateDiplomaHash(diplomaDataForHash);
       console.log("Generated diploma hash (for on-chain and PDF):", onChainDiplomaHash);
-
-      const issueResult = await issueDiploma(contractConnection, {
-        ...diplomaDataForHash,
-        hash: onChainDiplomaHash,
-      });
-
+      const issueResult = await issueDiploma(contractConnection, { ...diplomaDataForHash, hash: onChainDiplomaHash });
       console.log("Blockchain issue result:", issueResult);
-
-      if (onHashGenerated) {
-        onHashGenerated({
-          hash: onChainDiplomaHash,
-          txHash: issueResult.txHash
-        });
-      }
-
+      if (onHashGenerated) { onHashGenerated({ hash: onChainDiplomaHash, txHash: issueResult.txHash }); }
       createFolder();
       writeLog();
-
       return issueResult;
-
     } catch (error) {
       console.error("Blockchain error:", error.message);
-      setQrHandlingInitiated(false);
-      setEnabledhide(false);
-      if (onHashGenerated) {
-        onHashGenerated({ error: error.message });
-      }
+      if (onHashGenerated) { onHashGenerated({ error: error.message }); }
       alert(`Erreur Blockchain: ${error.message}`);
       throw error;
     }
   };
 
   const generateData = async () => {
-    if (isDisabled || isLoading) return;
-    setIsLoading(true);
+    if (isDisabled || isGenerating) return;
+    
+    setIsGenerating(true); // START full-screen loader
     setQrHandlingInitiated(true);
     setEnabledhide(false);
 
@@ -108,49 +90,42 @@ function QrHandling({
       });
 
       processQrRequest(xmlsFR, {
-        onSuccess: () => {
-          // isLoading will be set to false in onQrImage
-        },
+        onSuccess: () => {},
         onError: (msg) => {
           alert(msg);
           setQrHandlingInitiated(false);
           setEnabledhide(false);
-          setIsLoading(false);
+          setIsGenerating(false); // STOP full-screen loader on error
         },
         onQrImage: (image) => {
           setEnabledhide(true);
-          if (parentcallback) {
-            parentcallback(image, false, id, speciality, Diploma, academicFullYear);
-          }
-          if (callback) {
-            callback(image);
-          }
-          setIsLoading(false);
+          if (parentcallback) { parentcallback(image, false, id, speciality, Diploma, academicFullYear); }
+          if (callback) { callback(image); }
+          setIsGenerating(false); // STOP full-screen loader on success
         },
       }).catch((err) => {
         console.error("QR Generation Error:", err);
         setQrHandlingInitiated(false);
         setEnabledhide(false);
-        setIsLoading(false);
+        setIsGenerating(false); // STOP full-screen loader on error
       });
 
     } catch (error) {
       console.error("Error in generateData after blockchain step:", error);
-      // The blockchain function will show an alert, so we just reset state here.
       setQrHandlingInitiated(false);
       setEnabledhide(false);
-      setIsLoading(false);
+      setIsGenerating(false); // STOP full-screen loader on error
     }
   };
 
   return (
     <button
       className={isDisabled ? "cancel-button-disabled" : "cancel-button"}
-      disabled={isDisabled || isLoading}
+      disabled={isDisabled}
       type="button"
       onClick={generateData}
     >
-      {isLoading ? <CircularProgress size={24} color="inherit" /> : "Générer QR"}
+      Générer QR
     </button>
   );
 }

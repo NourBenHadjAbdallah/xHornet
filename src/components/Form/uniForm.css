@@ -1,6 +1,6 @@
 .reload-icon {
     position: absolute;
-    width: 2rem; /* Use relative units */
+    width: 2rem;
     height: 2rem;
     left: 97%;
     top: 9px;
@@ -8,7 +8,7 @@
 
 .form-section {
     display: flex;
-    flex-wrap: wrap; /* Allows for flexible wrapping */
+    flex-wrap: wrap;
     box-sizing: border-box;
     position: absolute;
     width: 70%;
@@ -27,13 +27,13 @@
 
 .form-title {
     position: absolute;
-    width: auto; /* Make title width flexible */
+    width: auto; 
     height: 24px;
     left: 12px;
     top: -9px;
     font-family: 'Poppins';
     font-weight: 350;
-    font-size: 1.125rem; /* Use rem for scalability */
+    font-size: 1.125rem; 
     line-height: 24px;
     color: #4A4A4A;
 }
@@ -104,8 +104,8 @@
 .proces-input-a, .diplome-input, .lieu-input1, .id-input, .mention-input{
     position: relative;
     width: 100%;
-    max-width: 70%; /* Flexibility for resizing */
-    height: 2rem; /* Fixed height, but scalable */
+    max-width: 70%; 
+    height: 2rem; 
     background: #fff;
     border: 1px solid #BFBFBF;
     border-radius: 5px;
@@ -143,26 +143,26 @@
 }
 
 .verification-arrow-toggle {
-  position: absolute; /* Relative to .form-section */
+  position: absolute; 
   top: 50%;
-  /* left: 0px; /* Set dynamically by style prop in JSX */
+
   transform: translateY(-50%);
-  width: 48px; /* Adjusted width */
-  min-height: 70px; /* Adjusted height */
+  width: 48px; 
+  min-height: 70px; 
   background: linear-gradient(135deg, #6B9AFF 0%, #4B7BFF 100%);
   color: white;
   border: none;
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
-  border-top-left-radius: 0;     /* Flat on the left */
-  border-bottom-left-radius: 0; /* Flat on the left */
+  border-top-left-radius: 0;     
+  border-bottom-left-radius: 0; 
   cursor: pointer;
-  z-index: 105; /* Ensure it's above the panel but respects form-section context */
+  z-index: 105; 
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: left 0.35s ease-in-out, background-color 0.2s ease; /* Added left transition */
-  padding: 8px 0px; /* Adjusted padding */
+  transition: left 0.35s ease-in-out, background-color 0.2s ease; 
+  padding: 8px 0px; 
   box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -181,30 +181,28 @@
   font-size: 10px;
   margin-top: 4px;
   font-weight: 500;
-  writing-mode: vertical-rl; /* Optional: if you want vertical text */
-  /* transform: rotate(180deg); /* If using vertical-rl and want to flip */
+  writing-mode: vertical-rl; 
+  
 }
 
 
-/* --- Styles for Verification Panel Content --- */
-/* These are basic styles, customize them further as needed */
 
 .verification-slide-panel {
   position: absolute;
-  left: -355px; /* Start off-screen (adjust if panel width changes + border) */
+  left: -355px; 
   top: 0;
   width: 350px;
   height: 100%;
-  background-color: #ffffff; /* Changed to white */
+  background-color: #ffffff; 
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
   transition: left 0.35s ease-in-out;
   z-index: 100; 
-  overflow-y: hidden; /* Hide main scroll, inner content will scroll */
-  border-left: 3px solid #6B9AFF; /* Add a highlight border */
+  overflow-y: hidden; 
+  border-left: 3px solid #6B9AFF; 
 }
 
 .verification-slide-panel.open {
-  left: 0; /* Slide in to be visible */
+  left: 0; 
 }
 
 .verification-slide-inner-content {
@@ -222,7 +220,7 @@
 
 .panel-header h4 {
   margin: 0 0 5px 0;
-  font-size: 1.1rem; /* Adjusted font size */
+  font-size: 1.1rem;
   font-weight: bold;
 }
 
@@ -234,8 +232,8 @@
 
 .panel-body {
   padding: 20px;
-  overflow-y: auto; /* Enable scrolling for this section */
-  flex-grow: 1; /* Allow this section to take available space */
+  overflow-y: auto; 
+  flex-grow: 1; 
   font-family: 'Poppins', sans-serif;
   color: #333;
 }
@@ -250,18 +248,18 @@
 }
 
 .placeholder-icon {
-  font-size: 2.5rem; /* Make icon larger */
+  font-size: 2.5rem; 
   margin-bottom: 10px;
 }
 
 .panel-data-sections {
   display: flex;
   flex-direction: column;
-  gap: 20px; /* Space between sections */
+  gap: 20px; 
 }
 
 .panel-section {
-  background-color: #f7f9fc; /* Light background for sections */
+  background-color: #f7f9fc;
   padding: 15px;
   border-radius: 8px;
   border: 1px solid #e0e8f3;
@@ -270,7 +268,7 @@
 .panel-section h5 {
   font-size: 1rem;
   font-weight: bold;
-  color: #4B7BFF; /* Use theme color */
+  color: #4B7BFF; 
   margin-top: 0;
   margin-bottom: 15px;
   padding-bottom: 8px;
@@ -288,11 +286,11 @@
 }
 
 .info-label {
-  font-size: 0.75rem; /* Smaller label */
-  font-weight: 600; /* Bolder label */
+  font-size: 0.75rem; 
+  font-weight: 600; 
   color: #555;
   margin-bottom: 4px;
-  text-transform: uppercase; /* Uppercase labels */
+  text-transform: uppercase; 
 }
 
 .info-value {
@@ -308,7 +306,7 @@
 .info-hash-value {
   font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
   font-size: 0.8rem;
-  color: #207500; /* Greenish for hashes */
+  color: #207500;
   background-color: #f0fdf4;
   padding: 10px;
   border-radius: 4px;
@@ -317,7 +315,7 @@
 }
 
 .info-link {
-  display: inline-flex; /* Align icon and text */
+  display: inline-flex; 
   align-items: center;
   padding: 8px 12px;
   color: white;
@@ -334,18 +332,12 @@
 }
 
 .etherscan-link {
-  background-color: #4B7BFF; /* Etherscan-like blue */
+  background-color: #4B7BFF;
 }
 .etherscan-link:hover {
   background-color: #3A6AEF;
 }
 
-.ipfs-link {
-  background-color: #ff8c00; /* IPFS-like orange */
-}
-.ipfs-link:hover {
-  background-color: #cc7000;
-}
 
 .info-link .hash-preview {
   font-size: 0.75rem;
@@ -362,8 +354,6 @@
   background-color: #e7f3ff;
   border-radius: 6px;
 }
-
-
 
 
 
