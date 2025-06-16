@@ -111,7 +111,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality, isG
         : 0;
       setSelectedIndex(index);
     }
-  }, [selectedDegree, speciality, checkedDuplicata]); 
+  }, [selectedDegree, speciality]); 
 
   const commonPdfInvalidatingChangeActions = () => {
     setIsPdfGenerated(false);
@@ -217,7 +217,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality, isG
         ipc.send(
           "downloadPDF",
           id,
-          formData.specialty,
+          formData.speciality,
           formData.Diploma,
           checkedDuplicata,
           currentAcademicFullYear, 
@@ -238,7 +238,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality, isG
         case "Licence": case "Doctorat": case "Mastère":
           return (<div className="mt-4">
               <label className="speciality-label">Specialité *</label>
-              <select id="speciality" className="input speciality-input" value={formData.specialty} onChange={handleSpecialtyChange} disabled={fieldsDisabled}>
+              <select id="speciality" className="input speciality-input" value={formData.speciality} onChange={handleSpecialtyChange} disabled={fieldsDisabled}>
                 <option value="" disabled>Choisir une spécialité</option>
                 {availableSpecialties.map((sp, idx) => (<option key={idx} value={sp}>{sp}</option>))}
               </select>
@@ -253,7 +253,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality, isG
         case "Ingénieur":
           return (<div className="mt-4">
               <label className="speciality-label">Specialité *</label>
-              <select id="speciality" className="input speciality-input" value={formData.specialty} onChange={handleSpecialtyChange} disabled={fieldsDisabled}>
+              <select id="speciality" className="input speciality-input" value={formData.speciality} onChange={handleSpecialtyChange} disabled={fieldsDisabled}>
                 <option value="" disabled>Choisir une spécialité</option>
                 {availableSpecialties.map((sp, idx) => (<option key={idx} value={sp}>{sp}</option>))}
               </select>
@@ -281,7 +281,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality, isG
   };
   return (
     <>
-    {pdfBytes && <VerificationDisplay metadata={diplomaMetadata} />}
+    {pdfBytes && !checkedDuplicata && <VerificationDisplay metadata={diplomaMetadata} />}
       {!showPreview ? (
         <section className="form-section">
           <h3 className="form-title">Formulaire</h3>

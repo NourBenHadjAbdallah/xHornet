@@ -1,4 +1,4 @@
-import React from "react"; // No longer need useState here
+import React from "react";
 import { generateQrXml, processQrRequest } from "../../helpers/xmlUtils.js";
 import { connectToContract, issueDiploma } from "../../helpers/contract.js";
 import { generateDiplomaHash } from "../../helpers/hashUtils.js";
@@ -14,8 +14,8 @@ function QrHandling({
   setQrHandlingInitiated,
   callback,
   onHashGenerated,
-  setIsGenerating, // New prop for controlling the global loader
-  isGenerating    // New prop to check global state
+  setIsGenerating,
+  isGenerating    
 }) {
 
   const {
@@ -50,8 +50,6 @@ function QrHandling({
       const issueResult = await issueDiploma(contractConnection, { ...diplomaDataForHash, hash: onChainDiplomaHash });
       console.log("Blockchain issue result:", issueResult);
       if (onHashGenerated) { onHashGenerated({ hash: onChainDiplomaHash, txHash: issueResult.txHash }); }
-      createFolder();
-      writeLog();
       return issueResult;
     } catch (error) {
       console.error("Blockchain error:", error.message);
@@ -64,12 +62,23 @@ function QrHandling({
   const generateData = async () => {
     if (isDisabled || isGenerating) return;
     
-    setIsGenerating(true); // START full-screen loader
+    setIsGenerating(true); 
     setQrHandlingInitiated(true);
     setEnabledhide(false);
 
     try {
-      await storeDiplomaToBlockchain();
+
+      if (!checkedDuplicata) {
+        await storeDiplomaToBlockchain();
+      } else {
+
+        if (onHashGenerated) {
+          onHashGenerated({ hash: null, txHash: null });
+        }
+      }
+
+      createFolder();
+      writeLog();
 
       const diplomaVerificationHashForQR = generateDiplomaHash({
         fullName: `${lastName} ${firstName}`,
@@ -95,26 +104,26 @@ function QrHandling({
           alert(msg);
           setQrHandlingInitiated(false);
           setEnabledhide(false);
-          setIsGenerating(false); // STOP full-screen loader on error
+          setIsGenerating(false);
         },
         onQrImage: (image) => {
           setEnabledhide(true);
           if (parentcallback) { parentcallback(image, false, id, speciality, Diploma, academicFullYear); }
           if (callback) { callback(image); }
-          setIsGenerating(false); // STOP full-screen loader on success
+          setIsGenerating(false); 
         },
       }).catch((err) => {
         console.error("QR Generation Error:", err);
         setQrHandlingInitiated(false);
         setEnabledhide(false);
-        setIsGenerating(false); // STOP full-screen loader on error
+        setIsGenerating(false); 
       });
 
     } catch (error) {
       console.error("Error in generateData after blockchain step:", error);
       setQrHandlingInitiated(false);
       setEnabledhide(false);
-      setIsGenerating(false); // STOP full-screen loader on error
+      setIsGenerating(false);
     }
   };
 
