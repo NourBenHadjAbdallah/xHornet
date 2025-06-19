@@ -76,6 +76,8 @@
 
         "app-module-path": "^2.2.0",
 
+        "archiver": "^7.0.1",
+
         "axios": "^0.18.0",
 
         "copy-image-clipboard": "^2.1.2",
@@ -100,7 +102,13 @@
 
         "express": "^4.17.1",
 
+        "jszip": "^3.10.1",
+
+        "keccak256": "^1.0.6",
+
         "lucide-react": "^0.513.0",
+
+        "merkletreejs": "^0.5.2",
 
         "nodemon": "^1.19.1",
 

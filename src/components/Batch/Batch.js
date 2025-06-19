@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@material-ui/core';
 import CSVTable from './CSVTable';
-import { processXlsxFile, validateFileType } from '../../helpers/xlsxUtils'
+import { processXlsxFile, validateFileType } from '../../helpers/xlsxUtils';
 import '../../pages/Loading/LoadingStyle.css';
 
 function Batch({ speciality, selectedDegree, onSubmit, onError }) {

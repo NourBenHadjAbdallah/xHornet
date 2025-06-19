@@ -54,7 +54,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality, isG
   const handleQRCodeUpdate = (qrCode) => setImageQR64(qrCode);
 
   const handleOnChainHashGenerated = (data) => {
-    const currentAcademicFullYear = getAcademicFullYearString(LastYear, Year);
+    const currentAcademicFullYear = getAcademicFullYearString(Year,LastYear);
     const commonMetadata = {
       academicFullYear: currentAcademicFullYear,
       studentFullName: `${lastName} ${firstName}`,
@@ -212,12 +212,12 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality, isG
 
 
   async function downloadPDF() {
-      const currentAcademicFullYear = getAcademicFullYearString(LastYear, Year);
+      const currentAcademicFullYear = getAcademicFullYearString(Year,LastYear);
       if (ipc) {
         ipc.send(
           "downloadPDF",
           id,
-          formData.specialty,
+          formData.speciality,
           formData.Diploma,
           checkedDuplicata,
           currentAcademicFullYear, 
