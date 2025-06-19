@@ -70,215 +70,35 @@ function createWindow() {
 
 
 
-function createFolder(id,specialty, Diploma, academicFullYear, checkLot) {
+function createFolder(id, specialty, Diploma, academicFullYear, checkLot) {
+  // Base directory, assuming electron.js is in src/main/electron.js
+  // and the target root is 6 levels up.
+  const baseDir = path.join(__dirname, '../../../../../../');
+  let targetPath;
 
-  if (!fs.existsSync("../../../../../../" + academicFullYear)) {
-    fs.mkdirSync("../../../../../../" + academicFullYear, (err) => {
-      //   if (err) {
-          // const messageBoxOptions = {
-          //   type: "error",
-          //   title: "Error in Main process",
-          //   message: 'Failed to create folder ' + err +"1"
-          // };
-          // dialog.showMessageBox(messageBoxOptions);
-      // }
+  if (Diploma !== "Architecture") {
+    if (checkLot === true) {
+      targetPath = path.join(baseDir, academicFullYear, Diploma, specialty, "lot", id);
+    } else {
+      targetPath = path.join(baseDir, academicFullYear, Diploma, specialty, id);
+    }
+  } else {
+    targetPath = path.join(baseDir, academicFullYear, Diploma, id);
+  }
 
-    
-  });
-  } 
-if(Diploma!=="Architecture"){
- 
-  if(checkLot===true){
-    if (!fs.existsSync( "../../../../../../" + academicFullYear + "/" +Diploma)) 
-    {
-      fs.mkdirSync(
-        "../../../../../../" + academicFullYear + "/" + Diploma,
-        (err) => {
-      // if (err) {
-      //       const messageBoxOptions = {
-      //         type: "error",
-      //         title: "Error in Main process",
-      //         message: 'Failed to create folder ' + err +"4"
-      //       };
-      //       dialog.showMessageBox(messageBoxOptions);
-      //     }
-        } );}
-    if (!fs.existsSync( "../../../../../../" + academicFullYear +"/" + Diploma + "/" + specialty)) 
-        {
-            fs.mkdirSync(
-              "../../../../../../" +
-                academicFullYear +
-                "/" + Diploma + "/" +
-                specialty
-               ,
-              (err) => {
-                // if (err) {
-                //   const messageBoxOptions = {
-                //     type: "error",
-                //     title: "Error in Main process",
-                //     message: 'Failed to create folder ' + err +"5"
-                //   };
-                //   dialog.showMessageBox(messageBoxOptions);
-                //  }
-                // else {
-                //   const messageBoxOptions = {
-                //     type: "info",
-                //     message: 'Created Folder '+academicFullYear+'/'+diplomeNameFolder+'/'+id
-                //   };
-                //   dialog.showMessageBox(messageBoxOptions);
-                // }
-              });}
-    if ( !fs.existsSync("../../../../../../" +academicFullYear +"/" + Diploma + "/" +specialty +"/lot")) 
-          { 
-                  fs.mkdirSync(
-                    "../../../../../../" +
-                      academicFullYear +
-                      "/" + Diploma + "/" +
-                      specialty +
-                      "/lot",
-                    (err) => {
-                      //   if (err) {
-                      //   const messageBoxOptions = {
-                      //     type: "error",
-                      //     title: "Error in Main process",
-                      //     message: 'Failed to create folder ' + err +"5"
-                      //   };
-                      //   dialog.showMessageBox(messageBoxOptions);
-                      //  }
-                      // else {
-                      //   const messageBoxOptions = {
-                      //     type: "info",
-                      //     message: 'Created Folder '+academicFullYear+'/'+diplomeNameFolder+'/'+id
-                      //   };
-                      //   dialog.showMessageBox(messageBoxOptions);
-                      // }
-                    }
-                  );
-                }
-              }
-              else{
-                if (!fs.existsSync( "../../../../../../" + academicFullYear + "/" +Diploma)) 
-                {
-                  fs.mkdirSync(
-                    "../../../../../../" + academicFullYear + "/" + Diploma,
-                    (err) => {
-                  // if (err) {
-                  //       const messageBoxOptions = {
-                  //         type: "error",
-                  //         title: "Error in Main process",
-                  //         message: 'Failed to create folder ' + err +"4"
-                  //       };
-                  //       dialog.showMessageBox(messageBoxOptions);
-                  //     }
-                    } );}
-                if (!fs.existsSync( "../../../../../../" + academicFullYear +"/" + Diploma + "/" +specialty )) 
-                    {
-                        fs.mkdirSync(
-                          "../../../../../../" +
-                            academicFullYear +
-                            "/" + Diploma + "/" +
-                            specialty
-                           ,
-                          (err) => {
-                            // if (err) {
-                            //   const messageBoxOptions = {
-                            //     type: "error",
-                            //     title: "Error in Main process",
-                            //     message: 'Failed to create folder ' + err +"5"
-                            //   };
-                            //   dialog.showMessageBox(messageBoxOptions);
-                            //  }
-                            // else {
-                            //   const messageBoxOptions = {
-                            //     type: "info",
-                            //     message: 'Created Folder '+academicFullYear+'/'+diplomeNameFolder+'/'+id
-                            //   };
-                            //   dialog.showMessageBox(messageBoxOptions);
-                            // }
-                          });}
-                if ( !fs.existsSync("../../../../../../" +academicFullYear +"/" + Diploma + "/" +specialty +"/" +id)) 
-                      { 
-                              fs.mkdirSync(
-                                "../../../../../../" +
-                                  academicFullYear +
-                                  "/" + Diploma + "/" +
-                                  specialty +
-                                  "/" +
-                                  id,
-                                (err) => {
-                                  //   if (err) {
-                                  //   const messageBoxOptions = {
-                                  //     type: "error",
-                                  //     title: "Error in Main process",
-                                  //     message: 'Failed to create folder ' + err +"5"
-                                  //   };
-                                  //   dialog.showMessageBox(messageBoxOptions);
-                                  //  }
-                                  // else {
-                                  //   const messageBoxOptions = {
-                                  //     type: "info",
-                                  //     message: 'Created Folder '+academicFullYear+'/'+diplomeNameFolder+'/'+id
-                                  //   };
-                                  //   dialog.showMessageBox(messageBoxOptions);
-                                  // }
-                                }
-                              );
-                            }            
-                          }
-              }
-else{
-  if (!fs.existsSync( "../../../../../../" + academicFullYear +"/" + Diploma )) 
-                {
-                    fs.mkdirSync(
-                      "../../../../../../" +
-                        academicFullYear +
-                        "/" + Diploma + "/"
-                       ,
-                      (err) => {
-                        // if (err) {
-                        //   const messageBoxOptions = {
-                        //     type: "error",
-                        //     title: "Error in Main process",
-                        //     message: 'Failed to create folder ' + err +"5"
-                        //   };
-                        //   dialog.showMessageBox(messageBoxOptions);
-                        //  }
-                        // else {
-                        //   const messageBoxOptions = {
-                        //     type: "info",
-                        //     message: 'Created Folder '+academicFullYear+'/'+diplomeNameFolder+'/'+id
-                        //   };
-                        //   dialog.showMessageBox(messageBoxOptions);
-                        // }
-                      });}
-  if ( !fs.existsSync("../../../../../../" +academicFullYear +"/" + Diploma + "/" +id)) 
-                  { 
-                          fs.mkdirSync(
-                            "../../../../../../" +
-                              academicFullYear +
-                              "/" + Diploma + "/" +
-                               id,
-                            (err) => {
-                              //   if (err) {
-                              //   const messageBoxOptions = {
-                              //     type: "error",
-                              //     title: "Error in Main process",
-                              //     message: 'Failed to create folder ' + err +"5"
-                              //   };
-                              //   dialog.showMessageBox(messageBoxOptions);
-                              //  }
-                              // else {
-                              //   const messageBoxOptions = {
-                              //     type: "info",
-                              //     message: 'Created Folder '+academicFullYear+'/'+diplomeNameFolder+'/'+id
-                              //   };
-                              //   dialog.showMessageBox(messageBoxOptions);
-                              // }
-                            }
-                          );
-                        }
-              }     
- }
+  try {
+    // Use recursive: true to create all non-existent directories in the path
+    fs.mkdirSync(targetPath, { recursive: true });
+    // console.log(`Folder created successfully at: ${targetPath}`);
+  } catch (err) {
+    const messageBoxOptions = {
+      type: "error",
+      title: "Error in Main process",
+      message: `Failed to create folder ${targetPath}: ${err.message}`
+    };
+    dialog.showMessageBox(messageBoxOptions);
+  }
+}
 ipcMain.on("createFolder", (event, id, specialty,Diploma, academicFullYear, checkLot) => {
 
   createFolder(id, specialty,Diploma, academicFullYear, checkLot);
@@ -289,159 +109,127 @@ ipcMain.on(
   (event, id,specialty, Diploma, checkedDuplicata, academicFullYear, blobURL, checkLot) => {
 
     let pdfName = checkedDuplicata ? id + "_duplicata.pdf" : id + ".pdf";
-    Diploma!=="architecture"?checkLot===true?fs.writeFile(
-      "../../../../../../" +
-        academicFullYear +
-        "/" +
-        Diploma +
-        "/" +
-        specialty +
-        "/lot/" +
-        pdfName,
-      blobURL,
-      function (err) {
-        if (err) {
-          const messageBoxOptions = {
-            type: "error",
-            // title: "Error in Main process",
-            message: "Impossible d'enregistrer le pdf" + err,
-          };
-          dialog.showMessageBox(messageBoxOptions);
-        } 
-       
-        
+    let fullPath; // Use a variable for the full path
+
+    const baseDir = path.join(__dirname, '../../../../../../');
+
+    if (Diploma !== "Architecture") {
+      if (checkLot === true) {
+        fullPath = path.join(baseDir, academicFullYear, Diploma, specialty, "lot", id, pdfName);
+      } else {
+        fullPath = path.join(baseDir, academicFullYear, Diploma, specialty, id, pdfName); 
       }
-      
-    ):fs.writeFile(
-      "../../../../../../" +
-        academicFullYear +
-        "/" +
-        Diploma +
-        "/" +
-        specialty +
-        "/" +
-        id +
-        "/" +
-        pdfName,
+    } else {
+      fullPath = path.join(baseDir, academicFullYear, Diploma, id, pdfName); 
+    }
+
+    fs.writeFile(
+      fullPath, 
       blobURL,
       function (err) {
         if (err) {
           const messageBoxOptions = {
             type: "error",
-            // title: "Error in Main process",
             message: "Impossible d'enregistrer le pdf" + err,
           };
           dialog.showMessageBox(messageBoxOptions);
         } else {
-          
-        
-         // if(checkLot==false) {
-           
-            const messageBoxOptions = {
-            type: "info",
-            message:
-              "PDF enregistré sous le nom : " +
-              "C:\\" +
-              academicFullYear +
-              "\\" +
-              Diploma +
-              "\\" +
-              specialty +
-              "\\" +
-              id +
-              "\\" +
-              pdfName,
-          };
-            dialog.showMessageBox(messageBoxOptions);
-            const { screen } = require("electron");
-            const primaryDisplay = screen.getPrimaryDisplay();
-            const { width, height } = primaryDisplay.workAreaSize;
-            const win = new PDFWindow({
-              width: width,
-              height: height,
-            });
-              win.loadURL(
-                "file:/../../../../../../" +
-                  academicFullYear +
-                  "/" +
-                  Diploma +
-                  "/" +
-                  specialty +
-                  "/" +
-                  id +
-                  "/" +
-                  pdfName
-              )
-          //  } 
-   
+          let displayPath = `C:\\${academicFullYear}\\${Diploma}\\`;
+          if (Diploma !== "Architecture") {
+            displayPath += `${specialty}\\`;
+            if (checkLot === true) {
+                displayPath += `lot\\`;
+            }
           }
-      }
-      
-    ):fs.writeFile(
-      "../../../../../../" +
-        academicFullYear +
-        "/" +
-        Diploma +
-        "/" +
-        id +
-        "/" +
-        pdfName,
-      blobURL,
-      function (err) {
-        if (err) {
+          displayPath += `${id}\\${pdfName}`;
+
           const messageBoxOptions = {
-            type: "error",
-            // title: "Error in Main process",
-            message: "Impossible d'enregistrer le pdf" + err,
+            type: "info",
+            message: "PDF enregistré sous le nom : " + displayPath,
           };
           dialog.showMessageBox(messageBoxOptions);
-        } else {
-         
-        
-          if(checkLot==false)
-          {  const messageBoxOptions = {
-            type: "info",
-            message:
-              "PDF enregistré sous le nom : " +
-              "C:\\" +
-              academicFullYear +
-              "\\" +
-              Diploma +
-              "\\" +
-              id +
-              "\\" +
-              pdfName,
-          };
-            dialog.showMessageBox(messageBoxOptions);
-            const { screen } = require("electron");
-            const primaryDisplay = screen.getPrimaryDisplay();
-            const { width, height } = primaryDisplay.workAreaSize;
-            const win = new PDFWindow({
-              // width: 800,
-              // height: 600,
-              width: width,
-              height: height,
-            });
-       
+          /*const { screen } = require("electron");
+          const primaryDisplay = screen.getPrimaryDisplay();
+          const { width, height } = primaryDisplay.workAreaSize;
+          const win = new PDFWindow({
+            width: width,
+            height: height,
+          });
             win.loadURL(
-              "file:/../../../../../../" +
-                academicFullYear +
-                "/" +
-                Diploma +
-                "/" +
-                id +
-                "/" +
-                pdfName
-            );
-          }
+                `file://${fullPath}` // Use the fullPath for opening the PDF
+            );*/
         }
       }
     );
-    
-
-
   }
 );
+
+ipcMain.on("downloadProof", (event, id, specialty, Diploma, checkLot, academicFullYear, proofDataString) => {
+
+    let proofFileName = id + ".json";
+    let fullFilePath;
+
+    if (Diploma !== "Architecture") {
+        if (checkLot === true) {
+            // Path for non-Architecture diplomas in a lot
+            fullFilePath = path.join(
+                __dirname, 
+                "../../../../../../",
+                academicFullYear,
+                Diploma,
+                specialty,
+                "lot",
+                id,
+                proofFileName
+            );
+        } else {
+
+            fullFilePath = path.join(
+                __dirname,
+                "../../../../../../",
+                academicFullYear,
+                Diploma,
+                specialty,
+                "lot",
+                id,
+                proofFileName
+            );
+        }
+    } else {
+
+        fullFilePath = path.join(
+            __dirname,
+            "../../../../../../",
+            academicFullYear,
+            "Architecture_Proofs", 
+            id,
+            proofFileName
+        );
+        // console.log("Handling Architecture diploma proof. Saving to:", fullFilePath);
+    }
+
+    // Get the directory name from the full file path
+    const fullDirPath = path.dirname(fullFilePath);
+
+    fs.mkdir(fullDirPath, { recursive: true }, (err) => {
+        if (err) {
+            console.error(`Failed to create directory ${fullDirPath}:`, err);
+            event.sender.send('downloadProofError', `Failed to create directory: ${err.message}`);
+            return;
+        }
+
+        // Now that the directory exists, write the file with the proofDataString
+        fs.writeFile(fullFilePath, proofDataString, (writeErr) => {
+            if (writeErr) {
+                console.error(`Failed to save proof file ${fullFilePath}:`, writeErr);
+                event.sender.send('downloadProofError', `Failed to save proof file: ${writeErr.message}`);
+            } else {
+                console.log(`Proof file saved: ${fullFilePath}`);
+                event.sender.send('downloadProofSuccess', `Proof for ${id} saved successfully.`);
+            }
+        });
+    });
+});
 
 ipcMain.on("downloadImage", (event, id,specialty, Diploma, academicFullYear, blobURL) => {
   

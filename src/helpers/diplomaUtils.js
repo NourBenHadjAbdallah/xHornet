@@ -1,4 +1,4 @@
-import configData from "../helpers/config.json"; 
+import configData from "../helpers/config.json"
 
 export const diplomaOptions = {
   "1": { value: "Licence", label: "Licence" },

@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import { connectWalletWithPrivateKey } from './wallet.js';
 import CONTRACT_ABI from './ABI.json';
 
-const CONTRACT_ADDRESS = "0x72bfB5c11483FfDAa613DAfF2345912Ad0596402";
+const CONTRACT_ADDRESS = "0xe7b42603bBE591A51c3849C25Dce35744CC7b1f0";
 
 export const connectToContract = async (privateKey) => {
   try {
@@ -26,7 +26,7 @@ export const connectToContract = async (privateKey) => {
   }
 };
 
-export const issueDiploma = async (contractConnection, diplomaData) => {
+export const issuePublicDiploma = async (contractConnection, diplomaData) => {
   try {
     const {
       fullName,
@@ -39,7 +39,7 @@ export const issueDiploma = async (contractConnection, diplomaData) => {
 
     console.log("📋 Diploma data:", { fullName, degree, speciality, academicFullYear, diplomaHash }); // Corrected
 
-    const tx = await contractConnection.contract.issueDiploma(
+    const tx = await contractConnection.contract.issuePublicDiploma(
       diplomaHash,
       fullName,
       studentId,
@@ -66,6 +66,28 @@ export const issueDiploma = async (contractConnection, diplomaData) => {
       }
     }
     console.error("❌ Failed to issue diploma:", error.message);
+    throw error;
+  }
+};
+
+export const registerBatchRoot = async (contractConnection, merkleRoot) => {
+  try {
+    const tx = await contractConnection.contract.registerBatchRoot(merkleRoot);
+    const receipt = await tx.wait();
+    return {
+      success: true,
+      txHash: tx.hash,
+      blockNumber: receipt.blockNumber,
+      gasUsed: receipt.gasUsed.toString(),
+    };
+  } catch (error) {
+    if(error.code === 'CALL_EXCEPTION') {
+      console.error("💥 Contract reverted:", error.reason || "Unknown reason");
+     if (error.reason?.includes("DiplomaRegistry: Batch root already registered")){
+        console.error("🚫 This Merkle Root has already been registered.");
+      }
+    }
+    console.error("❌ Failed to register Merkle root:", error.message);
     throw error;
   }
 };

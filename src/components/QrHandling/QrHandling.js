@@ -1,6 +1,6 @@
 import React from "react";
 import { generateQrXml, processQrRequest } from "../../helpers/xmlUtils.js";
-import { connectToContract, issueDiploma } from "../../helpers/contract.js";
+import { connectToContract, issuePublicDiploma } from "../../helpers/contract.js";
 import { generateDiplomaHash } from "../../helpers/hashUtils.js";
 
 const ipc = window.require ? window.require("electron").ipcRenderer : null;
@@ -47,7 +47,7 @@ function QrHandling({
       };
       const onChainDiplomaHash = generateDiplomaHash(diplomaDataForHash);
       console.log("Generated diploma hash (for on-chain and PDF):", onChainDiplomaHash);
-      const issueResult = await issueDiploma(contractConnection, { ...diplomaDataForHash, hash: onChainDiplomaHash });
+      const issueResult = await issuePublicDiploma(contractConnection, { ...diplomaDataForHash, hash: onChainDiplomaHash });
       console.log("Blockchain issue result:", issueResult);
       if (onHashGenerated) { onHashGenerated({ hash: onChainDiplomaHash, txHash: issueResult.txHash }); }
       return issueResult;

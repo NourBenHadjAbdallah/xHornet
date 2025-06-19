@@ -44,20 +44,8 @@
 			{
 				"indexed": true,
 				"internalType": "bytes32",
-				"name": "diplomaHash",
+				"name": "merkleRoot",
 				"type": "bytes32"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "fullName",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "degree",
-				"type": "string"
 			},
 			{
 				"indexed": true,
@@ -66,7 +54,7 @@
 				"type": "address"
 			}
 		],
-		"name": "DiplomaIssued",
+		"name": "BatchRootRegistered",
 		"type": "event"
 	},
 	{
@@ -120,7 +108,7 @@
 				"type": "string"
 			}
 		],
-		"name": "issueDiploma",
+		"name": "issuePublicDiploma",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -130,17 +118,10 @@
 		"inputs": [
 			{
 				"indexed": true,
-				"internalType": "address",
-				"name": "issuer",
-				"type": "address"
-			}
-		],
-		"name": "IssuerAdded",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
+				"internalType": "bytes32",
+				"name": "diplomaHash",
+				"type": "bytes32"
+			},
 			{
 				"indexed": true,
 				"internalType": "address",
@@ -148,8 +129,21 @@
 				"type": "address"
 			}
 		],
-		"name": "IssuerRemoved",
+		"name": "PublicDiplomaIssued",
 		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "merkleRoot",
+				"type": "bytes32"
+			}
+		],
+		"name": "registerBatchRoot",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"inputs": [
@@ -276,6 +270,25 @@
 		"type": "event"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"name": "batchMerkleRoots",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "DEFAULT_ADMIN_ROLE",
 		"outputs": [
@@ -366,12 +379,68 @@
 	{
 		"inputs": [
 			{
+				"internalType": "bytes32[]",
+				"name": "proof",
+				"type": "bytes32[]"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "merkleRoot",
+				"type": "bytes32"
+			},
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "fullName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "studentId",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "degree",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "speciality",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "academicFullYear",
+						"type": "string"
+					}
+				],
+				"internalType": "struct DiplomaRegistry.DiplomaData",
+				"name": "diploma",
+				"type": "tuple"
+			}
+		],
+		"name": "verifyDiplomaWithProof",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "bytes32",
 				"name": "diplomaHash",
 				"type": "bytes32"
 			}
 		],
-		"name": "verifyDiploma",
+		"name": "verifyPublicDiploma",
 		"outputs": [
 			{
 				"components": [
@@ -416,7 +485,7 @@
 						"type": "bool"
 					}
 				],
-				"internalType": "struct DiplomaRegistry.Diploma",
+				"internalType": "struct DiplomaRegistry.PublicDiploma",
 				"name": "",
 				"type": "tuple"
 			}
