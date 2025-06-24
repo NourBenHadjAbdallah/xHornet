@@ -1,5 +1,3 @@
-// Formulaire.js
-
 import { useState, forwardRef, useImperativeHandle } from "react";
 import '../css/main-interface.css';
 import { modifyPdfTemplate } from "../helpers/pdfUtils.js";
@@ -171,8 +169,6 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
             academicFullYear,
             formatDateFunctions,
           });
-
-          // Convert PDF bytes and JSON proof to Base64 for email attachment
           const pdfBase64 = Buffer.from(pdfBytes).toString('base64');
           const jsonBase64 = Buffer.from(JSON.stringify(proofData)).toString('base64');
 

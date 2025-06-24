@@ -31,7 +31,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality, isG
   const [image, setImage] = useState("");
   const [isPdfGenerated, setIsPdfGenerated] = useState(false);
   const [hasDownloaded, setHasDownloaded] = useState(false);
-
+  const [email, setEmail] = useState("");
   const [onChainDiplomaHash, setOnChainDiplomaHash] = useState(null);
   const [transactionHash, setTransactionHash] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -167,6 +167,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality, isG
     setId("");
     setNaissance("");
     setLieu("");
+    setEmail("");
     setImageQR64(null);
     setAvailableSpecialties([]);
     setShowPreview(false);
@@ -189,7 +190,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality, isG
   const isActiveFieldsValid = () => {
     const commonFieldsValid = (
         firstName.trim() !== "" && lastName.trim() !== "" && id.trim() !== "" &&
-        naissance.trim() !== "" && lieu.trim() !== "" &&
+        naissance.trim() !== "" && lieu.trim() !== "" && email.trim() !== "" && // Added email validation
         LastYear.trim() !== "" && Year.trim().length === 4 && formData.Diploma.trim() !== ""
       );
       if (!commonFieldsValid) return false;
@@ -322,6 +323,10 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality, isG
                 <label className="lieu-label">Lieu *</label>
                 <input id="birthPlace" className="input lieu-input1" disabled={qrGenerated || isUploading || isGenerating} value={lieu} type="text" onChange={createBaseChangeHandler(setLieu)} />
               </div>
+              <div className="form-group">
+                <label className="email-label">Email *</label>
+                <input id="email" className="input email-input1" disabled={qrGenerated || isUploading || isGenerating} value={email} type="text" onChange={createBaseChangeHandler(setEmail)} />
+              </div>
             </div>
             <div>
               <label className="academicYear-label">Année Universitaire *</label> <br />
@@ -359,13 +364,16 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality, isG
                     lastName, 
                     firstName, 
                     lieu, 
+                    email, // Pass email to QrHandling
                     checkedDuplicata 
                 }}
+                metadata={diplomaMetadata}
                 parentcallback={parentcallback}
                 setEnabledhide={setEnabledhide}
                 setQrHandlingInitiated={setQrGenerated}
                 isGenerating={isGenerating}
                 setIsGenerating={setIsGenerating}
+                email={email} // Pass email to QrHandling
               />
               <PdfHandler
                 formData={{ 

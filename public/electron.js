@@ -123,7 +123,7 @@ ipcMain.on(
         fullPath = path.join(baseDir, academicFullYear, Diploma, specialty, id, pdfName); 
       }
     } else {
-      fullPath = path.join(baseDir, academicFullYear, Diploma, id, pdfName); 
+      fullPath = path.join(baseDir, academicFullYear, Diploma,specialty, id, pdfName); 
     }
 
     fs.writeFile(
