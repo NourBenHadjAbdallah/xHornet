@@ -10,8 +10,11 @@ const fsPromises = require("fs").promises;
 
 const { dialog } = require("electron");
 //console.log(app.getPath('userData'));
-const PDFWindow = require("electron-pdf-window");
+//const PDFWindow = require("electron-pdf-window");
+const { sendEmail } = require(path.join(__dirname, '../src/components/EmailHandler')); //
+
 let mainWindow;
+
 //Create main window
 function createWindow() {
   const { screen } = require("electron");
@@ -378,6 +381,16 @@ ipcMain.on(
 
   }
 );
+
+ipcMain.on('send-email-ipc', async (event, emailData) => {
+  try {
+    const result = await sendEmail(emailData); //
+    event.reply('send-email-ipc-reply', result);
+  } catch (error) {
+    console.error('Error sending email from main process:', error);
+    event.reply('send-email-ipc-reply', { success: false, error: error.message });
+  }
+});
 
 app.whenReady().then(() => {
   createWindow();

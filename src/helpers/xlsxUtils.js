@@ -2,10 +2,10 @@ import { read, utils } from 'xlsx';
 
 // Expected headers for different diploma types
 const EXPECTED_HEADERS = {
-  '1': ['Prénom NOM', 'date de naissance', 'lieu de naissance', 'CIN', 'Mention', 'PV'], // Licence
-  '3': ['Prénom NOM', 'date de naissance', 'lieu de naissance', 'CIN', 'PV'],           // Ingénieur
-  '4': ['Prénom NOM', 'date de naissance', 'lieu de naissance', 'CIN', 'Mention', 'PV'], // Mastère
-  '5': ['Prénom NOM', 'date de naissance', 'lieu de naissance', 'CIN', 'Mention', 'PV'], // Doctorat
+  '1': ['Prénom NOM', 'date de naissance', 'lieu de naissance', 'CIN', 'Mention', 'PV', 'Email'], // Licence
+  '3': ['Prénom NOM', 'date de naissance', 'lieu de naissance', 'CIN', 'PV', 'Email'],           // Ingénieur
+  '4': ['Prénom NOM', 'date de naissance', 'lieu de naissance', 'CIN', 'Mention', 'PV', 'Email'], // Mastère
+  '5': ['Prénom NOM', 'date de naissance', 'lieu de naissance', 'CIN', 'Mention', 'PV', 'Email'], // Doctorat
 };
 
 export const formatDate = (excelDate) => {
