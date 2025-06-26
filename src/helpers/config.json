@@ -61,6 +61,11 @@
         "doctorat_Genie_Informatique_GestionDuplicata"
       ]
     }
+  },
+    "EMAIL": {
+    "user": "centre-op-robots1@audassia.com",
+    "pass": "centre-op-robots1:190365&",
+    "service": "gmail"
   }
 
 }

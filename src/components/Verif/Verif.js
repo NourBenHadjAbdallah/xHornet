@@ -36,8 +36,6 @@ const VerificationDisplay = ({ metadata }) => {
   const hasStudentData = studentId || studentFullName || degreeName || academicFullYear;
 
   const panelWidth = 350;
-
-  // Construct the full URL with both the diploma hash and transaction hash as query parameters
   const dynamicDiplomaUrl = onChainHash
     ? `${diplomaWebAppUrl}?hash=${onChainHash}${txHash ? `&txHash=${txHash}` : ''}`
     : diplomaWebAppUrl;

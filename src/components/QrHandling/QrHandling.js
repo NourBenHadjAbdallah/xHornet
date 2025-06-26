@@ -15,7 +15,8 @@ function QrHandling({
   callback,
   onHashGenerated,
   setIsGenerating,
-  isGenerating    
+  isGenerating,  
+  email 
 }) {
 
   const {
@@ -50,7 +51,7 @@ function QrHandling({
       const issueResult = await issuePublicDiploma(contractConnection, { ...diplomaDataForHash, hash: onChainDiplomaHash });
       console.log("Blockchain issue result:", issueResult);
       if (onHashGenerated) { onHashGenerated({ hash: onChainDiplomaHash, txHash: issueResult.txHash }); }
-      return issueResult;
+      return {issueResult, onChainDiplomaHash}; 
     } catch (error) {
       console.error("Blockchain error:", error.message);
       if (onHashGenerated) { onHashGenerated({ error: error.message }); }
@@ -67,11 +68,14 @@ function QrHandling({
     setEnabledhide(false);
 
     try {
+      let onChainDiplomaHash = null;
+      let issueResult = null;
 
       if (!checkedDuplicata) {
-        await storeDiplomaToBlockchain();
+        const blockchainResponse = await storeDiplomaToBlockchain();
+        issueResult = blockchainResponse.issueResult;
+        onChainDiplomaHash = blockchainResponse.onChainDiplomaHash;
       } else {
-
         if (onHashGenerated) {
           onHashGenerated({ hash: null, txHash: null });
         }
@@ -106,10 +110,48 @@ function QrHandling({
           setEnabledhide(false);
           setIsGenerating(false);
         },
-        onQrImage: (image) => {
+        onQrImage: async (image) => { 
           setEnabledhide(true);
           if (parentcallback) { parentcallback(image, false, id, speciality, Diploma, academicFullYear); }
           if (callback) { callback(image); }
+
+
+          if (email && onChainDiplomaHash) { 
+            const diplomaLink = `http://localhost:5173/?hash=${onChainDiplomaHash}&txHash=${issueResult.txHash}`;
+            
+            const emailData = {
+              recipientEmail: email,
+              fullName: `${lastName} ${firstName}`,
+              diplomaType: Diploma,
+              academicFullYear: academicFullYear,
+              pdfBase64: null,
+              jsonBase64: null,
+              diplomaLink: diplomaLink,
+            };
+
+            if (ipc) {
+                const emailResult = await new Promise((resolve) => {
+                    ipc.once('send-email-ipc-reply', (event, response) => {
+                        resolve(response);
+                    });
+                    ipc.send('send-email-ipc', emailData);
+                });
+
+                if (emailResult.success) {
+                    console.log(`Email sent successfully to ${email}`);
+                } else {
+                    console.error(`Failed to send email to ${email}:`, emailResult.error);
+                    alert(`Failed to send email to ${email}: ${emailResult.error}`);
+                }
+            } else {
+                console.warn("IPC not available. Cannot send email.");
+            }
+          } else if (!email) {
+            console.warn("No email address provided. Skipping email sending.");
+          } else if (!onChainDiplomaHash) {
+            console.warn("No on-chain diploma hash generated. Skipping email sending with proof link.");
+          }
+
           setIsGenerating(false); 
         },
       }).catch((err) => {

@@ -8,13 +8,15 @@ import {
   mentionMappingEN,
   getDiplomaFile,
   getAcademicYears,
-  formatDateFrench, 
+  formatDateFrench,
   toMonthNameFrenchPV
 } from "../helpers/diplomaUtils.js";
 import { buildMerkleTree } from "../helpers/merkleUtils.js";
 import { connectToContract, registerBatchRoot } from "../helpers/contract.js";
+
 const _ = require("lodash");
 const ipc = window.require('electron').ipcRenderer;
+const ethers = require("ethers"); // Ensure ethers is imported here for hashing
 
 const PRIVATE_KEY = "79fe3fa380c3b5e244c5cba7a6ef0f503f9adf9e486b562eb804ddc761a16c7d";
 
@@ -103,7 +105,8 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
             speciality: specialtyName,
             academicFullYear: academicFullYear
           };
-          const { ethers } = require("ethers");
+          // The `ethers` import was inside the loop; moved to top and added here.
+          // This currentLeafHash is what identifies the specific diploma data.
           const currentLeafHash = ethers.utils.solidityKeccak256(
             ['string', 'string', 'string', 'string', 'string'],
             [
@@ -166,6 +169,46 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
             academicFullYear,
             formatDateFunctions,
           });
+          const pdfBase64 = Buffer.from(pdfBytes).toString('base64');
+          const jsonBase64 = Buffer.from(JSON.stringify(proofData)).toString('base64');
+
+          // Construct the diploma link
+          const baseVerificationUrl = 'http://localhost:5173';
+          const diplomaLink = `${baseVerificationUrl}/?` + new URLSearchParams({
+              merkleRoot: proofData.merkleRoot,
+              proof: JSON.stringify(proofData.merkleProof), // Proof is an array, must be stringified for URL
+              hash: proofData.leafHash, // NEW: Include the diploma's specific hash for backend lookup
+          }).toString();
+
+          // Send email using IPC to the main process
+          if (result.Email) {
+            const emailData = {
+              recipientEmail: result.Email,
+              fullName: result.Prénom_NOM,
+              diplomaType: diplomaName,
+              academicFullYear: academicFullYear,
+              pdfBase64: pdfBase64,
+              jsonBase64: jsonBase64,
+              diplomaLink: diplomaLink,
+            };
+
+            const emailResult = await new Promise((resolve) => {
+              ipc.once('send-email-ipc-reply', (event, response) => {
+                resolve(response);
+              });
+              ipc.send('send-email-ipc', emailData);
+            });
+
+            if (emailResult.success) {
+              console.log(`Email sent successfully to ${result.Email}`);
+            } else {
+              console.error(`Failed to send email to ${result.Email}:`, emailResult.error);
+              alert(`Failed to send email to ${result.Email}: ${emailResult.error}`);
+            }
+          } else {
+            console.warn(`No email address found for ${result.Prénom_NOM}. Skipping email.`);
+          }
+
           ipc.send('createFolder', result.CIN, specialtyName, diplomaFR, academicFullYear, true);
           ipc.send("logFile", result.CIN, diplomaFR, academicFullYear, false, true);
           ipc.send('downloadPDF', result.CIN, specialtyName, diplomaFR, false, academicFullYear, pdfBytes, true);
@@ -174,7 +217,7 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
           processedCount += 1;
           onSubmit((processedCount / totalItems) * 100);
         } catch (err) {
-          console.error("Error processing item:", err); 
+          console.error("Error processing item:", err);
           setError(true);
           onError(true);
           return;
