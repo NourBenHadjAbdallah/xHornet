@@ -62,7 +62,7 @@
     color: #4A4A4A;
 }
 .proces-label{
-    top: 500px;
+    top: 460px;
     position: absolute;
     width: 80%;
     left: 5%;
@@ -86,7 +86,7 @@
     color: #4A4A4A;
 }
 .mention-label{
-    top: 460px;
+    top: 500px;
     width: 80%;
     left: 5%;
     margin: 1rem;
