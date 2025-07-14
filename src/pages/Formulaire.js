@@ -11,12 +11,11 @@ import {
   formatDateFrench,
   toMonthNameFrenchPV
 } from "../helpers/diplomaUtils.js";
-import { buildMerkleTree } from "../helpers/merkleUtils.js";
-import { connectToContract, registerBatchRoot } from "../helpers/contract.js";
+import { connectToContract, storeDiplomasBatch } from "../helpers/contract.js";
 
 const _ = require("lodash");
 const ipc = window.require('electron').ipcRenderer;
-const ethers = require("ethers"); // Ensure ethers is imported here for hashing
+const ethers = require("ethers");
 
 const PRIVATE_KEY = "79fe3fa380c3b5e244c5cba7a6ef0f503f9adf9e486b562eb804ddc761a16c7d";
 
@@ -51,46 +50,61 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
     const diplomeFileName = getDiplomaFile(speciality, selectedDegree);
     const url = `./assets/${diplomeFileName}`;
     const specialtyName = getSpecialtyEN(speciality);
-    const arrayOfSelected = _.chunk(rows, 10);
+    const arrayOfSelected = _.chunk(rows, 50);
 
     let processedCount = 0;
     const totalItems = rows.length;
 
-    let merkleRoot = null;
-    let merkleTree = null;
     let contractConnection = null;
 
     try {
-      const diplomasForMerkle = rows.map(item => {
-        const result = Object.fromEntries(
-          Object.entries(item).map(([key, v]) => [key.split(' ').join('_'), v])
-        );
-        return {
-          fullName: result.Prénom_NOM,
-          studentId: result.CIN,
-          degree: diplomaName,
-          speciality: specialtyName,
-          academicFullYear: academicFullYear
-        };
-      });
-
-      const merkleResult = buildMerkleTree(diplomasForMerkle);
-      merkleTree = merkleResult.merkleTree;
-      merkleRoot = merkleResult.merkleRoot;
-
       contractConnection = await connectToContract(PRIVATE_KEY);
-      const registerResult = await registerBatchRoot(contractConnection, merkleRoot);
-      console.log("Merkle Root Registered on Blockchain:", registerResult);
+
+      for (const batch of arrayOfSelected) {
+        const diplomaInputs = batch.map(item => {
+          const result = Object.fromEntries(
+            Object.entries(item).map(([key, v]) => [key.split(' ').join('_'), v])
+          );
+          const mention = result.Mention ? getMentionEN(result.Mention) : '';
+          const juryMeetingDate = result.PV; 
+
+          const diplomaHash = ethers.utils.solidityKeccak256(
+            ['string', 'string', 'string', 'string', 'string'],
+            [
+              result.Prénom_NOM,
+              result.CIN,
+              diplomaName,
+              specialtyName,
+              academicFullYear
+            ]
+          );
+
+          return {
+            diplomaHash: diplomaHash,
+            fullName: result.Prénom_NOM,
+            degree: diplomaName,
+            specialty: specialtyName,
+            mention: mention,
+            idNumber: result.CIN,
+            academicYear: academicFullYear,
+            juryMeetingDate: juryMeetingDate,
+          };
+        });
+
+        await storeDiplomasBatch(contractConnection, diplomaInputs);
+        console.log(`Successfully stored a batch of ${batch.length} diplomas on the blockchain.`);
+      }
 
     } catch (blockchainError) {
       console.error("Error with batch blockchain registration:", blockchainError);
       setError(true);
       onError(true);
-      alert("Erreur lors de l'enregistrement du Merkle Root sur la blockchain. Veuillez réessayer.");
+      alert("Erreur lors de l'enregistrement du diplôme sur la blockchain. Veuillez réessayer.");
       return;
     }
 
-    for (const batch of arrayOfSelected) {
+
+    for (const batch of arrayOfSelected) { 
       for (const item of batch) {
         try {
           const result = Object.fromEntries(
@@ -98,33 +112,26 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
           );
           const mention = result.Mention ? getMentionEN(result.Mention) : '';
 
-          const currentDiplomaForLeaf = {
-            fullName: result.Prénom_NOM,
-            studentId: result.CIN,
-            degree: diplomaName,
-            speciality: specialtyName,
-            academicFullYear: academicFullYear
-          };
-          // The `ethers` import was inside the loop; moved to top and added here.
-          // This currentLeafHash is what identifies the specific diploma data.
-          const currentLeafHash = ethers.utils.solidityKeccak256(
+          const currentDiplomaHash = ethers.utils.solidityKeccak256(
             ['string', 'string', 'string', 'string', 'string'],
             [
-                currentDiplomaForLeaf.fullName,
-                currentDiplomaForLeaf.studentId,
-                currentDiplomaForLeaf.degree,
-                currentDiplomaForLeaf.speciality,
-                currentDiplomaForLeaf.academicFullYear
+                result.Prénom_NOM,
+                result.CIN,
+                diplomaName,
+                specialtyName,
+                academicFullYear
             ]
           );
 
-          const merkleProof = merkleTree.getHexProof(currentLeafHash);
-
           const proofData = {
-            diplomaData: currentDiplomaForLeaf,
-            leafHash: currentLeafHash,
-            merkleRoot: merkleRoot,
-            merkleProof: merkleProof,
+            diplomaData: {
+              fullName: result.Prénom_NOM,
+              studentId: result.CIN,
+              degree: diplomaName,
+              speciality: specialtyName,
+              academicFullYear: academicFullYear
+            },
+            leafHash: currentDiplomaHash,
           };
 
           const xmls = generateQrXml({
@@ -172,15 +179,11 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
           const pdfBase64 = Buffer.from(pdfBytes).toString('base64');
           const jsonBase64 = Buffer.from(JSON.stringify(proofData)).toString('base64');
 
-          // Construct the diploma link
           const baseVerificationUrl = 'http://localhost:5173';
           const diplomaLink = `${baseVerificationUrl}/?` + new URLSearchParams({
-              merkleRoot: proofData.merkleRoot,
-              proof: JSON.stringify(proofData.merkleProof), // Proof is an array, must be stringified for URL
-              hash: proofData.leafHash, // NEW: Include the diploma's specific hash for backend lookup
+              hash: proofData.leafHash,
           }).toString();
 
-          // Send email using IPC to the main process
           if (result.Email) {
             const emailData = {
               recipientEmail: result.Email,
@@ -212,7 +215,6 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
           ipc.send('createFolder', result.CIN, specialtyName, diplomaFR, academicFullYear, true);
           ipc.send("logFile", result.CIN, diplomaFR, academicFullYear, false, true);
           ipc.send('downloadPDF', result.CIN, specialtyName, diplomaFR, false, academicFullYear, pdfBytes, true);
-          ipc.send('downloadProof', result.CIN, specialtyName, diplomaFR, false, academicFullYear, JSON.stringify(proofData), true)
 
           processedCount += 1;
           onSubmit((processedCount / totalItems) * 100);

@@ -136,38 +136,13 @@ ipcMain.on(
             message: "Impossible d'enregistrer le pdf" + err,
           };
           dialog.showMessageBox(messageBoxOptions);
-        } else {
-          let displayPath = `C:\\${academicFullYear}\\${Diploma}\\`;
-          if (Diploma !== "Architecture") {
-            displayPath += `${specialty}\\`;
-            if (checkLot === true) {
-                displayPath += `lot\\`;
-            }
-          }
-          displayPath += `${id}\\${pdfName}`;
-
-          const messageBoxOptions = {
-            type: "info",
-            message: "PDF enregistré sous le nom : " + displayPath,
-          };
-          dialog.showMessageBox(messageBoxOptions);
-          /*const { screen } = require("electron");
-          const primaryDisplay = screen.getPrimaryDisplay();
-          const { width, height } = primaryDisplay.workAreaSize;
-          const win = new PDFWindow({
-            width: width,
-            height: height,
-          });
-            win.loadURL(
-                `file://${fullPath}` // Use the fullPath for opening the PDF
-            );*/
         }
       }
     );
   }
 );
 
-ipcMain.on("downloadProof", (event, id, specialty, Diploma, checkLot, academicFullYear, proofDataString) => {
+/*ipcMain.on("downloadProof", (event, id, specialty, Diploma, checkLot, academicFullYear, proofDataString) => {
 
     let proofFileName = id + ".json";
     let fullFilePath;
@@ -232,7 +207,7 @@ ipcMain.on("downloadProof", (event, id, specialty, Diploma, checkLot, academicFu
             }
         });
     });
-});
+});*/
 
 ipcMain.on("downloadImage", (event, id,specialty, Diploma, academicFullYear, blobURL) => {
   
