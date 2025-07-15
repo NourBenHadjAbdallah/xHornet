@@ -213,7 +213,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality, isG
 
 
   async function downloadPDF() {
-      const currentAcademicFullYear = getAcademicFullYearString(Year,LastYear);
+      const currentAcademicFullYear = getAcademicFullYearString(LastYear,Year);
       if (ipc) {
         ipc.send(
           "downloadPDF",
