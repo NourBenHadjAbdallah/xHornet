@@ -1,0 +1,88 @@
+name: Build and Release Electron App
+
+on:
+  push:
+    branches:
+      - main  # Auto après merge sur main (après PR)
+
+  workflow_dispatch:   # Manuel avec choix des versions (à la demande)
+    inputs:
+      major:
+        description: 'Incrémenter Major ? (true/false)'
+        required: false
+        default: 'false'
+      minor:
+        description: 'Incrémenter Minor ? (true/false)'
+        required: false
+        default: 'false'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js 16.20.2
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.20.2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Electron Executable
+        run: |
+          npm install electron-builder --save-dev
+          npx electron-builder -c.extraMetadata.main=./public/electron.js
+
+      - name: Determine Next Version
+        id: versioning
+        shell: bash
+        run: |
+          # Récupérer le dernier tag existant
+          LAST_TAG=$(git describe --tags --abbrev=0 || echo "v0.0.0")
+          echo "Dernier tag : $LAST_TAG"
+
+          VERSION=${LAST_TAG#v}
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+
+          # Si lancement manuel avec input major/minor
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            if [ "${{ github.event.inputs.major }}" == "true" ]; then
+              MAJOR=$((MAJOR + 1))
+              MINOR=0
+              PATCH=0
+            elif [ "${{ github.event.inputs.minor }}" == "true" ]; then
+              MINOR=$((MINOR + 1))
+              PATCH=0
+            else
+              PATCH=$((PATCH + 1))
+            fi
+          else
+            # Si déclenché automatiquement → incrément patch
+            PATCH=$((PATCH + 1))
+          fi
+
+          NEW_VERSION="v$MAJOR.$MINOR.$PATCH"
+          echo "Nouvelle version : $NEW_VERSION"
+
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.versioning.outputs.new_version }}
+          name: Release ${{ steps.versioning.outputs.new_version }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload EXE to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/*.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
