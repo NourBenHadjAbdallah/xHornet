@@ -33,10 +33,9 @@ jobs:
         run: npm install
 
       - name: Build Electron Executable
-        run: |
-          npm install electron-builder --save-dev
-          npx electron-builder -c.extraMetadata.main=./public/electron.js
-
+        run: npm run electron-pack
+          
+          
       - name: Determine Next Version
         id: versioning
         shell: bash
