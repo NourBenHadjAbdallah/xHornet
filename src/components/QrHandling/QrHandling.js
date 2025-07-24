@@ -15,8 +15,8 @@ function QrHandling({
   callback,
   onHashGenerated,
   setIsGenerating,
-  isGenerating,  
-  email 
+  isGenerating,
+  email
 }) {
 
   const {
@@ -66,8 +66,8 @@ function QrHandling({
 
   const generateData = async () => {
     if (isDisabled || isGenerating) return;
-    
-    setIsGenerating(true); 
+
+    setIsGenerating(true);
     setQrHandlingInitiated(true);
     setEnabledhide(false);
 
@@ -108,15 +108,17 @@ function QrHandling({
           setEnabledhide(false);
           setIsGenerating(false);
         },
-        onQrImage: async (image) => { 
+        onQrImage: async (image) => {
           setEnabledhide(true);
           if (parentcallback) { parentcallback(image, false, id, speciality, Diploma, academicFullYear); }
           if (callback) { callback(image); }
 
 
+
           if (email && onChainDiplomaHash) { 
             const diplomaLink = `http://localhost:5173/?hash=${onChainDiplomaHash}`;
             
+
             const emailData = {
               recipientEmail: email,
               fullName: `${lastName} ${firstName}`,
@@ -148,13 +150,13 @@ function QrHandling({
             console.warn("No on-chain diploma hash generated. Skipping email sending with proof link.");
           }
 
-          setIsGenerating(false); 
+          setIsGenerating(false);
         },
       }).catch((err) => {
         console.error("QR Generation Error:", err);
         setQrHandlingInitiated(false);
         setEnabledhide(false);
-        setIsGenerating(false); 
+        setIsGenerating(false);
       });
 
     } catch (error) {

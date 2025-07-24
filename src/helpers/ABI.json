@@ -77,12 +77,14 @@
           "internalType": "address",
           "name": "issuer",
           "type": "address"
+
         },
         {
           "indexed": false,
           "internalType": "string",
           "name": "name",
           "type": "string"
+
         }
       ],
       "name": "IssuerAdded",
@@ -226,6 +228,7 @@
           "internalType": "string",
           "name": "name",
           "type": "string"
+
         }
       ],
       "name": "addIssuer",
@@ -298,6 +301,7 @@
       "type": "function"
     },
     {
+
       "inputs": [],
       "name": "getAllIssuers",
       "outputs": [
@@ -422,6 +426,7 @@
       "type": "function"
     },
     {
+
       "inputs": [
         {
           "internalType": "bytes32",
@@ -678,6 +683,7 @@
             }
           ],
           "internalType": "struct Verif2.DiplomaInput[]",
+
           "name": "diplomaList",
           "type": "tuple[]"
         }
@@ -769,7 +775,9 @@
               "type": "bool"
             }
           ],
+
           "internalType": "struct Verif2.Diploma",
+
           "name": "",
           "type": "tuple"
         }

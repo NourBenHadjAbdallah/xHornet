@@ -2,7 +2,9 @@ import { ethers } from "ethers";
 import { connectWalletWithPrivateKey } from './wallet.js';
 import CONTRACT_ABI from './ABI.json';
 
+
 const CONTRACT_ADDRESS = "0x7Dba8948a8d6E5CABF907fA4cAd498d4e49d069d";
+
 
 export const connectToContract = async (privateKey) => {
   try {
@@ -25,7 +27,6 @@ export const connectToContract = async (privateKey) => {
     throw error;
   }
 };
-
 
 export const issueDiploma = async (contractConnection, Diploma) => {
   try {
