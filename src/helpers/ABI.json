@@ -77,6 +77,14 @@
           "internalType": "address",
           "name": "issuer",
           "type": "address"
+
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+
         }
       ],
       "name": "IssuerAdded",
@@ -215,6 +223,12 @@
           "internalType": "address",
           "name": "issuer",
           "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+
         }
       ],
       "name": "addIssuer",
@@ -287,6 +301,132 @@
       "type": "function"
     },
     {
+
+      "inputs": [],
+      "name": "getAllIssuers",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "diplomaCount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "issuerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "bool",
+              "name": "isActive",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct Verif2.IssuerInfo[]",
+          "name": "infos",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "issuer",
+          "type": "address"
+        }
+      ],
+      "name": "getIssuerInfo",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "diplomaCount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "issuerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "bool",
+              "name": "isActive",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct Verif2.IssuerInfo",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getMyDiplomaCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getMyIssuerInfo",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "diplomaCount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "issuerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "bool",
+              "name": "isActive",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct Verif2.IssuerInfo",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+
       "inputs": [
         {
           "internalType": "bytes32",
@@ -398,6 +538,59 @@
     {
       "inputs": [
         {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "issuerAddresses",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "issuers",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "diplomaCount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "issuerAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "isActive",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "address",
           "name": "issuer",
           "type": "address"
@@ -489,7 +682,8 @@
               "type": "string"
             }
           ],
-          "internalType": "struct Verif.DiplomaInput[]",
+          "internalType": "struct Verif2.DiplomaInput[]",
+
           "name": "diplomaList",
           "type": "tuple[]"
         }
@@ -581,7 +775,9 @@
               "type": "bool"
             }
           ],
-          "internalType": "struct Verif.Diploma",
+
+          "internalType": "struct Verif2.Diploma",
+
           "name": "",
           "type": "tuple"
         }

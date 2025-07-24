@@ -33,6 +33,7 @@ function QrHandling({
     academicFullYear,
   } = formData;
 
+
   async function createFolder() { if (ipc) ipc.send("createFolder", id, speciality, Diploma, academicFullYear, false); }
   async function writeLog() { if (ipc) ipc.send("logFile", id, Diploma, academicFullYear, checkedDuplicata); }
 
@@ -41,7 +42,6 @@ function QrHandling({
       const contractConnection = await connectToContract(PRIVATE_KEY);
       const diplomaDataForHash = {
         fullName: `${lastName} ${firstName}`,
-        studentId: `${id}`,
         degree: `${Diploma}`,
         specialty: `${speciality}`,
         mention: `${mention}`,
@@ -88,6 +88,7 @@ function QrHandling({
       createFolder();
       writeLog();
 
+
       const xmlsFR = generateQrXml({
         diplomaType: Diploma,
         fullName: `${lastName} ${firstName}`,
@@ -113,17 +114,16 @@ function QrHandling({
           if (callback) { callback(image); }
 
 
-          if (email && onChainDiplomaHash) {
-            // The diplomaLink now only needs the hash for verification as per your contract
+
+          if (email && onChainDiplomaHash) { 
             const diplomaLink = `http://localhost:5173/?hash=${onChainDiplomaHash}`;
+            
 
             const emailData = {
               recipientEmail: email,
               fullName: `${lastName} ${firstName}`,
               diplomaType: Diploma,
               academicFullYear: academicFullYear,
-              pdfBase64: null,
-              jsonBase64: null,
               diplomaLink: diplomaLink,
             };
 

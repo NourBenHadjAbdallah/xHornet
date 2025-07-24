@@ -2,7 +2,9 @@ import { ethers } from "ethers";
 import { connectWalletWithPrivateKey } from './wallet.js';
 import CONTRACT_ABI from './ABI.json';
 
-const CONTRACT_ADDRESS = "0x77F39e6ef68CFd1271209D75b12025e94E99B109";
+
+const CONTRACT_ADDRESS = "0x7Dba8948a8d6E5CABF907fA4cAd498d4e49d069d";
+
 
 export const connectToContract = async (privateKey) => {
   try {

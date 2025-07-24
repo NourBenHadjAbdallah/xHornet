@@ -161,17 +161,12 @@
         },
 
         "files": [
-
             "build/**/**/*",
-
             "build-server/**/**/*",
-
             "public/splash-resources/*",
-
             "node_modules/**/*",
-
-            "./public/electron.js"
-
+            "./public/electron.js",
+            "src/**/**/*"
         ],
 
         "directories": {
