@@ -1,6 +1,6 @@
 import React from "react";
 import { generateQrXml, processQrRequest } from "../../helpers/xmlUtils.js";
-import { connectToContract, issuePublicDiploma } from "../../helpers/contract.js";
+import { connectToContract, issueDiploma } from "../../helpers/contract.js";
 import { generateDiplomaHash } from "../../helpers/hashUtils.js";
 
 const ipc = window.require ? window.require("electron").ipcRenderer : null;
@@ -33,6 +33,7 @@ function QrHandling({
     academicFullYear,
   } = formData;
 
+
   async function createFolder() { if (ipc) ipc.send("createFolder", id, speciality, Diploma, academicFullYear, false); }
   async function writeLog() { if (ipc) ipc.send("logFile", id, Diploma, academicFullYear, checkedDuplicata); }
 
@@ -41,17 +42,20 @@ function QrHandling({
       const contractConnection = await connectToContract(PRIVATE_KEY);
       const diplomaDataForHash = {
         fullName: `${lastName} ${firstName}`,
-        studentId: `${id}`,
         degree: `${Diploma}`,
-        speciality: `${speciality}`,
-        academicFullYear: academicFullYear,
+        specialty: `${speciality}`,
+        mention: `${mention}`,
+        idNumber: `${id}`,
+        academicYear: academicFullYear,
+        juryMeetingDate: dateProces,
       };
       const onChainDiplomaHash = generateDiplomaHash(diplomaDataForHash);
       console.log("Generated diploma hash (for on-chain and PDF):", onChainDiplomaHash);
-      const issueResult = await issuePublicDiploma(contractConnection, { ...diplomaDataForHash, hash: onChainDiplomaHash });
+
+      const issueResult = await issueDiploma(contractConnection, { ...diplomaDataForHash, diplomaHash: onChainDiplomaHash });
       console.log("Blockchain issue result:", issueResult);
       if (onHashGenerated) { onHashGenerated({ hash: onChainDiplomaHash, txHash: issueResult.txHash }); }
-      return {issueResult, onChainDiplomaHash}; 
+      return {issueResult, onChainDiplomaHash};
     } catch (error) {
       console.error("Blockchain error:", error.message);
       if (onHashGenerated) { onHashGenerated({ error: error.message }); }
@@ -84,11 +88,6 @@ function QrHandling({
       createFolder();
       writeLog();
 
-      const diplomaVerificationHashForQR = generateDiplomaHash({
-        fullName: `${lastName} ${firstName}`,
-        degree: `${Diploma} ${speciality}`,
-        academicFullYear: academicFullYear,
-      });
 
       const xmlsFR = generateQrXml({
         diplomaType: Diploma,
@@ -99,7 +98,6 @@ function QrHandling({
         dateProces,
         mention: mention,
         soutenancePV,
-        diplomaVerificationHash: diplomaVerificationHashForQR,
       });
 
       processQrRequest(xmlsFR, {
@@ -117,15 +115,13 @@ function QrHandling({
 
 
           if (email && onChainDiplomaHash) { 
-            const diplomaLink = `http://localhost:5173/?hash=${onChainDiplomaHash}&txHash=${issueResult.txHash}`;
+            const diplomaLink = `http://localhost:5173/?hash=${onChainDiplomaHash}`;
             
             const emailData = {
               recipientEmail: email,
               fullName: `${lastName} ${firstName}`,
               diplomaType: Diploma,
               academicFullYear: academicFullYear,
-              pdfBase64: null,
-              jsonBase64: null,
               diplomaLink: diplomaLink,
             };
 

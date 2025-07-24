@@ -190,7 +190,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality, isG
   const isActiveFieldsValid = () => {
     const commonFieldsValid = (
         firstName.trim() !== "" && lastName.trim() !== "" && id.trim() !== "" &&
-        naissance.trim() !== "" && lieu.trim() !== "" && email.trim() !== "" && // Added email validation
+        naissance.trim() !== "" && lieu.trim() !== "" && email.trim() !== "" && 
         LastYear.trim() !== "" && Year.trim().length === 4 && formData.Diploma.trim() !== ""
       );
       if (!commonFieldsValid) return false;
@@ -364,7 +364,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality, isG
                     lastName, 
                     firstName, 
                     lieu, 
-                    email, // Pass email to QrHandling
+                    email,
                     checkedDuplicata 
                 }}
                 metadata={diplomaMetadata}
@@ -373,7 +373,7 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality, isG
                 setQrHandlingInitiated={setQrGenerated}
                 isGenerating={isGenerating}
                 setIsGenerating={setIsGenerating}
-                email={email} // Pass email to QrHandling
+                email={email} 
               />
               <PdfHandler
                 formData={{ 

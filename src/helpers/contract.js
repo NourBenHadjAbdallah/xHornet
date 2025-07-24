@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import { connectWalletWithPrivateKey } from './wallet.js';
 import CONTRACT_ABI from './ABI.json';
 
-const CONTRACT_ADDRESS = "0xe7b42603bBE591A51c3849C25Dce35744CC7b1f0";
+const CONTRACT_ADDRESS = "0x7Dba8948a8d6E5CABF907fA4cAd498d4e49d069d";
 
 export const connectToContract = async (privateKey) => {
   try {
@@ -18,7 +18,7 @@ export const connectToContract = async (privateKey) => {
       walletConnection.signer
     );
 
-    console.log("📜 Connected to DiplomaRegistry contract");
+    console.log("📜 Connected to Verif contract");
     return { contract, walletConnection };
   } catch (error) {
     console.error("❌ Failed to connect to contract:", error.message);
@@ -26,26 +26,31 @@ export const connectToContract = async (privateKey) => {
   }
 };
 
-export const issuePublicDiploma = async (contractConnection, diplomaData) => {
+
+export const issueDiploma = async (contractConnection, Diploma) => {
   try {
     const {
       fullName,
-      studentId,
-      speciality, 
       degree,
-      academicFullYear,
-      hash: diplomaHash
-    } = diplomaData;
+      specialty,
+      mention,
+      idNumber,
+      academicYear,
+      juryMeetingDate,
+      diplomaHash
+    } = Diploma;
 
-    console.log("📋 Diploma data:", { fullName, degree, speciality, academicFullYear, diplomaHash }); // Corrected
+    console.log("📋 Diploma data:", { fullName, degree, specialty, mention, idNumber, academicYear, juryMeetingDate, diplomaHash });
 
-    const tx = await contractConnection.contract.issuePublicDiploma(
+    const tx = await contractConnection.contract.issueDiploma(
       diplomaHash,
       fullName,
-      studentId,
       degree,
-      speciality, // Corrected
-      academicFullYear
+      specialty,
+      mention,
+      idNumber,
+      academicYear,
+      juryMeetingDate
     );
 
     const receipt = await tx.wait();
@@ -70,9 +75,30 @@ export const issuePublicDiploma = async (contractConnection, diplomaData) => {
   }
 };
 
-export const registerBatchRoot = async (contractConnection, merkleRoot) => {
+export const storeDiplomasBatch = async (contractConnection, diplomaInputs) => {
   try {
-    const tx = await contractConnection.contract.registerBatchRoot(merkleRoot);
+    // Validate input is an array of objects with correct fields
+    if (!Array.isArray(diplomaInputs) || diplomaInputs.length === 0) {
+      throw new Error("Diploma batch must be a non-empty array.");
+    }
+    // Each object must have all required fields
+    for (const d of diplomaInputs) {
+      if (
+        !d.diplomaHash ||
+        !d.fullName ||
+        !d.degree ||
+        !d.specialty ||
+        !d.mention ||
+        !d.idNumber ||
+        !d.academicYear ||
+        !d.juryMeetingDate
+      ) {
+        throw new Error("Each diploma input must have all required fields.");
+      }
+    }
+
+    // Call the contract with the array
+    const tx = await contractConnection.contract.storeDiplomasBatch(diplomaInputs);
     const receipt = await tx.wait();
     return {
       success: true,
@@ -83,11 +109,11 @@ export const registerBatchRoot = async (contractConnection, merkleRoot) => {
   } catch (error) {
     if(error.code === 'CALL_EXCEPTION') {
       console.error("💥 Contract reverted:", error.reason || "Unknown reason");
-     if (error.reason?.includes("DiplomaRegistry: Batch root already registered")){
-        console.error("🚫 This Merkle Root has already been registered.");
+      if (error.reason?.includes("Duplicate diploma")){
+        console.error("🚫 One or more diplomas in the batch already exist.");
       }
     }
-    console.error("❌ Failed to register Merkle root:", error.message);
+    console.error("❌ Failed to batch issue diplomas:", error.message);
     throw error;
   }
 };

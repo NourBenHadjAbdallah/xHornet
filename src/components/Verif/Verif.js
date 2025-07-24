@@ -13,8 +13,7 @@ const openExternalLink = (url) => {
 
 const VerificationDisplay = ({ metadata }) => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
-
-  const diplomaWebAppUrl = "http://127.0.0.1:5173/";
+  const diplomaApiBaseUrl = "http://localhost:5174"; // Removed trailing slash as URLSearchParams will add '?'
 
   const togglePanel = () => {
     setIsPanelOpen(!isPanelOpen);
@@ -36,13 +35,20 @@ const VerificationDisplay = ({ metadata }) => {
   const hasStudentData = studentId || studentFullName || degreeName || academicFullYear;
 
   const panelWidth = 350;
+  
+  // Corrected: Construct the dynamicDiplomaUrl to match the format in Formulaire.js
   const dynamicDiplomaUrl = onChainHash
-    ? `${diplomaWebAppUrl}?hash=${onChainHash}${txHash ? `&txHash=${txHash}` : ''}`
-    : diplomaWebAppUrl;
+    ? `${diplomaApiBaseUrl}/?` + new URLSearchParams({ hash: onChainHash }).toString() //
+    : ''; // If no hash, perhaps link to a general info page or disable the link
 
   const handleDiplomaLinkClick = (event) => {
     event.preventDefault();
-    openExternalLink(dynamicDiplomaUrl);
+    if (dynamicDiplomaUrl) { // Only open if a valid URL is constructed
+      openExternalLink(dynamicDiplomaUrl);
+    } else {
+      console.warn("No diploma hash available to construct verification link.");
+      alert("No diploma hash available for verification.");
+    }
   };
   
   const handleEtherscanLinkClick = (event) => {
@@ -145,14 +151,18 @@ const VerificationDisplay = ({ metadata }) => {
                   <h5>🔗 Lien Web</h5>
                   <div className="info-item">
                     <p className="info-label">Page du Diplôme:</p>
-                    <a
-                      href={dynamicDiplomaUrl}
-                      onClick={handleDiplomaLinkClick} // Use the custom click handler
-                      className="info-link etherscan-link"
-                    >
-                      Voir le diplôme en ligne
-                      <ExternalLink size={16} style={{ marginLeft: '8px' }}/>
-                    </a>
+                    {onChainHash ? ( // Only show the link if onChainHash is available
+                      <a
+                        href={dynamicDiplomaUrl}
+                        onClick={handleDiplomaLinkClick} // Use the custom click handler
+                        className="info-link etherscan-link"
+                      >
+                        Voir le diplôme en ligne
+                        <ExternalLink size={16} style={{ marginLeft: '8px' }}/>
+                      </a>
+                    ) : (
+                      <p className="info-value">Hash du diplôme non disponible pour le lien.</p>
+                    )}
                   </div>
                 </div>
                 

@@ -136,103 +136,12 @@ ipcMain.on(
             message: "Impossible d'enregistrer le pdf" + err,
           };
           dialog.showMessageBox(messageBoxOptions);
-        } else {
-          let displayPath = `C:\\${academicFullYear}\\${Diploma}\\`;
-          if (Diploma !== "Architecture") {
-            displayPath += `${specialty}\\`;
-            if (checkLot === true) {
-                displayPath += `lot\\`;
-            }
-          }
-          displayPath += `${id}\\${pdfName}`;
-
-          const messageBoxOptions = {
-            type: "info",
-            message: "PDF enregistré sous le nom : " + displayPath,
-          };
-          dialog.showMessageBox(messageBoxOptions);
-          /*const { screen } = require("electron");
-          const primaryDisplay = screen.getPrimaryDisplay();
-          const { width, height } = primaryDisplay.workAreaSize;
-          const win = new PDFWindow({
-            width: width,
-            height: height,
-          });
-            win.loadURL(
-                `file://${fullPath}` // Use the fullPath for opening the PDF
-            );*/
         }
       }
     );
   }
 );
 
-ipcMain.on("downloadProof", (event, id, specialty, Diploma, checkLot, academicFullYear, proofDataString) => {
-
-    let proofFileName = id + ".json";
-    let fullFilePath;
-
-    if (Diploma !== "Architecture") {
-        if (checkLot === true) {
-            // Path for non-Architecture diplomas in a lot
-            fullFilePath = path.join(
-                __dirname, 
-                "../../../../../../",
-                academicFullYear,
-                Diploma,
-                specialty,
-                "lot",
-                id,
-                proofFileName
-            );
-        } else {
-
-            fullFilePath = path.join(
-                __dirname,
-                "../../../../../../",
-                academicFullYear,
-                Diploma,
-                specialty,
-                "lot",
-                id,
-                proofFileName
-            );
-        }
-    } else {
-
-        fullFilePath = path.join(
-            __dirname,
-            "../../../../../../",
-            academicFullYear,
-            "Architecture_Proofs", 
-            id,
-            proofFileName
-        );
-        // console.log("Handling Architecture diploma proof. Saving to:", fullFilePath);
-    }
-
-    // Get the directory name from the full file path
-    const fullDirPath = path.dirname(fullFilePath);
-
-    fs.mkdir(fullDirPath, { recursive: true }, (err) => {
-        if (err) {
-            console.error(`Failed to create directory ${fullDirPath}:`, err);
-            event.sender.send('downloadProofError', `Failed to create directory: ${err.message}`);
-            return;
-        }
-
-        // Now that the directory exists, write the file with the proofDataString
-        fs.writeFile(fullFilePath, proofDataString, (writeErr) => {
-            if (writeErr) {
-                console.error(`Failed to save proof file ${fullFilePath}:`, writeErr);
-                event.sender.send('downloadProofError', `Failed to save proof file: ${writeErr.message}`);
-            } else {
-                console.log(`Proof file saved: ${fullFilePath}`);
-                event.sender.send('downloadProofSuccess', `Proof for ${id} saved successfully.`);
-            }
-        });
-    });
-});
 
 ipcMain.on("downloadImage", (event, id,specialty, Diploma, academicFullYear, blobURL) => {
   
