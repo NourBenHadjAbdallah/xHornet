@@ -33,7 +33,7 @@ jobs:
         run: npm install
 
       - name: Build Electron Executable
-        run: npm run electron-pack
+        run: CI='' npm run electron-pack
           
           
       - name: Determine Next Version
