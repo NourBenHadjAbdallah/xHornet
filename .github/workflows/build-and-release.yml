@@ -18,7 +18,7 @@ on:
 
 permissions:
   contents: write
-  
+
 jobs:
   build:
     runs-on: windows-latest
@@ -75,18 +75,12 @@ jobs:
 
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
-      - name: Create GitHub Release
+      - name: Create GitHub Release and Upload EXE
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.versioning.outputs.new_version }}
           name: Release ${{ steps.versioning.outputs.new_version }}
           generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload EXE to Release
-        uses: softprops/action-gh-release@v1
-        with:
           files: |
             dist/*.exe
         env:
