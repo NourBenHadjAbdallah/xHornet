@@ -9,9 +9,8 @@ const fs = require("fs");
 const fsPromises = require("fs").promises;
 
 const { dialog } = require("electron");
-//console.log(app.getPath('userData'));
-//const PDFWindow = require("electron-pdf-window");
-const { sendEmail } = require(path.join(__dirname, '../src/components/EmailHandler')); //
+
+const { sendEmail } = require(path.join(__dirname, '../src/components/EmailHandler')); 
 
 let mainWindow;
 
@@ -47,9 +46,6 @@ function createWindow() {
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
 
-
-
-
   mainWindow.webContents.openDevTools();
   var splash = new BrowserWindow({
     width: 950,
@@ -70,18 +66,14 @@ function createWindow() {
   }, 5000);
 }
 
-
-
-
 function createFolder(id, specialty, Diploma, academicFullYear, checkLot) {
-  // Base directory, assuming electron.js is in src/main/electron.js
-  // and the target root is 6 levels up.
+  // Use consistent path handling for both dev and build
   const baseDir = path.join(__dirname, '../../../../../../');
   let targetPath;
 
   if (Diploma !== "Architecture") {
     if (checkLot === true) {
-      targetPath = path.join(baseDir, academicFullYear, Diploma, specialty, "lot", id);
+      targetPath = path.join(baseDir, academicFullYear, Diploma, specialty, "lot");
     } else {
       targetPath = path.join(baseDir, academicFullYear, Diploma, specialty, id);
     }
@@ -92,7 +84,7 @@ function createFolder(id, specialty, Diploma, academicFullYear, checkLot) {
   try {
     // Use recursive: true to create all non-existent directories in the path
     fs.mkdirSync(targetPath, { recursive: true });
-    // console.log(`Folder created successfully at: ${targetPath}`);
+    console.log(`Folder created successfully at: ${targetPath}`);
   } catch (err) {
     const messageBoxOptions = {
       type: "error",
@@ -102,139 +94,119 @@ function createFolder(id, specialty, Diploma, academicFullYear, checkLot) {
     dialog.showMessageBox(messageBoxOptions);
   }
 }
-ipcMain.on("createFolder", (event, id, specialty,Diploma, academicFullYear, checkLot) => {
 
-  createFolder(id, specialty,Diploma, academicFullYear, checkLot);
+ipcMain.on("createFolder", (event, id, specialty, Diploma, academicFullYear, checkLot) => {
+  createFolder(id, specialty, Diploma, academicFullYear, checkLot);
 });
 
 ipcMain.on(
   "downloadPDF",
-  (event, id,specialty, Diploma, checkedDuplicata, academicFullYear, blobURL, checkLot) => {
+  (event, id, specialty, Diploma, checkedDuplicata, academicFullYear, blobURL, checkLot) => {
 
     let pdfName = checkedDuplicata ? id + "_duplicata.pdf" : id + ".pdf";
-    let fullPath; // Use a variable for the full path
+    let fullPath;
+    let displayPath;
 
+    // Use consistent path handling
     const baseDir = path.join(__dirname, '../../../../../../');
 
     if (Diploma !== "Architecture") {
       if (checkLot === true) {
-        fullPath = path.join(baseDir, academicFullYear, Diploma, specialty, "lot", id, pdfName);
+        fullPath = path.join(baseDir, academicFullYear, Diploma, specialty, "lot", pdfName);
+        displayPath = path.join("C:", academicFullYear, Diploma, specialty, "lot", pdfName);
       } else {
-        fullPath = path.join(baseDir, academicFullYear, Diploma, specialty, id, pdfName); 
+        fullPath = path.join(baseDir, academicFullYear, Diploma, specialty, id, pdfName);
+        displayPath = path.join("C:", academicFullYear, Diploma, specialty, id, pdfName);
       }
     } else {
-      fullPath = path.join(baseDir, academicFullYear, Diploma,specialty, id, pdfName); 
+      fullPath = path.join(baseDir, academicFullYear, Diploma, id, pdfName);
+      displayPath = path.join("C:", academicFullYear, Diploma, id, pdfName);
+    }
+
+    // Ensure directory exists before writing file
+    const dirPath = path.dirname(fullPath);
+    try {
+      fs.mkdirSync(dirPath, { recursive: true });
+    } catch (err) {
+      console.error('Error creating directory:', err);
     }
 
     fs.writeFile(
-      fullPath, 
+      fullPath,
       blobURL,
       function (err) {
         if (err) {
           const messageBoxOptions = {
             type: "error",
-            message: "Impossible d'enregistrer le pdf" + err,
+            message: "Impossible d'enregistrer le pdf: " + err.message,
           };
           dialog.showMessageBox(messageBoxOptions);
+        } else {
+          // Show success message (similar to old code behavior)
+          if (checkLot === false) {
+            const messageBoxOptions = {
+              type: "info",
+              message: "PDF enregistré sous le nom : " + displayPath,
+            };
+            dialog.showMessageBox(messageBoxOptions);
+          }
         }
       }
     );
   }
 );
 
-
-ipcMain.on("downloadImage", (event, id,specialty, Diploma, academicFullYear, blobURL) => {
-  
-
-
+ipcMain.on("downloadImage", (event, id, specialty, Diploma, academicFullYear, blobURL) => {
   var base64Data = blobURL.replace(/^data:image\/png;base64,/, "");
-  Diploma!=="Architecture"?fs.writeFile(
-    "../../../../../../" +
-      academicFullYear +
-      "/" +
-      Diploma +
-      "/" +
-      specialty +
-      "/" +
-      id +
-      "/" +
-      id +
-      ".png",
+  
+  // Use consistent path handling
+  const baseDir = path.join(__dirname, '../../../../../../');
+  let fullPath;
+  let displayPath;
+
+  if (Diploma !== "Architecture") {
+    fullPath = path.join(baseDir, academicFullYear, Diploma, specialty, id, id + ".png");
+    displayPath = path.join("C:", academicFullYear, Diploma, specialty, id, id + ".png");
+  } else {
+    fullPath = path.join(baseDir, academicFullYear, Diploma, id, id + ".png");
+    displayPath = path.join("C:", academicFullYear, Diploma, id, id + ".png");
+  }
+
+  // Ensure directory exists before writing file
+  const dirPath = path.dirname(fullPath);
+  try {
+    fs.mkdirSync(dirPath, { recursive: true });
+  } catch (err) {
+    console.error('Error creating directory:', err);
+  }
+
+  fs.writeFile(
+    fullPath,
     base64Data,
     "base64",
     function (err) {
       if (err) {
         const messageBoxOptions = {
           type: "error",
-          //title: "Error in Main process",
-          message: "Impossible d'enregistrer l'image " + err,
+          message: "Impossible d'enregistrer l'image: " + err.message,
         };
         dialog.showMessageBox(messageBoxOptions);
       } else {
         const messageBoxOptions = {
           type: "info",
-          message:
-            "Image enregistrée sous le nom :  " +
-            "C:\\" +
-            academicFullYear +
-            "\\" +
-            Diploma + 
-            "\\" +
-            specialty + 
-            "\\" +
-            id +
-            "\\" +
-            id +
-            ".png",
+          message: "Image enregistrée sous le nom : " + displayPath.replace(/\//g, "\\"),
         };
         dialog.showMessageBox(messageBoxOptions);
       }
     }
-  ):fs.writeFile(
-    "../../../../../../" +
-      academicFullYear +
-      "/" +
-      Diploma +
-      "/" +
-      id +
-      "/" +
-      id +
-      ".png",
-    base64Data,
-    "base64",
-    function (err) {
-      if (err) {
-        const messageBoxOptions = {
-          type: "error",
-          //title: "Error in Main process",
-          message: "Impossible d'enregistrer l'image " + err,
-        };
-        dialog.showMessageBox(messageBoxOptions);
-      } else {
-        const messageBoxOptions = {
-          type: "info",
-          message:
-            "Image enregistrée sous le nom :  " +
-            "C:\\" +
-            academicFullYear +
-            "\\" +
-            Diploma + 
-            "\\" +
-            id +
-            "\\" +
-            id +
-            ".png",
-        };
-        dialog.showMessageBox(messageBoxOptions);
-      }
-    }
-  )
+  );
 });
+
 //Log File
 ipcMain.on(
   "logFile",
   (event, id, Diploma, academicFullYear, checkedDuplicata) => {
-    let diplome = Diploma==="architecture"?"architecture":Diploma;
+    let diplome = Diploma === "Architecture" ? "architecture" : Diploma;
     let duplicata = checkedDuplicata ? "Diplôme duplicata" : "Diplôme original";
 
     let ts = Date.now();
@@ -247,13 +219,14 @@ ipcMain.on(
     let second = date_ob.getSeconds();
 
     let dataWrite = `${year}-${month}-${date} ${hour}:${minute}:${second}#admin#${diplome}#${id}#${duplicata}`;
-    let pathLogFile = "../../../../../../" + academicFullYear + "/logs.bat"
+    
+    // Use consistent path handling
+    const baseDir = path.join(__dirname, '../../../../../../');
+    let pathLogFile = path.join(baseDir, academicFullYear, "logs.bat");
 
     try {
       // Read the contents of the file
-      if (
-        fs.existsSync(pathLogFile)
-      ) {
+      if (fs.existsSync(pathLogFile)) {
         fs.readFile(
           pathLogFile,
           "utf8",
@@ -266,7 +239,6 @@ ipcMain.on(
             // Add a line number to the last line
             const lineNumber = lines.length;
             const newLastLine = `${lineNumber}. ${dataWrite}`;
-            // event.reply("logFile", lineNumber);
 
             fs.appendFileSync(
               pathLogFile,
@@ -275,25 +247,26 @@ ipcMain.on(
           }
         );
       } else {
+        // Ensure directory exists
+        fs.mkdirSync(path.dirname(pathLogFile), { recursive: true });
         fs.appendFileSync(
           pathLogFile,
           "1. " + dataWrite + "\n"
         );
-        // event.reply("logFile", 1);
       }
 
     } catch (err) {
-      console.error(err);
+      console.error('Log file error:', err);
     }
- 
-   
-
   }
 );
 
 ipcMain.on('send-email-ipc', async (event, emailData) => {
   try {
-    const result = await sendEmail(emailData); //
+    if (!sendEmail) {
+      throw new Error('EmailHandler not available');
+    }
+    const result = await sendEmail(emailData);
     event.reply('send-email-ipc-reply', result);
   } catch (error) {
     console.error('Error sending email from main process:', error);
