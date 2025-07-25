@@ -36,7 +36,8 @@ jobs:
         run: |
           $env:CI = ''
           npm run electron-pack
-          
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }} 
           
       - name: Determine Next Version
         id: versioning
