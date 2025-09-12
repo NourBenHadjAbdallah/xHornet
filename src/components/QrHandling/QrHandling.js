@@ -2,7 +2,7 @@ import React from "react";
 import { generateQrXml, processQrRequest } from "../../helpers/xmlUtils.js";
 import { connectToContract, issueDiploma } from "../../helpers/contract.js";
 import { generateDiplomaHash } from "../../helpers/hashUtils.js";
-
+import configData from "../../helpers/config.json";
 const ipc = window.require ? window.require("electron").ipcRenderer : null;
 const PRIVATE_KEY = "79fe3fa380c3b5e244c5cba7a6ef0f503f9adf9e486b562eb804ddc761a16c7d";
 
@@ -48,6 +48,7 @@ function QrHandling({
         idNumber: `${id}`,
         academicYear: academicFullYear,
         juryMeetingDate: dateProces,
+        directorName: configData.DIRECTEUR
       };
       const onChainDiplomaHash = generateDiplomaHash(diplomaDataForHash);
       console.log("Generated diploma hash (for on-chain and PDF):", onChainDiplomaHash);

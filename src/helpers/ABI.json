@@ -30,12 +30,24 @@
       "inputs": [
         {
           "indexed": true,
-          "internalType": "bytes32",
-          "name": "diplomaHash",
-          "type": "bytes32"
+          "internalType": "address",
+          "name": "issuer",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "diplomaCount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
         }
       ],
-      "name": "DiplomaInvalidated",
+      "name": "DiplomaCountUpdated",
       "type": "event"
     },
     {
@@ -64,6 +76,24 @@
           "internalType": "string",
           "name": "degree",
           "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "specialty",
+          "type": "string"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "issuer",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
         }
       ],
       "name": "DiplomaIssued",
@@ -77,14 +107,24 @@
           "internalType": "address",
           "name": "issuer",
           "type": "address"
-
         },
         {
           "indexed": false,
           "internalType": "string",
           "name": "name",
           "type": "string"
-
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "packageId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
         }
       ],
       "name": "IssuerAdded",
@@ -98,9 +138,77 @@
           "internalType": "address",
           "name": "issuer",
           "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
         }
       ],
       "name": "IssuerRemoved",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "issuer",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "additionalLimit",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "newTotalLimit",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "LimitExtended",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "issuer",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "packageId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "diplomaLimit",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "PackageAssigned",
       "type": "event"
     },
     {
@@ -180,6 +288,19 @@
     },
     {
       "inputs": [],
+      "name": "BASIC",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "DEFAULT_ADMIN_ROLE",
       "outputs": [
         {
@@ -218,6 +339,32 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "PREMIUM",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "STANDARD",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "address",
@@ -228,7 +375,11 @@
           "internalType": "string",
           "name": "name",
           "type": "string"
-
+        },
+        {
+          "internalType": "uint256",
+          "name": "packageId",
+          "type": "uint256"
         }
       ],
       "name": "addIssuer",
@@ -282,6 +433,11 @@
           "type": "string"
         },
         {
+          "internalType": "string",
+          "name": "directorName",
+          "type": "string"
+        },
+        {
           "internalType": "uint256",
           "name": "issueDate",
           "type": "uint256"
@@ -301,8 +457,36 @@
       "type": "function"
     },
     {
-
-      "inputs": [],
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "issuer",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "additionalLimit",
+          "type": "uint256"
+        }
+      ],
+      "name": "extendIssuerLimit",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "start",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "count",
+          "type": "uint256"
+        }
+      ],
       "name": "getAllIssuers",
       "outputs": [
         {
@@ -314,23 +498,103 @@
             },
             {
               "internalType": "uint256",
-              "name": "diplomaCount",
+              "name": "packageId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "packageUsed",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "customLimitAdjustment",
               "type": "uint256"
             },
             {
               "internalType": "address",
               "name": "issuerAddress",
               "type": "address"
-            },
-            {
-              "internalType": "bool",
-              "name": "isActive",
-              "type": "bool"
             }
           ],
-          "internalType": "struct Verif2.IssuerInfo[]",
-          "name": "infos",
+          "internalType": "struct Verif5.IssuerInfo[]",
+          "name": "",
           "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getIssuerAtIndex",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getIssuerCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "issuer",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getIssuerDiplomaAtIndex",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "issuer",
+          "type": "address"
+        }
+      ],
+      "name": "getIssuerDiplomaCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -355,21 +619,26 @@
             },
             {
               "internalType": "uint256",
-              "name": "diplomaCount",
+              "name": "packageId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "packageUsed",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "customLimitAdjustment",
               "type": "uint256"
             },
             {
               "internalType": "address",
               "name": "issuerAddress",
               "type": "address"
-            },
-            {
-              "internalType": "bool",
-              "name": "isActive",
-              "type": "bool"
             }
           ],
-          "internalType": "struct Verif2.IssuerInfo",
+          "internalType": "struct Verif5.IssuerInfo",
           "name": "",
           "type": "tuple"
         }
@@ -379,20 +648,7 @@
     },
     {
       "inputs": [],
-      "name": "getMyDiplomaCount",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getMyIssuerInfo",
+      "name": "getMyInfo",
       "outputs": [
         {
           "components": [
@@ -403,21 +659,26 @@
             },
             {
               "internalType": "uint256",
-              "name": "diplomaCount",
+              "name": "packageId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "packageUsed",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "customLimitAdjustment",
               "type": "uint256"
             },
             {
               "internalType": "address",
               "name": "issuerAddress",
               "type": "address"
-            },
-            {
-              "internalType": "bool",
-              "name": "isActive",
-              "type": "bool"
             }
           ],
-          "internalType": "struct Verif2.IssuerInfo",
+          "internalType": "struct Verif5.IssuerInfo",
           "name": "",
           "type": "tuple"
         }
@@ -426,7 +687,29 @@
       "type": "function"
     },
     {
-
+      "inputs": [],
+      "name": "getMyPackageStatus",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "used",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "limit",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "remaining",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "bytes32",
@@ -528,6 +811,11 @@
           "internalType": "string",
           "name": "juryMeetingDate",
           "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "directorName",
+          "type": "string"
         }
       ],
       "name": "issueDiploma",
@@ -560,6 +848,30 @@
           "internalType": "address",
           "name": "",
           "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "issuerDiplomas",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
         }
       ],
       "name": "issuers",
@@ -571,18 +883,23 @@
         },
         {
           "internalType": "uint256",
-          "name": "diplomaCount",
+          "name": "packageId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "packageUsed",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "customLimitAdjustment",
           "type": "uint256"
         },
         {
           "internalType": "address",
           "name": "issuerAddress",
           "type": "address"
-        },
-        {
-          "internalType": "bool",
-          "name": "isActive",
-          "type": "bool"
         }
       ],
       "stateMutability": "view",
@@ -680,10 +997,14 @@
               "internalType": "string",
               "name": "juryMeetingDate",
               "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "directorName",
+              "type": "string"
             }
           ],
-          "internalType": "struct Verif2.DiplomaInput[]",
-
+          "internalType": "struct Verif5.DiplomaInput[]",
           "name": "diplomaList",
           "type": "tuple[]"
         }
@@ -710,6 +1031,24 @@
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "issuer",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "newPackageId",
+          "type": "uint256"
+        }
+      ],
+      "name": "upgradeIssuerPackage",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -760,6 +1099,11 @@
               "type": "string"
             },
             {
+              "internalType": "string",
+              "name": "directorName",
+              "type": "string"
+            },
+            {
               "internalType": "uint256",
               "name": "issueDate",
               "type": "uint256"
@@ -775,9 +1119,7 @@
               "type": "bool"
             }
           ],
-
-          "internalType": "struct Verif2.Diploma",
-
+          "internalType": "struct Verif5.Diploma",
           "name": "",
           "type": "tuple"
         }

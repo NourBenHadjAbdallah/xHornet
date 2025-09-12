@@ -11,7 +11,7 @@ export const diplomaOptions = {
 // Centralized specialty options with both French and English labels
 export const specialtyOptions = {
   "1": [
-    { value: "10", labelFR: "Génie Logiciel et système d'information", labelEN: "Information Systems and Software Engineering" },
+    { value: "10", labelFR: "Génie Logiciel et Système D'information", labelEN: "Information Systems and Software Engineering" },
     { value: "11", labelFR: "Business Intelligence", labelEN: "Business Intelligence" },
   ],
   "3": [

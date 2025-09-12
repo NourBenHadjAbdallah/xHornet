@@ -3,7 +3,9 @@ import { connectWalletWithPrivateKey } from './wallet.js';
 import CONTRACT_ABI from './ABI.json';
 
 
-const CONTRACT_ADDRESS = "0x7Dba8948a8d6E5CABF907fA4cAd498d4e49d069d";
+//const CONTRACT_ADDRESS = "0x7Dba8948a8d6E5CABF907fA4cAd498d4e49d069d";
+//const CONTRACT_ADDRESS = "0x732aDB73A60D3f2dED37517b34b599787d640f53";
+const CONTRACT_ADDRESS = "0xe97a27B2ec34852333dD96a8927a11fE2d4ce912";
 
 
 export const connectToContract = async (privateKey) => {
@@ -38,10 +40,11 @@ export const issueDiploma = async (contractConnection, Diploma) => {
       idNumber,
       academicYear,
       juryMeetingDate,
+      directorName,
       diplomaHash
     } = Diploma;
 
-    console.log("📋 Diploma data:", { fullName, degree, specialty, mention, idNumber, academicYear, juryMeetingDate, diplomaHash });
+    console.log("📋 Diploma data:", { fullName, degree, specialty, mention, idNumber, academicYear, juryMeetingDate, diplomaHash, directorName  });
 
     const tx = await contractConnection.contract.issueDiploma(
       diplomaHash,
@@ -51,7 +54,8 @@ export const issueDiploma = async (contractConnection, Diploma) => {
       mention,
       idNumber,
       academicYear,
-      juryMeetingDate
+      juryMeetingDate,
+      directorName
     );
 
     const receipt = await tx.wait();
@@ -92,7 +96,8 @@ export const storeDiplomasBatch = async (contractConnection, diplomaInputs) => {
         !d.mention ||
         !d.idNumber ||
         !d.academicYear ||
-        !d.juryMeetingDate
+        !d.juryMeetingDate ||
+        !d.directorName
       ) {
         throw new Error("Each diploma input must have all required fields.");
       }

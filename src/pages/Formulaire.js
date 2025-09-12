@@ -12,6 +12,7 @@ import {
   toMonthNameFrenchPV
 } from "../helpers/diplomaUtils.js";
 import { connectToContract, storeDiplomasBatch } from "../helpers/contract.js";
+import configData from "../helpers/config.json";
 
 const _ = require("lodash");
 const ipc = window.require('electron').ipcRenderer;
@@ -30,6 +31,7 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
   const diplomaConfig = diplomaOptions[selectedDegree];
   const diplomaName = diplomaConfig.value;
   const diplomaFR = diplomaName;
+  const directorName = configData.DIRECTEUR;
 
   useImperativeHandle(ref, () => ({
     createFolder(rows) {
@@ -77,8 +79,8 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
           const juryMeetingDate = result.PV;
 
           const diplomaHash = ethers.utils.solidityKeccak256(
-            ['string', 'string', 'string', 'string', 'string', 'string', 'string'],
-            [fullName, degree, specialty, mention, idNumber, academicYear, juryMeetingDate]
+            ['string', 'string', 'string', 'string', 'string', 'string', 'string', 'string'],
+            [fullName, degree, specialty, mention, idNumber, academicYear, juryMeetingDate, directorName]
           );
 
           return {
@@ -90,6 +92,7 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
             idNumber: idNumber,
             academicYear: academicYear,
             juryMeetingDate: juryMeetingDate,
+            directorName: directorName,
           };
         });
 
@@ -114,10 +117,11 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
               idNumber: result.CIN,
               academicYear: academicFullYear,
               juryMeetingDate: result.PV,
+              directorName: directorName,
             };
 
             const currentDiplomaHash = ethers.utils.solidityKeccak256(
-              ['string', 'string', 'string', 'string', 'string', 'string', 'string'],
+              ['string', 'string', 'string', 'string', 'string', 'string', 'string', 'string'],
               [
                   currentDiplomaDataForHash.fullName,
                   currentDiplomaDataForHash.degree,
@@ -125,7 +129,8 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
                   currentDiplomaDataForHash.mention,
                   currentDiplomaDataForHash.idNumber,
                   currentDiplomaDataForHash.academicYear,
-                  currentDiplomaDataForHash.juryMeetingDate
+                  currentDiplomaDataForHash.juryMeetingDate,
+                  currentDiplomaDataForHash.directorName
               ]
             );
 
