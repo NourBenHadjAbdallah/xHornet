@@ -3,6 +3,8 @@ import '../css/main-interface.css';
 import { modifyPdfTemplate } from "../helpers/pdfUtils.js";
 import { generateQrXml, processQrRequest } from "../helpers/xmlUtils.js";
 import {
+  specialtiesMapping,
+  mentionOptions,
   diplomaOptions,
   specialtiesMappingEN,
   mentionMappingEN,
@@ -39,8 +41,7 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
     }
   }));
 
-  const getSpecialtyEN = (input) => specialtiesMappingEN[input] || '';
-  const getMentionEN = (input) => mentionMappingEN[input.toLowerCase()] || '';
+  const getSpecialty = (input) => specialtiesMapping[input] || '';
 
   const modifyPdf = async (rows) => {
     if (!rows || !Array.isArray(rows) || rows.length === 0) {
@@ -51,7 +52,7 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
 
     const diplomeFileName = getDiplomaFile(speciality, selectedDegree);
     const url = `./assets/${diplomeFileName}`;
-    const specialtyName = getSpecialtyEN(speciality);
+    const specialtyName = getSpecialty(speciality);
     const chunkSize = 20; // Reduce chunk size for blockchain transactions
     const arrayOfSelected = _.chunk(rows, chunkSize); // Chunk for both PDF and blockchain
 
@@ -73,7 +74,7 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
           const fullName = result.Prénom_NOM;
           const degree = diplomaName;
           const specialty = specialtyName;
-          const mention = result.Mention ? getMentionEN(result.Mention) : '';
+          const mention = result.Mention;
           const idNumber = result.CIN;
           const academicYear = academicFullYear;
           const juryMeetingDate = result.PV;
@@ -107,7 +108,7 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
             const result = Object.fromEntries(
               Object.entries(item).map(([key, v]) => [key.split(' ').join('_'), v])
             );
-            const mention = result.Mention ? getMentionEN(result.Mention) : '';
+            const mention = result.Mention;
 
             const currentDiplomaDataForHash = {
               fullName: result.Prénom_NOM,
