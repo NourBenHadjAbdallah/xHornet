@@ -1,9 +1,12 @@
 import React from "react";
 import { generateQrXml, processQrRequest } from "../../helpers/xmlUtils.js";
 import { connectToContract, issueDiploma } from "../../helpers/contract.js";
-import { generateDiplomaHash } from "../../helpers/hashUtils.js";
+import { generateDiplomaHash, encrypt, toBytes32Hex } from "../../helpers/hashUtils.js";
 import configData from "../../helpers/config.json";
+import dotenv from 'dotenv';
 const ipc = window.require ? window.require("electron").ipcRenderer : null;
+
+dotenv.config();
 const PRIVATE_KEY = "79fe3fa380c3b5e244c5cba7a6ef0f503f9adf9e486b562eb804ddc761a16c7d";
 
 function QrHandling({
@@ -33,14 +36,13 @@ function QrHandling({
     academicFullYear,
   } = formData;
 
-
   async function createFolder() { if (ipc) ipc.send("createFolder", id, speciality, Diploma, academicFullYear, false); }
   async function writeLog() { if (ipc) ipc.send("logFile", id, Diploma, academicFullYear, checkedDuplicata); }
 
   const storeDiplomaToBlockchain = async () => {
     try {
       const contractConnection = await connectToContract(PRIVATE_KEY);
-      const diplomaDataForHash = {
+      const plainDiplomaData = {
         fullName: `${lastName} ${firstName}`,
         degree: `${Diploma}`,
         specialty: `${speciality}`,
@@ -50,13 +52,34 @@ function QrHandling({
         juryMeetingDate: dateProces,
         directorName: configData.DIRECTEUR
       };
-      const onChainDiplomaHash = generateDiplomaHash(diplomaDataForHash);
+
+      // Generate hash using encrypted fullName and idNumber
+      const onChainDiplomaHash = generateDiplomaHash(plainDiplomaData);
       console.log("Generated diploma hash (for on-chain and PDF):", onChainDiplomaHash);
 
-      const issueResult = await issueDiploma(contractConnection, { ...diplomaDataForHash, diplomaHash: onChainDiplomaHash });
+      // Prepare data for contract: encrypt fullName and idNumber, keep others as strings
+      const diplomaDataForContract = {
+        diplomaHash: onChainDiplomaHash,
+        fullName: toBytes32Hex(encrypt(plainDiplomaData.fullName)),
+        degree: plainDiplomaData.degree,
+        specialty: plainDiplomaData.specialty,
+        mention: plainDiplomaData.mention,
+        idNumber: toBytes32Hex(encrypt(plainDiplomaData.idNumber)),
+        academicYear: plainDiplomaData.academicYear,
+        juryMeetingDate: plainDiplomaData.juryMeetingDate,
+        directorName: plainDiplomaData.directorName
+      };
+
+      console.log("Data for contract (sample):", {
+        fullName: diplomaDataForContract.fullName.substring(0, 20) + "...",
+        idNumber: diplomaDataForContract.idNumber.substring(0, 20) + "...",
+      });
+
+      // Issue with prepared data
+      const issueResult = await issueDiploma(contractConnection, diplomaDataForContract);
       console.log("Blockchain issue result:", issueResult);
       if (onHashGenerated) { onHashGenerated({ hash: onChainDiplomaHash, txHash: issueResult.txHash }); }
-      return {issueResult, onChainDiplomaHash};
+      return { issueResult, onChainDiplomaHash, plainDiplomaData };
     } catch (error) {
       console.error("Blockchain error:", error.message);
       if (onHashGenerated) { onHashGenerated({ error: error.message }); }
@@ -75,11 +98,13 @@ function QrHandling({
     try {
       let onChainDiplomaHash = null;
       let issueResult = null;
+      let plainDiplomaData = null;
 
       if (!checkedDuplicata) {
         const blockchainResponse = await storeDiplomaToBlockchain();
         issueResult = blockchainResponse.issueResult;
         onChainDiplomaHash = blockchainResponse.onChainDiplomaHash;
+        plainDiplomaData = blockchainResponse.plainDiplomaData;
       } else {
         if (onHashGenerated) {
           onHashGenerated({ hash: null, txHash: null });
@@ -88,7 +113,6 @@ function QrHandling({
 
       createFolder();
       writeLog();
-
 
       const xmlsFR = generateQrXml({
         diplomaType: Diploma,
@@ -114,17 +138,14 @@ function QrHandling({
           if (parentcallback) { parentcallback(image, false, id, speciality, Diploma, academicFullYear); }
           if (callback) { callback(image); }
 
-
-
-          if (email && onChainDiplomaHash) { 
+          if (email && onChainDiplomaHash && plainDiplomaData) { 
             const diplomaLink = `http://localhost:5173/?hash=${onChainDiplomaHash}`;
             
-
             const emailData = {
               recipientEmail: email,
-              fullName: `${lastName} ${firstName}`,
-              diplomaType: Diploma,
-              academicFullYear: academicFullYear,
+              fullName: plainDiplomaData.fullName,
+              diplomaType: plainDiplomaData.degree,
+              academicFullYear: plainDiplomaData.academicYear,
               diplomaLink: diplomaLink,
             };
 
