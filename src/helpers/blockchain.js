@@ -19,7 +19,7 @@ const amoyRpcUrl = `https://polygon-amoy.infura.io/v3/${infuraApiKey}`;
     throw error;
   }
 };*/
-/*export const connectProvider = () => {
+export const connectProvider = () => {
   try {
     const provider = new ethers.providers.JsonRpcProvider(bscTestnetRpcUrl);
     console.log("🔗 Provider initialized for BSC Testnet");
@@ -28,16 +28,7 @@ const amoyRpcUrl = `https://polygon-amoy.infura.io/v3/${infuraApiKey}`;
     console.error("❌ Provider initialization failed:", error.message);
     throw error;
   }
-};*/
-export const connectProvider = () => {
-  try {
-    const provider = new ethers.providers.JsonRpcProvider(amoyRpcUrl);
-    console.log("🔗 Provider initialized for Polygon Amoy Testnet");
-    return provider;
-  } catch (error) {
-    console.error("❌ Provider initialization failed:", error.message);
-    throw error;
-  }
 };
+
 
 
