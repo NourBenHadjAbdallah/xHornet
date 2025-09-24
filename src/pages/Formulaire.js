@@ -1,251 +1,329 @@
-import { useState, forwardRef, useImperativeHandle } from "react";
-   import '../css/main-interface.css';
-   import { modifyPdfTemplate } from "../helpers/pdfUtils.js";
-   import { generateQrXml, processQrRequest } from "../helpers/xmlUtils.js";
-   import {
-     specialtiesMapping,
-     mentionOptions,
-     diplomaOptions,
-     specialtiesMappingEN,
-     mentionMappingEN,
-     getDiplomaFile,
-     getAcademicYears,
-     formatDateFrench,
-     toMonthNameFrenchPV
-   } from "../helpers/diplomaUtils.js";
-   import { connectToContract, storeDiplomasBatch } from "../helpers/contract.js";
-   import { encrypt, toBytes32Hex, generateDiplomaHash } from "../helpers/hashUtils.js";
-   import configData from "../helpers/config.json";
+import React, { useState, forwardRef, useImperativeHandle } from "react";
+import '../css/main-interface.css';
+import { modifyPdfTemplate } from "../helpers/pdfUtils.js";
+import { generateQrXml, processQrRequest } from "../helpers/xmlUtils.js";
+import {
+  specialtiesMapping,
+  mentionOptions,
+  diplomaOptions,
+  specialtiesMappingEN,
+  mentionMappingEN,
+  getDiplomaFile,
+  getAcademicYears,
+  formatDateFrench,
+  toMonthNameFrenchPV
+} from "../helpers/diplomaUtils.js";
+import { connectToContract, storeDiplomasBatch } from "../helpers/contract.js";
+import { encrypt, toBytes32Hex, generateDiplomaHash } from "../helpers/hashUtils.js";
+import { checkBalanceForTx } from "../helpers/LimitAlert.js";
+import { Modal, Box, Typography, Button } from "@material-ui/core";
+import configData from "../helpers/config.json";
 
-   const _ = require("lodash");
-   const ipc = window.require('electron').ipcRenderer;
-   const ethers = require("ethers");
+const _ = require("lodash");
+const ipc = window.require('electron').ipcRenderer;
+const ethers = require("ethers");
 
-   const PRIVATE_KEY = "79fe3fa380c3b5e244c5cba7a6ef0f503f9adf9e486b562eb804ddc761a16c7d";
+const PRIVATE_KEY = "79fe3fa380c3b5e244c5cba7a6ef0f503f9adf9e486b562eb804ddc761a16c7d";
 
-   const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }, ref) => {
+const modalStyle = {
+  margin: 'auto',
+  width: '100%',
+  maxWidth: 400,
+  bgcolor: '#F44336',
+  border: '2px solid #F44336',
+  color: 'white',
+  p: 2,
+  textAlign: 'center'
+};
 
-     const [setError] = useState(false);
+const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }, ref) => {
+  const [errorModalOpen, setErrorModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [error, setError] = useState(false);
 
-     const currentDate = new Date();
-     const formattedDate = formatDateFrench(currentDate);
-     const academicFullYear = getAcademicYears();
+  const currentDate = new Date();
+  const formattedDate = formatDateFrench(currentDate);
+  const academicFullYear = getAcademicYears();
 
-     const diplomaConfig = diplomaOptions[selectedDegree];
-     const diplomaName = diplomaConfig.value;
-     const diplomaFR = diplomaName;
-     const directorName = configData.DIRECTEUR;
+  const diplomaConfig = diplomaOptions[selectedDegree];
+  const diplomaName = diplomaConfig.value;
+  const diplomaFR = diplomaName;
+  const directorName = configData.DIRECTEUR;
 
-     useImperativeHandle(ref, () => ({
-       createFolder(rows) {
-         modifyPdf(rows);
-       }
-     }));
+  useImperativeHandle(ref, () => ({
+    createFolder(rows) {
+      modifyPdf(rows);
+    }
+  }));
 
-     const getSpecialty = (input) => specialtiesMapping[input] || '';
+  const getSpecialty = (input) => specialtiesMapping[input] || '';
 
-     const modifyPdf = async (rows) => {
-       if (!rows || !Array.isArray(rows) || rows.length === 0) {
-         setError(true);
-         onError(true);
-         return;
-       }
+  const modifyPdf = async (rows) => {
+    if (!rows || !Array.isArray(rows) || rows.length === 0) {
+      setError(true);
+      onError(true);
+      setErrorMessage("Aucune donnée valide fournie pour le traitement.");
+      setErrorModalOpen(true);
+      return;
+    }
 
-       const diplomeFileName = getDiplomaFile(speciality, selectedDegree);
-       const url = `./assets/${diplomeFileName}`;
-       const specialtyName = getSpecialty(speciality);
-       const chunkSize = 50; // Reduce chunk size for blockchain transactions
-       const arrayOfSelected = _.chunk(rows, chunkSize); // Chunk for both PDF and blockchain
+    const diplomeFileName = getDiplomaFile(speciality, selectedDegree);
+    const url = `./assets/${diplomeFileName}`;
+    const specialtyName = getSpecialty(speciality);
+    const chunkSize = 50;
+    const arrayOfSelected = _.chunk(rows, chunkSize);
 
-       let processedCount = 0;
-       const totalItems = rows.length;
+    let processedCount = 0;
+    const totalItems = rows.length;
 
-       let contractConnection = null;
-       let allBatchTxHashes = []; // To store transaction hashes of all batches
+    let contractConnection = null;
+    let allBatchTxHashes = [];
 
-       try {
-         contractConnection = await connectToContract(PRIVATE_KEY);
+    try {
+      contractConnection = await connectToContract(PRIVATE_KEY);
 
-         for (const batch of arrayOfSelected) {
-           const diplomasForBatchIssuance = batch.map(item => {
-             const result = Object.fromEntries(
-               Object.entries(item).map(([key, v]) => [key.split(' ').join('_'), v])
-             );
+      if (arrayOfSelected.length > 0) {
+        const sampleBatch = arrayOfSelected[0].map(item => {
+          const result = Object.fromEntries(
+            Object.entries(item).map(([key, v]) => [key.split(' ').join('_'), v])
+          );
 
-             const fullName = result.Prénom_NOM;
-             const degree = diplomaName;
-             const specialty = specialtyName;
-             const mention = result.Mention;
-             const idNumber = result.CIN;
-             const academicYear = academicFullYear;
-             const juryMeetingDate = result.PV;
+          const fullName = result.Prénom_NOM;
+          const degree = diplomaName;
+          const specialty = specialtyName;
+          const mention = result.Mention;
+          const idNumber = result.CIN;
+          const academicYear = academicFullYear;
+          const juryMeetingDate = result.PV;
 
-             // Encrypt fullName and idNumber for storage
-             const encryptedFullName = toBytes32Hex(encrypt(fullName));
-             const encryptedIdNumber = toBytes32Hex(encrypt(idNumber));
+          const encryptedFullName = toBytes32Hex(encrypt(fullName));
+          const encryptedIdNumber = toBytes32Hex(encrypt(idNumber));
 
-             const diplomaHash = generateDiplomaHash({
-               fullName, // Plaintext for hashing
-               degree,
-               specialty,
-               mention,
-               idNumber, // Plaintext for hashing
-               academicYear,
-               juryMeetingDate,
-               directorName
-             });
+          const diplomaHash = generateDiplomaHash({
+            fullName,
+            degree,
+            specialty,
+            mention,
+            idNumber,
+            academicYear,
+            juryMeetingDate,
+            directorName
+          });
 
-             return {
-               diplomaHash: diplomaHash,
-               fullName: encryptedFullName,
-               degree: degree,
-               specialty: specialty,
-               mention: mention,
-               idNumber: encryptedIdNumber,
-               academicYear: academicYear,
-               juryMeetingDate: juryMeetingDate,
-               directorName: directorName,
-             };
-           });
+          return {
+            diplomaHash: diplomaHash,
+            fullName: encryptedFullName,
+            degree: degree,
+            specialty: specialty,
+            mention: mention,
+            idNumber: encryptedIdNumber,
+            academicYear: academicYear,
+            juryMeetingDate: juryMeetingDate,
+            directorName: directorName,
+          };
+        });
+        await checkBalanceForTx(contractConnection, 'storeDiplomasBatch', [sampleBatch]);
+      }
 
-           // Issue diplomas in a smaller batch for the smart contract
-           const batchResult = await storeDiplomasBatch(contractConnection, diplomasForBatchIssuance);
-           allBatchTxHashes.push(batchResult.txHash); // Store the tx hash for each batch
-           console.log("Diplomas Batch Issued on Blockchain:", batchResult);
+      for (const batch of arrayOfSelected) {
+        const diplomasForBatchIssuance = batch.map(item => {
+          const result = Object.fromEntries(
+            Object.entries(item).map(([key, v]) => [key.split(' ').join('_'), v])
+          );
 
-           // Process PDFs and send emails for the current batch
-           for (const item of batch) {
-             try {
-               const result = Object.fromEntries(
-                 Object.entries(item).map(([key, v]) => [key.split(' ').join('_'), v])
-               );
-               const mention = result.Mention;
+          const fullName = result.Prénom_NOM;
+          const degree = diplomaName;
+          const specialty = specialtyName;
+          const mention = result.Mention;
+          const idNumber = result.CIN;
+          const academicYear = academicFullYear;
+          const juryMeetingDate = result.PV;
 
-               const currentDiplomaDataForHash = {
-                 fullName: result.Prénom_NOM,
-                 degree: diplomaName,
-                 specialty: specialtyName,
-                 mention: mention,
-                 idNumber: result.CIN,
-                 academicYear: academicFullYear,
-                 juryMeetingDate: result.PV,
-                 directorName: directorName,
-               };
+          const encryptedFullName = toBytes32Hex(encrypt(fullName));
+          const encryptedIdNumber = toBytes32Hex(encrypt(idNumber));
 
-               const currentDiplomaHash = generateDiplomaHash(currentDiplomaDataForHash);
+          const diplomaHash = generateDiplomaHash({
+            fullName,
+            degree,
+            specialty,
+            mention,
+            idNumber,
+            academicYear,
+            juryMeetingDate,
+            directorName
+          });
 
-               // For the diploma link, we need to associate it with one of the batch transaction hashes.
-               // For simplicity, we'll use the hash of the batch it was included in.
-               const currentBatchTxHash = batchResult.txHash; // Use the tx hash of the current batch
+          return {
+            diplomaHash: diplomaHash,
+            fullName: encryptedFullName,
+            degree: degree,
+            specialty: specialty,
+            mention: mention,
+            idNumber: encryptedIdNumber,
+            academicYear: academicYear,
+            juryMeetingDate: juryMeetingDate,
+            directorName: directorName,
+          };
+        });
 
-               const proofData = {
-                 diplomaData: currentDiplomaDataForHash,
-                 diplomaHash: currentDiplomaHash,
-                 batchTxHash: currentBatchTxHash,
-               };
+        await checkBalanceForTx(contractConnection, 'storeDiplomasBatch', [diplomasForBatchIssuance]);
 
-               const xmls = generateQrXml({
-                 diplomaType: diplomaName,
-                 fullName: result.Prénom_NOM,
-                 id: result.CIN,
-                 specialty: specialtyName,
-                 birthDate: result.date_de_naissance,
-                 academicFullYear,
-                 dateProces: result.PV,
-                 mention,
-               });
+        const batchResult = await storeDiplomasBatch(contractConnection, diplomasForBatchIssuance);
+        allBatchTxHashes.push(batchResult.txHash);
+        console.log("Diplomas Batch Issued on Blockchain:", batchResult);
 
-               const qrImage = await processQrRequest(xmls, {
-                 onError: (msg) => { throw new Error(msg); },
-                 onQrImage: (image) => image,
-               });
+        for (const item of batch) {
+          try {
+            const result = Object.fromEntries(
+              Object.entries(item).map(([key, v]) => [key.split(' ').join('_'), v])
+            );
+            const mention = result.Mention;
 
-               const formData = {
-                 fullName: result.Prénom_NOM,
-                 birthDate: result.date_de_naissance,
-                 birthPlace: result.lieu_de_naissance,
-                 id: result.CIN,
-                 procesVerbal: result.PV,
-                 mention: result.Mention || '',
-                 soutenancePV: result.PV || '',
-                 currentDate: formattedDate,
-               };
+            const currentDiplomaDataForHash = {
+              fullName: result.Prénom_NOM,
+              degree: diplomaName,
+              specialty: specialtyName,
+              mention: mention,
+              idNumber: result.CIN,
+              academicYear: academicFullYear,
+              juryMeetingDate: result.PV,
+              directorName: directorName,
+            };
 
-               const formatDateFunctions = {
-                 formatProcesVerbal: (date) => `${date.slice(0, 2)} ${toMonthNameFrenchPV(date.substring(3, 5))} ${date.slice(6)}`,
-                 formatCurrentDate: (date) => `${date.slice(0, 2)} ${toMonthNameFrenchPV(date.substring(3, 5))} ${date.slice(6)}`,
-                 formatBirthDate: (date) => date,
-               };
+            const currentDiplomaHash = generateDiplomaHash(currentDiplomaDataForHash);
 
-               const pdfBytes = await modifyPdfTemplate({
-                 pdfUrl: url,
-                 qrImageBase64: qrImage,
-                 formData,
-                 diplomaType: diplomaName,
-                 specialtyName,
-                 academicFullYear,
-                 formatDateFunctions,
-               });
-               const pdfBase64 = Buffer.from(pdfBytes).toString('base64');
-               const jsonBase64 = Buffer.from(JSON.stringify(proofData)).toString('base64');
+            const currentBatchTxHash = batchResult.txHash;
 
-               const baseVerificationUrl = 'http://localhost:5174';
-               const diplomaLink = `${baseVerificationUrl}/?` + new URLSearchParams({
-                 hash: proofData.diplomaHash,
-               }).toString();
+            const proofData = {
+              diplomaData: currentDiplomaDataForHash,
+              diplomaHash: currentDiplomaHash,
+              batchTxHash: currentBatchTxHash,
+            };
 
-               if (result.Email) {
-                 const emailData = {
-                   recipientEmail: result.Email,
-                   fullName: result.Prénom_NOM,
-                   diplomaType: diplomaName,
-                   academicFullYear: academicFullYear,
-                   pdfBase64: pdfBase64,
-                   jsonBase64: jsonBase64,
-                   diplomaLink: diplomaLink,
-                 };
+            const xmls = generateQrXml({
+              diplomaType: diplomaName,
+              fullName: result.Prénom_NOM,
+              id: result.CIN,
+              specialty: specialtyName,
+              birthDate: result.date_de_naissance,
+              academicFullYear,
+              dateProces: result.PV,
+              mention,
+            });
 
-                 const emailResult = await new Promise((resolve) => {
-                   ipc.once('send-email-ipc-reply', (event, response) => {
-                     resolve(response);
-                   });
-                   ipc.send('send-email-ipc', emailData);
-                 });
+            const qrImage = await processQrRequest(xmls, {
+              onError: (msg) => { throw new Error(msg); },
+              onQrImage: (image) => image,
+            });
 
-                 if (emailResult.success) {
-                   console.log(`Email sent successfully to ${result.Email}`);
-                 } else {
-                   console.error(`Failed to send email to ${result.Email}:`, emailResult.error);
-                   alert(`Failed to send email to ${result.Email}: ${emailResult.error}`);
-                 }
-               } else {
-                 console.warn(`No email address found for ${result.Prénom_NOM}. Skipping email.`);
-               }
+            const formData = {
+              fullName: result.Prénom_NOM,
+              birthDate: result.date_de_naissance,
+              birthPlace: result.lieu_de_naissance,
+              id: result.CIN,
+              procesVerbal: result.PV,
+              mention: result.Mention || '',
+              soutenancePV: result.PV || '',
+              currentDate: formattedDate,
+            };
 
-               ipc.send('createFolder', result.CIN, specialtyName, diplomaFR, academicFullYear, true);
-               ipc.send("logFile", result.CIN, diplomaFR, academicFullYear, false, true);
-               ipc.send('downloadPDF', result.CIN, specialtyName, diplomaFR, false, academicFullYear, pdfBytes, true);
+            const formatDateFunctions = {
+              formatProcesVerbal: (date) => `${date.slice(0, 2)} ${toMonthNameFrenchPV(date.substring(3, 5))} ${date.slice(6)}`,
+              formatCurrentDate: (date) => `${date.slice(0, 2)} ${toMonthNameFrenchPV(date.substring(3, 5))} ${date.slice(6)}`,
+              formatBirthDate: (date) => date,
+            };
 
-               processedCount += 1;
-               onSubmit((processedCount / totalItems) * 100);
-             } catch (err) {
-               console.error("Error processing item:", err);
-               setError(true);
-               onError(true);
-               // Continue processing other items in the batch or decide to stop the entire process
-             }
-           }
-         }
-       } catch (blockchainError) {
-         console.error("Error with batch blockchain registration:", blockchainError);
-         setError(true);
-         onError(true);
-         alert("Erreur lors de l'enregistrement des diplômes sur la blockchain. Veuillez réessayer.");
-         return;
-       }
-     };
+            const pdfBytes = await modifyPdfTemplate({
+              pdfUrl: url,
+              qrImageBase64: qrImage,
+              formData,
+              diplomaType: diplomaName,
+              specialtyName,
+              academicFullYear,
+              formatDateFunctions,
+            });
+            const pdfBase64 = Buffer.from(pdfBytes).toString('base64');
+            const jsonBase64 = Buffer.from(JSON.stringify(proofData)).toString('base64');
 
-     return null;
-   });
+            const baseVerificationUrl = 'http://localhost:5174';
+            const diplomaLink = `${baseVerificationUrl}/?` + new URLSearchParams({
+              hash: proofData.diplomaHash,
+            }).toString();
 
-   export default Formulaire;
+            if (result.Email) {
+              const emailData = {
+                recipientEmail: result.Email,
+                fullName: result.Prénom_NOM,
+                diplomaType: diplomaName,
+                academicFullYear: academicFullYear,
+                pdfBase64: pdfBase64,
+                jsonBase64: jsonBase64,
+                diplomaLink: diplomaLink,
+              };
+
+              const emailResult = await new Promise((resolve) => {
+                ipc.once('send-email-ipc-reply', (event, response) => {
+                  resolve(response);
+                });
+                ipc.send('send-email-ipc', emailData);
+              });
+
+              if (emailResult.success) {
+                console.log(`Email sent successfully to ${result.Email}`);
+              } else {
+                console.error(`Failed to send email to ${result.Email}:`, emailResult.error);
+                setErrorMessage(`Échec de l'envoi de l'email à ${result.Email}: ${emailResult.error}`);
+                setErrorModalOpen(true);
+              }
+            } else {
+              console.warn(`No email address found for ${result.Prénom_NOM}. Skipping email.`);
+            }
+
+            ipc.send('createFolder', result.CIN, specialtyName, diplomaFR, academicFullYear, true);
+            ipc.send("logFile", result.CIN, diplomaFR, academicFullYear, false, true);
+            ipc.send('downloadPDF', result.CIN, specialtyName, diplomaFR, false, academicFullYear, pdfBytes, true);
+
+            processedCount += 1;
+            onSubmit((processedCount / totalItems) * 100);
+          } catch (err) {
+            console.error("Error processing item:", err);
+            setError(true);
+            onError(true);
+            setErrorMessage(`Erreur de traitement: ${err.message}`);
+            setErrorModalOpen(true);
+          }
+        }
+      }
+    } catch (blockchainError) {
+      console.error("Error with batch blockchain registration:", blockchainError);
+      setError(true);
+      onError(true);
+      setErrorMessage(`Erreur lors de l'enregistrement des diplômes sur la blockchain: ${blockchainError.message}`);
+      setErrorModalOpen(true);
+      return;
+    }
+  };
+
+  return errorModalOpen ? (
+    <Modal
+      open={errorModalOpen}
+      onClose={() => setErrorModalOpen(false)}
+      sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+    >
+      <Box sx={modalStyle}>
+        <Typography variant="h6" component="h2">Erreur</Typography>
+        <Typography component="span">{errorMessage}</Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setErrorModalOpen(false)}
+          sx={{ mt: 2 }}
+        >
+          Fermer
+        </Button>
+      </Box>
+    </Modal>
+  ) : null;
+});
+
+export default Formulaire;

@@ -1,13 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import { generateQrXml, processQrRequest } from "../../helpers/xmlUtils.js";
 import { connectToContract, issueDiploma } from "../../helpers/contract.js";
 import { generateDiplomaHash, encrypt, toBytes32Hex } from "../../helpers/hashUtils.js";
 import configData from "../../helpers/config.json";
+import { Modal, Box, Typography } from "@material-ui/core";
 import dotenv from 'dotenv';
 const ipc = window.require ? window.require("electron").ipcRenderer : null;
 
 dotenv.config();
 const PRIVATE_KEY = "79fe3fa380c3b5e244c5cba7a6ef0f503f9adf9e486b562eb804ddc761a16c7d";
+
+const modalStyle = {
+  margin: 'auto',
+  width: '100%',
+  bgcolor: '#F44336',
+  border: '2px solid #F44336',
+  color: 'white',
+  p: 2
+};
 
 function QrHandling({
   formData,
@@ -21,7 +31,6 @@ function QrHandling({
   isGenerating,
   email
 }) {
-
   const {
     Diploma,
     speciality,
@@ -35,6 +44,9 @@ function QrHandling({
     checkedDuplicata,
     academicFullYear,
   } = formData;
+
+  const [errorModalOpen, setErrorModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   async function createFolder() { if (ipc) ipc.send("createFolder", id, speciality, Diploma, academicFullYear, false); }
   async function writeLog() { if (ipc) ipc.send("logFile", id, Diploma, academicFullYear, checkedDuplicata); }
@@ -53,11 +65,9 @@ function QrHandling({
         directorName: configData.DIRECTEUR
       };
 
-      // Generate hash using encrypted fullName and idNumber
       const onChainDiplomaHash = generateDiplomaHash(plainDiplomaData);
       console.log("Generated diploma hash (for on-chain and PDF):", onChainDiplomaHash);
 
-      // Prepare data for contract: encrypt fullName and idNumber, keep others as strings
       const diplomaDataForContract = {
         diplomaHash: onChainDiplomaHash,
         fullName: toBytes32Hex(encrypt(plainDiplomaData.fullName)),
@@ -75,7 +85,6 @@ function QrHandling({
         idNumber: diplomaDataForContract.idNumber.substring(0, 20) + "...",
       });
 
-      // Issue with prepared data
       const issueResult = await issueDiploma(contractConnection, diplomaDataForContract);
       console.log("Blockchain issue result:", issueResult);
       if (onHashGenerated) { onHashGenerated({ hash: onChainDiplomaHash, txHash: issueResult.txHash }); }
@@ -83,7 +92,8 @@ function QrHandling({
     } catch (error) {
       console.error("Blockchain error:", error.message);
       if (onHashGenerated) { onHashGenerated({ error: error.message }); }
-      alert(`Erreur Blockchain: ${error.message}`);
+      setErrorMessage(`Erreur Blockchain: ${error.message}`);
+      setErrorModalOpen(true);
       throw error;
     }
   };
@@ -128,7 +138,8 @@ function QrHandling({
       processQrRequest(xmlsFR, {
         onSuccess: () => {},
         onError: (msg) => {
-          alert(msg);
+          setErrorMessage(msg);
+          setErrorModalOpen(true);
           setQrHandlingInitiated(false);
           setEnabledhide(false);
           setIsGenerating(false);
@@ -161,7 +172,8 @@ function QrHandling({
                     console.log(`Email sent successfully to ${email}`);
                 } else {
                     console.error(`Failed to send email to ${email}:`, emailResult.error);
-                    alert(`Failed to send email to ${email}: ${emailResult.error}`);
+                    setErrorMessage(`Failed to send email to ${email}: ${emailResult.error}`);
+                    setErrorModalOpen(true);
                 }
             } else {
                 console.warn("IPC not available. Cannot send email.");
@@ -176,6 +188,8 @@ function QrHandling({
         },
       }).catch((err) => {
         console.error("QR Generation Error:", err);
+        setErrorMessage(`Erreur de génération QR: ${err.message}`);
+        setErrorModalOpen(true);
         setQrHandlingInitiated(false);
         setEnabledhide(false);
         setIsGenerating(false);
@@ -183,6 +197,8 @@ function QrHandling({
 
     } catch (error) {
       console.error("Error in generateData after blockchain step:", error);
+      setErrorMessage(`Erreur: ${error.message}`);
+      setErrorModalOpen(true);
       setQrHandlingInitiated(false);
       setEnabledhide(false);
       setIsGenerating(false);
@@ -190,14 +206,25 @@ function QrHandling({
   };
 
   return (
-    <button
-      className={isDisabled ? "cancel-button-disabled" : "cancel-button"}
-      disabled={isDisabled}
-      type="button"
-      onClick={generateData}
-    >
-      Générer QR
-    </button>
+    <>
+      <button
+        className={isDisabled ? "cancel-button-disabled" : "cancel-button"}
+        disabled={isDisabled}
+        type="button"
+        onClick={generateData}
+      >
+        Générer QR
+      </button>
+      <Modal
+        open={errorModalOpen}
+        sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+      >
+        <Box sx={modalStyle}>
+          <Typography variant="h6" component="h2">Erreur</Typography>
+          <Typography component="span">{errorMessage}</Typography>
+        </Box>
+      </Modal>
+    </>
   );
 }
 
