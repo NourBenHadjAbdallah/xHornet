@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import { connectWalletWithPrivateKey } from './wallet.js';
+import { checkBalanceForTx } from './LimitAlert.js';
 import CONTRACT_ABI from './ABI.json';
 
 
@@ -46,7 +47,21 @@ export const issueDiploma = async (contractConnection, Diploma) => {
       diplomaHash
     } = Diploma;
 
-    console.log("📋 Diploma data:", { fullName, degree, specialty, mention, idNumber, academicYear, juryMeetingDate, diplomaHash, directorName  });
+    console.log("📋 Diploma data:", { fullName, degree, specialty, mention, idNumber, academicYear, juryMeetingDate, diplomaHash, directorName });
+
+    // Check balance before issuing
+    const txArgs = [
+      diplomaHash,
+      fullName,
+      degree,
+      specialty,
+      mention,
+      idNumber,
+      academicYear,
+      juryMeetingDate,
+      directorName
+    ];
+    await checkBalanceForTx(contractConnection, 'issueDiploma', txArgs);
 
     const tx = await contractConnection.contract.issueDiploma(
       diplomaHash,
@@ -105,6 +120,9 @@ export const storeDiplomasBatch = async (contractConnection, diplomaInputs) => {
       }
     }
 
+    // Check balance before batch issuance
+    await checkBalanceForTx(contractConnection, 'storeDiplomasBatch', [diplomaInputs]);
+
     // Call the contract with the array
     const tx = await contractConnection.contract.storeDiplomasBatch(diplomaInputs);
     const receipt = await tx.wait();
@@ -115,9 +133,9 @@ export const storeDiplomasBatch = async (contractConnection, diplomaInputs) => {
       gasUsed: receipt.gasUsed.toString(),
     };
   } catch (error) {
-    if(error.code === 'CALL_EXCEPTION') {
+    if (error.code === 'CALL_EXCEPTION') {
       console.error("💥 Contract reverted:", error.reason || "Unknown reason");
-      if (error.reason?.includes("Duplicate diploma")){
+      if (error.reason?.includes("Duplicate diploma")) {
         console.error("🚫 One or more diplomas in the batch already exist.");
       }
     }
@@ -125,4 +143,3 @@ export const storeDiplomasBatch = async (contractConnection, diplomaInputs) => {
     throw error;
   }
 };
-
