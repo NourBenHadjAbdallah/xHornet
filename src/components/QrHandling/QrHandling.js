@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; 
 import { generateQrXml, processQrRequest } from "../../helpers/xmlUtils.js";
-import { connectToContract, issueDiploma } from "../../helpers/contract.js";
+import { connectToContract, issueDiploma, checkDiplomaExists } from "../../helpers/contract.js";
 import { generateDiplomaHash, encrypt, toBytes32Hex } from "../../helpers/hashUtils.js";
 import configData from "../../helpers/config.json";
 import { Modal, Box, Typography } from "@material-ui/core";
@@ -48,6 +48,17 @@ function QrHandling({
   const [errorModalOpen, setErrorModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  // Auto-dismiss modal 
+  useEffect(() => {
+    if (errorModalOpen) {
+      const timer = setTimeout(() => {
+        setErrorModalOpen(false);
+        setErrorMessage('');
+      }, 15000); 
+      return () => clearTimeout(timer); 
+    }
+  }, [errorModalOpen]);
+
   async function createFolder() { if (ipc) ipc.send("createFolder", id, speciality, Diploma, academicFullYear, false); }
   async function writeLog() { if (ipc) ipc.send("logFile", id, Diploma, academicFullYear, checkedDuplicata); }
 
@@ -67,6 +78,12 @@ function QrHandling({
 
       const onChainDiplomaHash = generateDiplomaHash(plainDiplomaData);
       console.log("Generated diploma hash (for on-chain and PDF):", onChainDiplomaHash);
+
+      // Check if diploma already exists
+      const diplomaCheck = await checkDiplomaExists(contractConnection, onChainDiplomaHash);
+      if (diplomaCheck.exists) {
+        throw new Error("Ce diplôme existe déjà sur la blockchain. Veuillez vérifier les données saisies.");
+      }
 
       const diplomaDataForContract = {
         diplomaHash: onChainDiplomaHash,
@@ -90,9 +107,20 @@ function QrHandling({
       if (onHashGenerated) { onHashGenerated({ hash: onChainDiplomaHash, txHash: issueResult.txHash }); }
       return { issueResult, onChainDiplomaHash, plainDiplomaData };
     } catch (error) {
-      console.error("Blockchain error:", error.message);
-      if (onHashGenerated) { onHashGenerated({ error: error.message }); }
-      setErrorMessage(`Erreur Blockchain: ${error.message}`);
+      console.error("Full Blockchain error object:", error);
+      let detailedMessage = error.message;
+      if (error.reason) {
+        detailedMessage = `Erreur Blockchain: ${error.reason}`;
+      } else if (error.error && error.error.data && error.error.data.message) {
+        detailedMessage = `Erreur Blockchain: ${error.error.data.message}`;
+      } else if (error.data) {
+        detailedMessage = `Erreur Blockchain: ${error.data}`;
+      } else if (error.message.includes("Ce diplôme existe déjà")) {
+        detailedMessage = error.message; 
+      }
+      console.error("Blockchain error:", detailedMessage);
+      if (onHashGenerated) { onHashGenerated({ error: detailedMessage }); }
+      setErrorMessage(detailedMessage);
       setErrorModalOpen(true);
       throw error;
     }
