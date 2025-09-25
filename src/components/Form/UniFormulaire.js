@@ -351,39 +351,39 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality, isG
           </div></div>
 
             <div className="buttons-container">
-              <QrHandling
-                callback={handleQRCodeUpdate}
-                onHashGenerated={handleOnChainHashGenerated} 
-                isDisabled={!isActiveFieldsValid() || qrGenerated || isUploading || isGenerating}
-                formData={{ 
-                    ...formData, 
-                    academicYear: getAcademicYearString(LastYear, Year), 
-                    academicFullYear: getAcademicFullYearString(LastYear, Year), 
-                    id, 
-                    naissance, 
-                    lastName, 
-                    firstName, 
-                    lieu, 
-                    email,
-                    checkedDuplicata 
-                }}
-                metadata={diplomaMetadata}
-                parentcallback={parentcallback}
-                setEnabledhide={setEnabledhide}
-                setQrHandlingInitiated={setQrGenerated}
-                isGenerating={isGenerating}
-                setIsGenerating={setIsGenerating}
-                email={email} 
-              />
+            <QrHandling
+              callback={handleQRCodeUpdate}
+              onHashGenerated={handleOnChainHashGenerated} 
+              isDisabled={!isActiveFieldsValid() || qrGenerated || isUploading || isGenerating}
+              formData={{ 
+                ...formData, 
+                academicYear: getAcademicYearString(LastYear, Year), 
+                academicFullYear: getAcademicFullYearString(LastYear, Year), 
+                id: id.trim(), // Trim leading and trailing spaces from id
+                naissance, 
+                lastName: lastName.trim(), // Trim leading and trailing spaces from lastName
+                firstName: firstName.trim(), // Trim leading and trailing spaces from firstName
+                lieu, 
+                email,
+                checkedDuplicata 
+              }}
+              metadata={diplomaMetadata}
+              parentcallback={parentcallback}
+              setEnabledhide={setEnabledhide}
+              setQrHandlingInitiated={setQrGenerated}
+              isGenerating={isGenerating}
+              setIsGenerating={setIsGenerating}
+              email={email} 
+            />
               <PdfHandler
                 formData={{ 
                     ...formData, 
                     academicYear: getAcademicYearString(LastYear, Year), 
                     academicFullYear: getAcademicFullYearString(LastYear, Year), 
-                    id, 
+                    id: id.trim(), 
                     naissance, 
-                    lastName, 
-                    firstName, 
+                    lastName: lastName.trim(),
+                    firstName: firstName.trim(),
                     lieu, 
                     checkedDuplicata 
                 }}

@@ -143,3 +143,32 @@ export const storeDiplomasBatch = async (contractConnection, diplomaInputs) => {
     throw error;
   }
 };
+
+export const checkDiplomaExists = async (contractConnection, diplomaHash) => {
+  try {
+    // Call the verifyDiploma function on the contract
+    const diploma = await contractConnection.contract.verifyDiploma(diplomaHash);
+    return {
+      exists: true,
+      diploma: {
+        fullName: diploma.fullName,
+        degree: diploma.degree,
+        specialty: diploma.specialty,
+        mention: diploma.mention,
+        idNumber: diploma.idNumber,
+        academicYear: diploma.academicYear,
+        juryMeetingDate: diploma.juryMeetingDate,
+        directorName: diploma.directorName,
+        issueDate: diploma.issueDate.toNumber(),
+        signatory: diploma.signatory,
+        isValid: diploma.isValid
+      }
+    };
+  } catch (error) {
+    if (error.reason?.includes("Diploma not found or invalid")) {
+      return { exists: false };
+    }
+    console.error("❌ Failed to check diploma existence:", error.message);
+    throw error;
+  }
+};
