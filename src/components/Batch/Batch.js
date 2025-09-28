@@ -55,12 +55,21 @@ function Batch({ speciality, selectedDegree, onSubmit, onError }) {
       setError(err.message);
       setShow(false);
       setLoading(false);
+      onError(true);
     }
   };
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
     setShowCSVContent(true);
+  };
+
+  const handlePrint = () => {
+    if (selectedRows.length === 0) {
+      setError('Aucune ligne sélectionnée pour le traitement.');
+      return;
+    }
+    onSubmit(selectedRows); // Pass rows to trigger processing
   };
 
   return (
@@ -88,9 +97,9 @@ function Batch({ speciality, selectedDegree, onSubmit, onError }) {
             variant="contained"
             id="csv-button"
             disabled={!show || selectedRows.length === 0}
-            onClick={() => onSubmit(selectedRows)}
+            onClick={handlePrint}
           >
-            Imprimer le contenu
+            Générer les diplômes
           </Button>
         ) : (
           <Button
@@ -112,7 +121,7 @@ function Batch({ speciality, selectedDegree, onSubmit, onError }) {
             setSelectedRows={setSelectedRows}
           />
         ) : (
-          <div>Aucune donnée à afficher</div>
+          <div className="batch-error-message">Aucune donnée à afficher</div>
         )
       )}
     </>

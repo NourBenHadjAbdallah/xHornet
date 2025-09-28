@@ -4,10 +4,8 @@ import {
   Select, Box, Typography, Modal, MenuItem
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
-import applicationLogo from '../../resources/application_logo.png';
 import appLogo from '../../resources/app_logo.png';
 import poweredBy from '../../resources/powered-by-cybots.png';
-import algocodLogo from '../../resources/powered-by.png';
 import MainInterface from '../Main/MainInterface';
 import Formulaire from '../Formulaire';
 import CircularStatic from '../../components/Progressbar';
@@ -222,6 +220,8 @@ function Loading() {
                   selectedDegree={selectedDegree}
                   onSubmit={onSubmit}
                   onError={handleFormError}
+                  progress={progress}
+                  isProcessing={print && !errorForm}
                 />
                 <Formulaire
                   ref={formRef}
