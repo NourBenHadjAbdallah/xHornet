@@ -92,7 +92,7 @@ export const getDiplomaFile = (speciality, selectedDegree, isDuplicata = false) 
 export const getAcademicYears = () => {
   const currentYear = new Date().getFullYear();
   const previousYear = currentYear - 1;
-  return `${currentYear}-${previousYear}`;
+  return `${previousYear}-${currentYear}`;
 };
 
 export const formatDateFrench = (date) => {

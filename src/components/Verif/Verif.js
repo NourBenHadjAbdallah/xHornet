@@ -30,6 +30,7 @@ const VerificationDisplay = ({ metadata }) => {
 
 
   const etherscanBaseTxUrl = "https://sepolia.etherscan.io/tx/";
+  const bscScanerUrl = "https://testnet.bscscan.com/tx/"
 
   const hasCoreVerificationData = onChainHash || txHash;
   const hasStudentData = studentId || studentFullName || degreeName || academicFullYear;
@@ -51,9 +52,9 @@ const VerificationDisplay = ({ metadata }) => {
     }
   };
   
-  const handleEtherscanLinkClick = (event) => {
+  const handleScanLinkClick = (event) => {
     event.preventDefault();
-    openExternalLink(`${etherscanBaseTxUrl}${txHash}`);
+    openExternalLink(`${bscScanerUrl}${txHash}`);
   };
 
   return (
@@ -133,11 +134,11 @@ const VerificationDisplay = ({ metadata }) => {
                       <div className="info-item">
                         <p className="info-label">Transaction Blockchain:</p>
                         <a
-                          href={`${etherscanBaseTxUrl}${txHash}`}
-                          onClick={handleEtherscanLinkClick} // Use the custom click handler
+                          href={`${bscScanerUrl}${txHash}`}
+                          onClick={handleScanLinkClick} // Use the custom click handler
                           className="info-link etherscan-link"
                         >
-                          🔗 Voir sur Etherscan
+                          🔗 Voir sur BscScan
                           <span className="hash-preview">
                             {txHash.substring(0, 6)}...{txHash.substring(txHash.length - 4)}
                           </span>

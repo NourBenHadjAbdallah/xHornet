@@ -67,8 +67,7 @@ function createWindow() {
 }
 
 function createFolder(id, specialty, Diploma, academicFullYear, checkLot) {
-  // Use consistent path handling for both dev and build
-  const baseDir = path.join(__dirname, '../../../../../../');
+  const baseDir = 'C:\\';
   let targetPath;
 
   if (Diploma !== "Architecture") {
@@ -82,16 +81,11 @@ function createFolder(id, specialty, Diploma, academicFullYear, checkLot) {
   }
 
   try {
-    // Use recursive: true to create all non-existent directories in the path
     fs.mkdirSync(targetPath, { recursive: true });
     console.log(`Folder created successfully at: ${targetPath}`);
   } catch (err) {
-    const messageBoxOptions = {
-      type: "error",
-      title: "Error in Main process",
-      message: `Failed to create folder ${targetPath}: ${err.message}`
-    };
-    dialog.showMessageBox(messageBoxOptions);
+    console.error('Folder creation error:', err);
+    dialog.showErrorBox("Error Creating Folder", `Failed to create folder ${targetPath}: ${err.message}. Run as admin if targeting C:\\.`);
   }
 }
 
@@ -105,22 +99,18 @@ ipcMain.on(
 
     let pdfName = checkedDuplicata ? id + "_duplicata.pdf" : id + ".pdf";
     let fullPath;
-    let displayPath;
 
-    // Use consistent path handling
-    const baseDir = path.join(__dirname, '../../../../../../');
+    // Use a consistent base directory for both dev and production
+    const baseDir = 'C:\\';
 
     if (Diploma !== "Architecture") {
       if (checkLot === true) {
         fullPath = path.join(baseDir, academicFullYear, Diploma, specialty, "lot", pdfName);
-        displayPath = path.join("C:", academicFullYear, Diploma, specialty, "lot", pdfName);
       } else {
         fullPath = path.join(baseDir, academicFullYear, Diploma, specialty, id, pdfName);
-        displayPath = path.join("C:", academicFullYear, Diploma, specialty, id, pdfName);
       }
     } else {
       fullPath = path.join(baseDir, academicFullYear, Diploma, id, pdfName);
-      displayPath = path.join("C:", academicFullYear, Diploma, id, pdfName);
     }
 
     // Ensure directory exists before writing file
@@ -129,38 +119,32 @@ ipcMain.on(
       fs.mkdirSync(dirPath, { recursive: true });
     } catch (err) {
       console.error('Error creating directory:', err);
+      dialog.showErrorBox("Directory Error", `Failed to create directory: ${err.message}`);
+      return;
     }
 
-    fs.writeFile(
-      fullPath,
-      blobURL,
-      function (err) {
-        if (err) {
-          const messageBoxOptions = {
-            type: "error",
-            message: "Impossible d'enregistrer le pdf: " + err.message,
-          };
-          dialog.showMessageBox(messageBoxOptions);
-        } else {
-          // Show success message (similar to old code behavior)
-          if (checkLot === false) {
-            const messageBoxOptions = {
-              type: "info",
-              message: "PDF enregistré sous le nom : " + displayPath,
-            };
-            dialog.showMessageBox(messageBoxOptions);
-          }
+    fs.writeFile(fullPath, blobURL, function (err) {
+      if (err) {
+        dialog.showMessageBox({
+          type: "error",
+          message: "Impossible d'enregistrer le pdf: " + err.message,
+        });
+      } else {
+        if (checkLot === false) {
+          dialog.showMessageBox({
+            type: "info",
+            message: "PDF enregistré sous le nom : " + fullPath,
+          });
         }
       }
-    );
+    });
   }
 );
 
 ipcMain.on("downloadImage", (event, id, specialty, Diploma, academicFullYear, blobURL) => {
+  const baseDir = 'C:\\';
   var base64Data = blobURL.replace(/^data:image\/png;base64,/, "");
   
-  // Use consistent path handling
-  const baseDir = path.join(__dirname, '../../../../../../');
   let fullPath;
   let displayPath;
 
@@ -172,7 +156,6 @@ ipcMain.on("downloadImage", (event, id, specialty, Diploma, academicFullYear, bl
     displayPath = path.join("C:", academicFullYear, Diploma, id, id + ".png");
   }
 
-  // Ensure directory exists before writing file
   const dirPath = path.dirname(fullPath);
   try {
     fs.mkdirSync(dirPath, { recursive: true });
@@ -205,7 +188,8 @@ ipcMain.on("downloadImage", (event, id, specialty, Diploma, academicFullYear, bl
 //Log File
 ipcMain.on(
   "logFile",
-  (event, id, Diploma, academicFullYear, checkedDuplicata) => {
+  async (event, id, Diploma, academicFullYear, checkedDuplicata) => {
+    const baseDir = 'C:\\';
     let diplome = Diploma === "Architecture" ? "architecture" : Diploma;
     let duplicata = checkedDuplicata ? "Diplôme duplicata" : "Diplôme original";
 
@@ -220,43 +204,24 @@ ipcMain.on(
 
     let dataWrite = `${year}-${month}-${date} ${hour}:${minute}:${second}#admin#${diplome}#${id}#${duplicata}`;
     
-    // Use consistent path handling
-    const baseDir = path.join(__dirname, '../../../../../../');
     let pathLogFile = path.join(baseDir, academicFullYear, "logs.bat");
 
     try {
-      // Read the contents of the file
+      const dirPath = path.dirname(pathLogFile);
+      fs.mkdirSync(dirPath, { recursive: true });
+
+      let data = '';
+      let lineNumber = 1;
       if (fs.existsSync(pathLogFile)) {
-        fs.readFile(
-          pathLogFile,
-          "utf8",
-          (err, data) => {
-            if (err) throw err;
-
-            // Split the contents into individual lines
-            const lines = data.split("\n");
-
-            // Add a line number to the last line
-            const lineNumber = lines.length;
-            const newLastLine = `${lineNumber}. ${dataWrite}`;
-
-            fs.appendFileSync(
-              pathLogFile,
-              newLastLine + "\n"
-            );
-          }
-        );
-      } else {
-        // Ensure directory exists
-        fs.mkdirSync(path.dirname(pathLogFile), { recursive: true });
-        fs.appendFileSync(
-          pathLogFile,
-          "1. " + dataWrite + "\n"
-        );
+        data = await fsPromises.readFile(pathLogFile, 'utf8');
+        const lines = data.trim().split('\n');
+        lineNumber = lines.length + 1;
       }
-
+      const newLine = `${lineNumber}. ${dataWrite}\n`;
+      await fsPromises.appendFile(pathLogFile, newLine);
     } catch (err) {
       console.error('Log file error:', err);
+      dialog.showErrorBox("Error Logging", `Failed to write log: ${err.message}`);
     }
   }
 );
