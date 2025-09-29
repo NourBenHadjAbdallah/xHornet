@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  Radio, RadioGroup, FormControlLabel, FormControl, FormGroup,FormLabel, Button, Checkbox, OutlinedInput, InputLabel,
+  Radio, RadioGroup, FormControlLabel, FormControl, FormGroup, FormLabel, Button, Checkbox, OutlinedInput, InputLabel,
   Select, Box, Typography, Modal, MenuItem
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import appLogo from '../../resources/app_logo.png';
 import poweredBy from '../../resources/powered-by-cybots.png';
 import MainInterface from '../Main/MainInterface';
 import Formulaire from '../Formulaire';
 import CircularStatic from '../../components/Progressbar';
 import Batch from '../../components/Batch/Batch';
+import Login from '../Login/Login.js';
 import '../Loading/LoadingStyle.css';
 import { specialtyOptions } from '../../helpers/diplomaUtils.js'; 
 
@@ -52,13 +54,15 @@ function Loading() {
   const [errorForm, setErrorForm] = useState(false);
   const [open, setOpen] = useState(true);
   const [onlineStatus, setOnlineStatus] = useState(navigator.onLine);
+  const [logOut, setLogOut] = useState(false); 
+  const [undo, setUndo] = useState(false); 
   const formRef = useRef();
 
   useEffect(() => {
     const handleOnline = () => setOnlineStatus(true);
     const handleOffline = () => setOnlineStatus(false);
     window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    window.removeEventListener('offline', handleOffline);
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
@@ -96,7 +100,6 @@ function Loading() {
     }
   };
 
-
   const handleDiplomaByUnitChange = (e) => {
     setIsDiplomaByUnit(e.target.checked);
     setIsDiplomaByBatch(false);
@@ -110,6 +113,11 @@ function Loading() {
   const handleFormError = (err) => {
     console.log('Form error:', err);
     setErrorForm(err);
+  };
+
+  const handleQuit = () => {
+    setLogOut(true);
+    setUndo(true);
   };
 
   const onConfirm = () => {
@@ -152,144 +160,159 @@ function Loading() {
 
   return (
     <>
-      {print && !errorForm ? (
-        <div id="formulaire">
-          <CircularStatic value={progress} />
-        </div>
-      ) : (print || errorForm) && open ? (
-        <Modal
-          open={open}
-          onClose={() => {
-            setOpen(true);
-            setErrorForm(false);
-            setPrint(false);
-          }}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Box sx={modalStyle}>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-              Erreur lors de la connexion au serveur Tuntrust. Veuillez réessayer.
-            </Typography>
-          </Box>
-        </Modal>
-      ) : null}
-
-      {!clicked ? (
-        <>
-          {error && !isDiplomaByBatch && !clickedBatch && (
-            <Alert variant="filled" severity="error">
-              Vous n'avez pas sélectionner un diplôme
-            </Alert>
-          )}
-          <section className="split left">
-            {(!clickedBatch || progress === 100 || isDiplomaByUnit || selectedDegree === '2') ? (
-              <>
-
-                <img className="application-logo" src={appLogo} alt="App Logo" />
-                <img className="cybots-logo" src={poweredBy} alt="Cybots Logo" />
-              </>
-            ) : (
-              <>
-                {!onlineStatus && (
-                  <Modal
-                    open
-                    disablePortal
-                    disableEnforceFocus
-                    disableAutoFocus
-                    sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                  >
-                    <Box
-                      sx={{
-                        margin: 'auto',
-                        width: '100%',
-                        bgcolor: '#F44336',
-                        border: '2px solid #F44336',
-                        color: 'white',
-                      }}
-                    >
-                      <Typography variant="h6" component="h2">
-                        Problème Connexion
-                      </Typography>
-                      <Typography>Veuillez vérifier votre connexion Internet</Typography>
-                    </Box>
-                  </Modal>
-                )}
-                <Batch
-                  speciality={speciality}
-                  selectedDegree={selectedDegree}
-                  onSubmit={onSubmit}
-                  onError={handleFormError}
-                  progress={progress}
-                  isProcessing={print && !errorForm}
-                />
-                <Formulaire
-                  ref={formRef}
-                  onSubmit={onSubmit}
-                  onError={handleFormError}
-                  selectedDegree={selectedDegree}
-                  speciality={speciality}
-                />
-              </>
-            )}
-          </section>
-          <section className="split right">
-            <div className="loading-section">
-              <h2 className="title-style-loading">Générer Diplôme</h2>
-              <div className="Loading-menu">
-                <FormLabel>Veuillez choisir un diplôme</FormLabel>
-                <FormControl>
-                  <RadioGroup
-                    row
-                    aria-labelledby="radio-buttons-group-label"
-                    name="degree"
-                    id="radio-group"
-                    value={selectedDegree}
-                  >
-                    <FormControlLabel value="1" control={<Radio onClick={handleMenuItemClick} />} label="Licence" />
-                    <FormControlLabel value="3" control={<Radio onClick={handleMenuItemClick} />} label="Ingénieur" />
-                    <FormControlLabel value="2" control={<Radio onClick={handleMenuItemClick} />} label="Architecte" />
-                    <FormControlLabel value="4" control={<Radio onClick={handleMenuItemClick} />} label="Mastère" />
-                    <FormControlLabel value="5" control={<Radio onClick={handleMenuItemClick} />} label="Doctorat" />
-                  </RadioGroup>
-                  {selectedDegree !== '' && selectedDegree !== '2' && (
-                    <FormControl required sx={{ m: 1, minWidth: 120 }} size="small">
-                      <InputLabel id="speciality-select-label">Specialité</InputLabel>
-                      {renderSpecialitySelect()}
-                    </FormControl>
-                  )}
-                  <FormGroup row id="checkbox-group">
-                    <FormControlLabel
-                      control={<Checkbox checked={isDiplomaByUnit} onChange={handleDiplomaByUnitChange} name="diplomaByUnit" />}
-                      label="Diplôme par unité"
-                    />
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          disabled={selectedDegree === '2'}
-                          checked={selectedDegree !== '2' ? isDiplomaByBatch : false}
-                          onChange={handleDiplomaByBatchChange}
-                          name="diplomaByBatch"
-                        />
-                      }
-                      label="Diplôme par lot"
-                    />
-                  </FormGroup>
-                </FormControl>
-              </div>
-              <Button
-                variant="contained"
-                id="loading-confirm-button"
-                onClick={onConfirm}
-                disabled={!((isDiplomaByUnit || (isDiplomaByBatch && selectedDegree !== '2')) && conditionSpeciality)}
-              >
-                Confirmer
-              </Button>
-            </div>
-          </section>
-        </>
+      {undo && logOut ? (
+        <Login />
       ) : (
-        <MainInterface selectedDegree={selectedDegree} speciality={speciality} />
+        <>
+          {print && !errorForm ? (
+            <div id="formulaire">
+              <CircularStatic value={progress} />
+            </div>
+          ) : (print || errorForm) && open ? (
+            <Modal
+              open={open}
+              onClose={() => {
+                setOpen(true);
+                setErrorForm(false);
+                setPrint(false);
+              }}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={modalStyle}>
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                  Erreur lors de la connexion au serveur Tuntrust. Veuillez réessayer.
+                </Typography>
+              </Box>
+            </Modal>
+          ) : null}
+
+          {!clicked ? (
+            <>
+              {error && !isDiplomaByBatch && !clickedBatch && (
+                <Alert variant="filled" severity="error">
+                  Vous n'avez pas sélectionner un diplôme
+                </Alert>
+              )}
+              <section className="split left">
+                {(!clickedBatch || progress === 100 || isDiplomaByUnit || selectedDegree === '2') ? (
+                  <>
+                    <img className="application-logo" src={appLogo} alt="App Logo" />
+                    <img className="cybots-logo" src={poweredBy} alt="Cybots Logo" />
+                  </>
+                ) : (
+                  <>
+                    {!onlineStatus && (
+                      <Modal
+                        open
+                        disablePortal
+                        disableEnforceFocus
+                        disableAutoFocus
+                        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      >
+                        <Box
+                          sx={{
+                            margin: 'auto',
+                            width: '100%',
+                            bgcolor: '#F44336',
+                            border: '2px solid #F44336',
+                            color: 'white',
+                          }}
+                        >
+                          <Typography variant="h6" component="h2">
+                            Problème Connexion
+                          </Typography>
+                          <Typography>Veuillez vérifier votre connexion Internet</Typography>
+                        </Box>
+                      </Modal>
+                    )}
+                    <Batch
+                      speciality={speciality}
+                      selectedDegree={selectedDegree}
+                      onSubmit={onSubmit}
+                      onError={handleFormError}
+                      progress={progress}
+                      isProcessing={print && !errorForm}
+                    />
+                    <Formulaire
+                      ref={formRef}
+                      onSubmit={onSubmit}
+                      onError={handleFormError}
+                      selectedDegree={selectedDegree}
+                      speciality={speciality}
+                    />
+                  </>
+                )}
+              </section>
+              <section className="split right">
+                <div className="loading-section">
+                  <h2 className="title-style-loading">Générer Diplôme</h2>
+                  <div className="Loading-menu">
+                    <FormLabel>Veuillez choisir un diplôme</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        row
+                        aria-labelledby="radio-buttons-group-label"
+                        name="degree"
+                        id="radio-group"
+                        value={selectedDegree}
+                      >
+                        <FormControlLabel value="1" control={<Radio onClick={handleMenuItemClick} />} label="Licence" />
+                        <FormControlLabel value="3" control={<Radio onClick={handleMenuItemClick} />} label="Ingénieur" />
+                        <FormControlLabel value="2" control={<Radio onClick={handleMenuItemClick} />} label="Architecte" />
+                        <FormControlLabel value="4" control={<Radio onClick={handleMenuItemClick} />} label="Mastère" />
+                        <FormControlLabel value="5" control={<Radio onClick={handleMenuItemClick} />} label="Doctorat" />
+                      </RadioGroup>
+                      {selectedDegree !== '' && selectedDegree !== '2' && (
+                        <FormControl required sx={{ m: 1, minWidth: 120 }} size="small">
+                          <InputLabel id="speciality-select-label">Specialité</InputLabel>
+                          {renderSpecialitySelect()}
+                        </FormControl>
+                      )}
+                      <FormGroup row id="checkbox-group">
+                        <FormControlLabel
+                          control={<Checkbox checked={isDiplomaByUnit} onChange={handleDiplomaByUnitChange} name="diplomaByUnit" />}
+                          label="Diplôme par unité"
+                        />
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              disabled={selectedDegree === '2'}
+                              checked={selectedDegree !== '2' ? isDiplomaByBatch : false}
+                              onChange={handleDiplomaByBatchChange}
+                              name="diplomaByBatch"
+                            />
+                          }
+                          label="Diplôme par lot"
+                        />
+                      </FormGroup>
+                    </FormControl>
+                  </div>
+                  <div className="button-group">
+
+                    <Button
+                      id="exit-button"
+                      onClick={handleQuit}
+                    >
+                      <ExitToAppIcon />
+                      Quitter
+                    </Button>
+                    <Button
+                      variant="contained"
+                      id="loading-confirm-button"
+                      onClick={onConfirm}
+                      disabled={!((isDiplomaByUnit || (isDiplomaByBatch && selectedDegree !== '2')) && conditionSpeciality)}
+                    >
+                      Confirmer
+                    </Button>
+                  </div>
+                </div>
+              </section>
+            </>
+          ) : (
+            <MainInterface selectedDegree={selectedDegree} speciality={speciality} />
+          )}
+        </>
       )}
     </>
   );
