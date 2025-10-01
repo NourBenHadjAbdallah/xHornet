@@ -36,7 +36,6 @@ const UniFormulaire = ({ base64, parentcallback, selectedDegree, speciality, isG
   const [transactionHash, setTransactionHash] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [diplomaMetadata, setDiplomaMetadata] = useState({});
-
   const currentYear = new Date().getFullYear().toString();
   const previousYear = (new Date().getFullYear() - 1).toString();
   const [Year, setYear] = useState(currentYear);
