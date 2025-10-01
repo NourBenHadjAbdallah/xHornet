@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"; 
 import { generateQrXml, processQrRequest } from "../../helpers/xmlUtils.js";
 import { connectToContract, issueDiploma, checkDiplomaExists } from "../../helpers/contract.js";
-import { generateDiplomaHash, encrypt, toBytes32Hex } from "../../helpers/hashUtils.js";
+import { generateDiplomaHash, encryptAES, encryptedToBytes } from "../../helpers/hashUtils.js";
 import configData from "../../helpers/config.json";
 import { Modal, Box, Typography } from "@material-ui/core";
 import dotenv from 'dotenv';
@@ -59,8 +59,13 @@ function QrHandling({
     }
   }, [errorModalOpen]);
 
-  async function createFolder() { if (ipc) ipc.send("createFolder", id, speciality, Diploma, academicFullYear, false); }
-  async function writeLog() { if (ipc) ipc.send("logFile", id, Diploma, academicFullYear, checkedDuplicata); }
+  async function createFolder() { 
+    if (ipc) ipc.send("createFolder", id, speciality, Diploma, academicFullYear, false); 
+  }
+  
+  async function writeLog() { 
+    if (ipc) ipc.send("logFile", id, Diploma, academicFullYear, checkedDuplicata); 
+  }
 
   const storeDiplomaToBlockchain = async () => {
     try {
@@ -85,30 +90,44 @@ function QrHandling({
         throw new Error("Ce diplôme existe déjà sur la blockchain. Veuillez vérifier les données saisies.");
       }
 
+      // Encrypt sensitive fields using AES-256-CBC
+      console.log("Encrypting fullName and idNumber with AES-256-CBC");
+      const encryptedFullName = encryptAES(plainDiplomaData.fullName);
+      const encryptedIdNumber = encryptAES(plainDiplomaData.idNumber);
+
+      // Convert to hex bytes for Solidity
+      const fullNameBytes = encryptedToBytes(encryptedFullName);
+      const idNumberBytes = encryptedToBytes(encryptedIdNumber);
+
       const diplomaDataForContract = {
         diplomaHash: onChainDiplomaHash,
-        fullName: toBytes32Hex(encrypt(plainDiplomaData.fullName)),
+        fullName: fullNameBytes,
         degree: plainDiplomaData.degree,
         specialty: plainDiplomaData.specialty,
         mention: plainDiplomaData.mention,
-        idNumber: toBytes32Hex(encrypt(plainDiplomaData.idNumber)),
+        idNumber: idNumberBytes,
         academicYear: plainDiplomaData.academicYear,
         juryMeetingDate: plainDiplomaData.juryMeetingDate,
         directorName: plainDiplomaData.directorName
       };
 
-      console.log("Data for contract (sample):", {
+      console.log("Data for contract (encrypted fields):", {
         fullName: diplomaDataForContract.fullName.substring(0, 20) + "...",
         idNumber: diplomaDataForContract.idNumber.substring(0, 20) + "...",
       });
 
       const issueResult = await issueDiploma(contractConnection, diplomaDataForContract);
       console.log("Blockchain issue result:", issueResult);
-      if (onHashGenerated) { onHashGenerated({ hash: onChainDiplomaHash, txHash: issueResult.txHash }); }
+      
+      if (onHashGenerated) { 
+        onHashGenerated({ hash: onChainDiplomaHash, txHash: issueResult.txHash }); 
+      }
+      
       return { issueResult, onChainDiplomaHash, plainDiplomaData };
     } catch (error) {
       console.error("Full Blockchain error object:", error);
       let detailedMessage = error.message;
+      
       if (error.reason) {
         detailedMessage = `Erreur Blockchain: ${error.reason}`;
       } else if (error.error && error.error.data && error.error.data.message) {
@@ -118,8 +137,13 @@ function QrHandling({
       } else if (error.message.includes("Ce diplôme existe déjà")) {
         detailedMessage = error.message; 
       }
+      
       console.error("Blockchain error:", detailedMessage);
-      if (onHashGenerated) { onHashGenerated({ error: detailedMessage }); }
+      
+      if (onHashGenerated) { 
+        onHashGenerated({ error: detailedMessage }); 
+      }
+      
       setErrorMessage(detailedMessage);
       setErrorModalOpen(true);
       throw error;
@@ -174,8 +198,12 @@ function QrHandling({
         },
         onQrImage: async (image) => {
           setEnabledhide(true);
-          if (parentcallback) { parentcallback(image, false, id, speciality, Diploma, academicFullYear); }
-          if (callback) { callback(image); }
+          if (parentcallback) { 
+            parentcallback(image, false, id, speciality, Diploma, academicFullYear); 
+          }
+          if (callback) { 
+            callback(image); 
+          }
 
           if (email && onChainDiplomaHash && plainDiplomaData) { 
             const diplomaLink = `http://localhost:5173/?hash=${onChainDiplomaHash}`;
@@ -189,22 +217,22 @@ function QrHandling({
             };
 
             if (ipc) {
-                const emailResult = await new Promise((resolve) => {
-                    ipc.once('send-email-ipc-reply', (event, response) => {
-                        resolve(response);
-                    });
-                    ipc.send('send-email-ipc', emailData);
+              const emailResult = await new Promise((resolve) => {
+                ipc.once('send-email-ipc-reply', (event, response) => {
+                  resolve(response);
                 });
+                ipc.send('send-email-ipc', emailData);
+              });
 
-                if (emailResult.success) {
-                    console.log(`Email sent successfully to ${email}`);
-                } else {
-                    console.error(`Failed to send email to ${email}:`, emailResult.error);
-                    setErrorMessage(`Failed to send email to ${email}: ${emailResult.error}`);
-                    setErrorModalOpen(true);
-                }
+              if (emailResult.success) {
+                console.log(`Email sent successfully to ${email}`);
+              } else {
+                console.error(`Failed to send email to ${email}:`, emailResult.error);
+                setErrorMessage(`Failed to send email to ${email}: ${emailResult.error}`);
+                setErrorModalOpen(true);
+              }
             } else {
-                console.warn("IPC not available. Cannot send email.");
+              console.warn("IPC not available. Cannot send email.");
             }
           } else if (!email) {
             console.warn("No email address provided. Skipping email sending.");

@@ -1,4 +1,4 @@
-[
+ [
     {
       "inputs": [],
       "stateMutability": "nonpayable",
@@ -61,15 +61,15 @@
         },
         {
           "indexed": false,
-          "internalType": "string",
+          "internalType": "bytes",
           "name": "fullName",
-          "type": "string"
+          "type": "bytes"
         },
         {
           "indexed": false,
-          "internalType": "string",
+          "internalType": "bytes",
           "name": "idNumber",
-          "type": "string"
+          "type": "bytes"
         },
         {
           "indexed": false,
@@ -398,9 +398,9 @@
       "name": "diplomas",
       "outputs": [
         {
-          "internalType": "string",
+          "internalType": "bytes",
           "name": "fullName",
-          "type": "string"
+          "type": "bytes"
         },
         {
           "internalType": "string",
@@ -418,9 +418,9 @@
           "type": "string"
         },
         {
-          "internalType": "string",
+          "internalType": "bytes",
           "name": "idNumber",
-          "type": "string"
+          "type": "bytes"
         },
         {
           "internalType": "string",
@@ -517,7 +517,7 @@
               "type": "address"
             }
           ],
-          "internalType": "struct Verif5.IssuerInfo[]",
+          "internalType": "struct Verif7.IssuerInfo[]",
           "name": "",
           "type": "tuple[]"
         }
@@ -638,7 +638,7 @@
               "type": "address"
             }
           ],
-          "internalType": "struct Verif5.IssuerInfo",
+          "internalType": "struct Verif7.IssuerInfo",
           "name": "",
           "type": "tuple"
         }
@@ -678,7 +678,7 @@
               "type": "address"
             }
           ],
-          "internalType": "struct Verif5.IssuerInfo",
+          "internalType": "struct Verif7.IssuerInfo",
           "name": "",
           "type": "tuple"
         }
@@ -778,9 +778,9 @@
           "type": "bytes32"
         },
         {
-          "internalType": "string",
+          "internalType": "bytes",
           "name": "fullName",
-          "type": "string"
+          "type": "bytes"
         },
         {
           "internalType": "string",
@@ -798,9 +798,9 @@
           "type": "string"
         },
         {
-          "internalType": "string",
+          "internalType": "bytes",
           "name": "idNumber",
-          "type": "string"
+          "type": "bytes"
         },
         {
           "internalType": "string",
@@ -964,9 +964,9 @@
               "type": "bytes32"
             },
             {
-              "internalType": "string",
+              "internalType": "bytes",
               "name": "fullName",
-              "type": "string"
+              "type": "bytes"
             },
             {
               "internalType": "string",
@@ -984,9 +984,9 @@
               "type": "string"
             },
             {
-              "internalType": "string",
+              "internalType": "bytes",
               "name": "idNumber",
-              "type": "string"
+              "type": "bytes"
             },
             {
               "internalType": "string",
@@ -1004,7 +1004,7 @@
               "type": "string"
             }
           ],
-          "internalType": "struct Verif5.DiplomaInput[]",
+          "internalType": "struct Verif7.DiplomaInput[]",
           "name": "diplomaList",
           "type": "tuple[]"
         }
@@ -1064,9 +1064,9 @@
         {
           "components": [
             {
-              "internalType": "string",
+              "internalType": "bytes",
               "name": "fullName",
-              "type": "string"
+              "type": "bytes"
             },
             {
               "internalType": "string",
@@ -1084,9 +1084,9 @@
               "type": "string"
             },
             {
-              "internalType": "string",
+              "internalType": "bytes",
               "name": "idNumber",
-              "type": "string"
+              "type": "bytes"
             },
             {
               "internalType": "string",
@@ -1119,7 +1119,7 @@
               "type": "bool"
             }
           ],
-          "internalType": "struct Verif5.Diploma",
+          "internalType": "struct Verif7.Diploma",
           "name": "",
           "type": "tuple"
         }

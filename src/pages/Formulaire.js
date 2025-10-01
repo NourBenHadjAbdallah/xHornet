@@ -2,19 +2,9 @@ import React, { useState, forwardRef, useImperativeHandle, useRef } from "react"
 import '../css/main-interface.css';
 import { modifyPdfTemplate } from "../helpers/pdfUtils.js";
 import { generateQrXml, processQrRequest } from "../helpers/xmlUtils.js";
-import {
-  specialtiesMapping,
-  mentionOptions,
-  diplomaOptions,
-  specialtiesMappingEN,
-  mentionMappingEN,
-  getDiplomaFile,
-  getAcademicYears,
-  formatDateFrench,
-  toMonthNameFrenchPV
-} from "../helpers/diplomaUtils.js";
+import { specialtiesMapping, diplomaOptions, getDiplomaFile, getAcademicYears, formatDateFrench, toMonthNameFrenchPV } from "../helpers/diplomaUtils.js";
 import { connectToContract, storeDiplomasBatch, checkDiplomaExists } from "../helpers/contract.js";
-import { encrypt, toBytes32Hex, generateDiplomaHash } from "../helpers/hashUtils.js";
+import { encryptAES, encryptedToBytes, generateDiplomaHash } from "../helpers/hashUtils.js";
 import { checkBalanceForTx } from "../helpers/LimitAlert.js";
 import { Modal, Box, Typography, Button, IconButton } from "@material-ui/core";
 import CloseIcon from '@material-ui/icons/Close';
@@ -185,8 +175,11 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
           const academicYear = academicFullYear;
           const juryMeetingDate = result.PV;
 
-          const encryptedFullName = toBytes32Hex(encrypt(fullName));
-          const encryptedIdNumber = toBytes32Hex(encrypt(idNumber));
+          const encryptedFullName = encryptAES(fullName);
+          const encryptedIdNumber = encryptAES(idNumber);
+
+          const fullNameBytes = encryptedToBytes(encryptedFullName);
+          const idNumberBytes = encryptedToBytes(encryptedIdNumber);
 
           const diplomaHash = generateDiplomaHash({
             fullName,
@@ -201,11 +194,11 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
 
           return {
             diplomaHash: diplomaHash,
-            fullName: encryptedFullName,
+            fullName: fullNameBytes,
             degree: degree,
             specialty: specialty,
             mention: mention,
-            idNumber: encryptedIdNumber,
+            idNumber: idNumberBytes,
             academicYear: academicYear,
             juryMeetingDate: juryMeetingDate,
             directorName: directorName,
@@ -228,8 +221,12 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
           const academicYear = academicFullYear;
           const juryMeetingDate = result.PV;
 
-          const encryptedFullName = toBytes32Hex(encrypt(fullName));
-          const encryptedIdNumber = toBytes32Hex(encrypt(idNumber));
+          const encryptedFullName = encryptAES(fullName);
+          const encryptedIdNumber = encryptAES(idNumber);
+
+          const fullNameBytes = encryptedToBytes(encryptedFullName);
+          const idNumberBytes = encryptedToBytes(encryptedIdNumber);
+
 
           const diplomaHash = generateDiplomaHash({
             fullName,
@@ -244,11 +241,11 @@ const Formulaire = forwardRef(({ onSubmit, onError, selectedDegree, speciality }
 
           return {
             diplomaHash: diplomaHash,
-            fullName: encryptedFullName,
+            fullName: fullNameBytes,
             degree: degree,
             specialty: specialty,
             mention: mention,
-            idNumber: encryptedIdNumber,
+            idNumber: idNumberBytes,
             academicYear: academicYear,
             juryMeetingDate: juryMeetingDate,
             directorName: directorName,

@@ -2,42 +2,80 @@ import { ethers } from "ethers";
 
 const crypto = window.require ? window.require("crypto") : null;
 
-const SECRET_KEY = Buffer.from(process.env.ENCRYPTION_KEY || "blsABb0VaMpiG0YqztZAJRiiZPsiuRON+cuDsXTYG3s=", "base64");
+// This is a 256-bit key (32 bytes = 64 hex characters)
+const AES_KEY = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
-// Validate key length
-if (SECRET_KEY.length !== 32) {
-  throw new Error(`Invalid ENCRYPTION_KEY length: ${SECRET_KEY.length} bytes, expected 32 bytes`);
-}
 
-// Encryption function (AES-256-CBC with random IV, base64 output)
-export const encrypt = (text) => {
-  if (!crypto) throw new Error("Crypto module not available. Ensure running in an Electron environment or provide a browser-compatible crypto library.");
-  const iv = crypto.randomBytes(16);
-  const cipher = crypto.createCipheriv("aes-256-cbc", SECRET_KEY, iv);
-  let encrypted = cipher.update(text, "utf8", "hex");
-  encrypted += cipher.final("hex");
-  const ivHex = iv.toString("hex");
-  return Buffer.from(ivHex + encrypted).toString("base64");
+export const encryptAES = (text) => {
+  if (!crypto) {
+    throw new Error("Crypto module not available. Ensure running in an Electron environment.");
+  }
+  
+  try {
+    // Generate a random IV (Initialization Vector) for each encryption
+    const ivRaw = crypto.randomBytes(16); // 128 bits = 16 bytes
+    const iv = Buffer.from(ivRaw); // Ensure it's a Buffer
+    
+    // Convert hex key to Buffer
+    const key = Buffer.from(AES_KEY, 'hex');
+    
+    if (key.length !== 32) {
+      throw new Error(`Invalid AES key length: expected 32 bytes, got ${key.length}`);
+    }
+    
+    // Create cipher and encrypt
+    const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+    
+    // Get encrypted data as hex, then convert to Buffer
+    let encryptedHex = cipher.update(text, 'utf8', 'hex');
+    encryptedHex += cipher.final('hex');
+    const encrypted = Buffer.from(encryptedHex, 'hex');
+    
+    // Combine IV and ciphertext as raw bytes using hex concatenation
+    const combinedHex = iv.toString('hex') + encrypted.toString('hex');
+    const combined = Buffer.from(combinedHex, 'hex');
+    
+    // Convert to base64
+    const base64Output = combined.toString('base64');
+    
+    return base64Output;
+  } catch (error) {
+    throw new Error(`AES encryption failed: ${error.message}`);
+  }
 };
 
-// Helper to convert encrypted base64 to 32-byte hex for bytes32 (padded or truncated)
-export const toBytes32Hex = (encryptedBase64) => {
-  if (!crypto) throw new Error("Crypto module not available. Ensure running in an Electron environment or provide a browser-compatible crypto library.");
-  const binaryData = Buffer.from(encryptedBase64, 'base64');
-  const hex = `0x${binaryData.toString('hex')}`;
-  if (hex.length > 66) return hex.substring(0, 66); // Truncate to 32 bytes + 0x
-  if (hex.length < 66) return ethers.utils.hexZeroPad(hex, 32); // Pad to 32 bytes
-  return hex;
+
+export const encryptedToBytes = (encryptedBase64) => {
+  try {
+    // Convert base64 to Buffer
+    const buffer = Buffer.from(encryptedBase64, 'base64');
+    
+    // Convert to hex with 0x prefix
+    const hexOutput = "0x" + buffer.toString('hex');
+    
+    return hexOutput;
+  } catch (error) {
+    throw new Error(`Base64 to bytes conversion failed: ${error.message}`);
+  }
 };
 
 export function generateDiplomaHash(diplomaData) {
-  const { fullName, degree, specialty, mention, idNumber, academicYear, juryMeetingDate, directorName } = diplomaData;
+  const { 
+    fullName, 
+    degree, 
+    specialty, 
+    mention, 
+    idNumber, 
+    academicYear, 
+    juryMeetingDate, 
+    directorName 
+  } = diplomaData;
 
-  // Generate hash using plaintext fullName and idNumber
+  // Generate hash using plaintext data
   const diplomaHash = ethers.utils.solidityKeccak256(
     ['string', 'string', 'string', 'string', 'string', 'string', 'string', 'string'],
     [fullName, degree, specialty, mention, idNumber, academicYear, juryMeetingDate, directorName]
   );
-
+  
   return diplomaHash;
 }
