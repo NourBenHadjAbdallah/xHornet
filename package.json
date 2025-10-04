@@ -4,7 +4,7 @@
 
     "version": "1.0.0",
 
-    "description": "QR-Diploma application",
+    "description": "Crypto trading platform",
 
     "main": "./public/electron.js",
 
@@ -40,7 +40,7 @@
 
     },
 
-    "author": "CYBOTS",
+    "author": "Nour Ben Hadj Abdallah",
 
     "devDependencies": {
 
@@ -75,94 +75,41 @@
     "dependencies": {
 
         "@emotion/react": "^11.14.0",
-
         "@emotion/styled": "^11.14.1",
-
         "@mui/icons-material": "^7.3.4",
-
         "@mui/lab": "^7.0.1-beta.18",
-
         "@mui/material": "^7.3.4",
-
         "@pdf-lib/fontkit": "^1.1.1",
-
         "app-module-path": "^2.2.0",
-
         "axios": "^0.18.0",
-
         "copy-image-clipboard": "^2.1.2",
-
         "cors": "^2.8.5",
-
         "crypto": "^1.0.1",
-
         "date-fns": "^2.30.0",
-
         "date-fns-tz": "^2.0.0",
-
         "dotenv": "^16.5.0",
-
-        "downloadjs": "^1.4.7",
-
         "electron-dl": "^3.3.1",
-
         "electron-is-dev": "^1.1.0",
-
-        "electron-pdf-window": "^1.0.12",
-
         "ethers": "^6.15.0",
-
         "express": "^5.1.0",
-
         "keccak256": "^1.0.6",
-
         "lucide-react": "^0.544.0",
-
-        "merkletreejs": "^0.5.2",
-
         "nodemailer": "^7.0.3",
-
-        "pdf-image": "2.0.0",
-
-        "pdf-lib": "^1.17.1",
-
-        "pdfjs": "^2.4.7",
-
-        "pdfjs-dist": "^5.4.149",
-
-        "pdfkit": "^0.13.0",
-
         "piping": "^1.0.0-rc.4",
-
         "react": "^19.2.0",
-
         "react-detect-offline": "^2.4.5",
-
         "react-dom": "^19.2.0",
-
-        "react-pdf": "^10.1.0",
-
-        "react-pdf-to-image": "^1.0.2",
-
         "react-router-dom": "^7.9.3",
-
-        "react-xml-parser": "^1.1.8",
-
         "recharts": "^3.2.1",
-
         "Verif": "file:",
-
-        "worker-loader": "3.0.8",
-
-        "xlsx": "^0.18.5"
-
+        "worker-loader": "3.0.8"
     },
 
     "build": {
 
-        "appId": "Verif",
+        "appId": "xHornet",
 
-        "productName": "Verif",
+        "productName": "xHornet",
 
         "win": {
 
