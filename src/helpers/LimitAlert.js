@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { ethers, formatEther } from "ethers";
 
 export const checkBalanceForTx = async (contractConnection, txFunction, txArgs, bufferMultiplier = 1.2) => {
   const { contract, walletConnection } = contractConnection;
@@ -22,7 +22,7 @@ export const checkBalanceForTx = async (contractConnection, txFunction, txArgs, 
       throw new Error("Vous avez dépassé votre limite pour la génération de diplômes. Veuillez contacter CYBOTS pour recharger votre pack.");
     }
 
-    console.log(`Balance check passed. Wallet balance: ${ethers.utils.formatEther(balance)} BNB`);
+    console.log(`Balance check passed. Wallet balance: ${formatEther(balance)} BNB`);
     return true; // Sufficient balance
   } catch (error) {
     console.error("Gas estimation or balance check failed:", error.message);

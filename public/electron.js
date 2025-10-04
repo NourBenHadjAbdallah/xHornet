@@ -10,7 +10,6 @@ const fsPromises = require("fs").promises;
 
 const { dialog } = require("electron");
 
-const { sendEmail } = require(path.join(__dirname, '../src/components/EmailHandler')); 
 
 let mainWindow;
 
@@ -226,18 +225,6 @@ ipcMain.on(
   }
 );
 
-ipcMain.on('send-email-ipc', async (event, emailData) => {
-  try {
-    if (!sendEmail) {
-      throw new Error('EmailHandler not available');
-    }
-    const result = await sendEmail(emailData);
-    event.reply('send-email-ipc-reply', result);
-  } catch (error) {
-    console.error('Error sending email from main process:', error);
-    event.reply('send-email-ipc-reply', { success: false, error: error.message });
-  }
-});
 
 app.whenReady().then(() => {
   createWindow();

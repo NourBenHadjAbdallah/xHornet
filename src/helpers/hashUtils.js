@@ -1,10 +1,9 @@
-import { ethers } from "ethers";
+import { solidityPackedKeccak256 } from "ethers";
 
 const crypto = window.require ? window.require("crypto") : null;
 
 // This is a 256-bit key (32 bytes = 64 hex characters)
 const AES_KEY = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
-
 
 export const encryptAES = (text) => {
   if (!crypto) {
@@ -44,7 +43,6 @@ export const encryptAES = (text) => {
   }
 };
 
-
 export const encryptedToBytes = (encryptedBase64) => {
   try {
     // Convert base64 to Buffer
@@ -72,7 +70,7 @@ export function generateDiplomaHash(diplomaData) {
   } = diplomaData;
 
   // Generate hash using plaintext data
-  const diplomaHash = ethers.utils.solidityKeccak256(
+  const diplomaHash = solidityPackedKeccak256(
     ['string', 'string', 'string', 'string', 'string', 'string', 'string', 'string'],
     [fullName, degree, specialty, mention, idNumber, academicYear, juryMeetingDate, directorName]
   );

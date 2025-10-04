@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { ethers, formatEther, parseEther, Wallet } from "ethers";
 import { connectProvider } from './blockchain.js';
 
 const TEST_PRIVATE_KEY = "79fe3fa380c3b5e244c5cba7a6ef0f503f9adf9e486b562eb804ddc761a16c7d";
@@ -18,7 +18,7 @@ export const connectWalletWithPrivateKey = async (privateKey = TEST_PRIVATE_KEY)
     }
 
     const provider = connectProvider();
-    const wallet = new ethers.Wallet(privateKey, provider);
+    const wallet = new Wallet(privateKey, provider);
 
     return {
       provider,
@@ -35,7 +35,7 @@ export const connectWalletWithPrivateKey = async (privateKey = TEST_PRIVATE_KEY)
 export const getWalletBalance = async (walletConnection) => {
   try {
     const balance = await walletConnection.provider.getBalance(walletConnection.address);
-    const balanceInEth = ethers.utils.formatEther(balance);
+    const balanceInEth = formatEther(balance);
     console.log(`💰 Balance: ${balanceInEth} ETH`);
     return balanceInEth;
   } catch (error) {
@@ -48,7 +48,7 @@ export const sendTransaction = async (walletConnection, toAddress, amountInEth) 
   try {
     const tx = {
       to: toAddress,
-      value: ethers.utils.parseEther(amountInEth.toString()),
+      value: parseEther(amountInEth.toString()),
       gasLimit: 21000,
     };
 

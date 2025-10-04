@@ -1,0 +1,101 @@
+/* 🎨 NAVBAR (Fixed Sidebar - Yellow Theme) */
+
+:root {
+  --bg-sidebar: #fffbe6;   /* light yellow background */
+  --accent: #ffd60a;       /* yellow accent */
+  --accent-danger: #ff4d4d;
+  --text-dark: #000000;
+  --border: #e0e0e0;
+}
+
+.sidebar {
+  position: fixed;             /* stays fixed on left */
+  top: 0;
+  left: 0;
+  height: 100vh;               /* full height */
+  width: 240px;
+  background: var(--bg-sidebar);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid var(--border);
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
+}
+
+/* slide effect (for mobile/toggle if needed) */
+.sidebar.hidden {
+  transform: translateX(-100%);
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.brand-text {
+  margin-left: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    border-radius: var(--radius);
+    margin-bottom: 0.25rem;
+    position: relative;
+}
+
+.nav-item:hover,
+.nav-item.active {
+  background: var(--accent);
+  color: #000;
+}
+
+.sidebar-footer {
+  padding: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.user-mini {
+  margin-bottom: 0.5rem;
+  color: var(--text-dark);
+}
+
+.logout-btn {
+  background: var(--accent-danger);
+  border: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background: #ff3333;
+}
+
+.home-container {
+  margin-left: 240px;          /* push right to avoid overlap */
+  width: calc(100% - 240px);   /* take remaining width */
+  min-height: 100vh;           /* always fill screen height */
+  background: #ffffff;         /* or var(--bg-light) if you themed it */
+}

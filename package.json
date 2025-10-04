@@ -1,10 +1,8 @@
 {
 
-    "name": "Verif",
+    "name": "xHornet",
 
-    "version": "25.03.01",
-
-    "proxy": "http://localhost:5000",
+    "version": "1.0.0",
 
     "description": "QR-Diploma application",
 
@@ -13,6 +11,12 @@
     "homepage": "./",
 
     "private": true,
+
+    "engines": {
+
+        "node": ">=20.0.0"
+
+    },
 
     "scripts": {
 
@@ -40,25 +44,29 @@
 
     "devDependencies": {
 
-        "@babel/cli": "^7.4.4",
+        "@babel/cli": "^7.28.3",
 
-        "@babel/core": "^7.4.4",
+        "@babel/core": "^7.28.4",
 
-        "@babel/node": "^7.4.5",
+        "@babel/node": "^7.28.0",
 
-        "@babel/preset-env": "^7.4.4",
+        "@babel/preset-env": "^7.28.3",
+
+        "@craco/craco": "^7.1.0",
 
         "concurrently": "^4.1.0",
 
         "customize-cra": "^0.2.12",
 
-        "electron": "^5.0.2",
+        "electron": "^38.2.1",
 
-        "electron-builder": "^25.1.8",
+        "electron-builder": "^26.0.12",
 
-        "react-app-rewired": "^2.1.3",
+        "nodemon": "^3.1.10",
 
-        "react-scripts": "^3.0.1",
+        "react-app-rewired": "^2.2.1",
+
+        "react-scripts": "^5.0.1",
 
         "wait-on": "^3.2.0"
 
@@ -66,11 +74,15 @@
 
     "dependencies": {
 
-        "@material-ui/core": "^4.12.4",
+        "@emotion/react": "^11.14.0",
 
-        "@material-ui/icons": "^4.11.3",
+        "@emotion/styled": "^11.14.1",
 
-        "@material-ui/lab": "^4.0.0-alpha.61",
+        "@mui/icons-material": "^7.3.4",
+
+        "@mui/lab": "^7.0.1-beta.18",
+
+        "@mui/material": "^7.3.4",
 
         "@pdf-lib/fontkit": "^1.1.1",
 
@@ -81,6 +93,8 @@
         "copy-image-clipboard": "^2.1.2",
 
         "cors": "^2.8.5",
+
+        "crypto": "^1.0.1",
 
         "date-fns": "^2.30.0",
 
@@ -96,19 +110,17 @@
 
         "electron-pdf-window": "^1.0.12",
 
-        "ethers": "^5.8.0",
+        "ethers": "^6.15.0",
 
-        "express": "^4.17.1",
+        "express": "^5.1.0",
 
         "keccak256": "^1.0.6",
 
-        "lucide-react": "^0.513.0",
+        "lucide-react": "^0.544.0",
 
         "merkletreejs": "^0.5.2",
 
         "nodemailer": "^7.0.3",
-
-        "nodemon": "^1.19.1",
 
         "pdf-image": "2.0.0",
 
@@ -116,27 +128,27 @@
 
         "pdfjs": "^2.4.7",
 
-        "pdfjs-dist": "2.6.347",
+        "pdfjs-dist": "^5.4.149",
 
         "pdfkit": "^0.13.0",
 
         "piping": "^1.0.0-rc.4",
 
-        "react": "17.0.1",
+        "react": "^19.2.0",
 
         "react-detect-offline": "^2.4.5",
 
-        "react-dom": "17.0.1",
+        "react-dom": "^19.2.0",
 
-        "react-pdf": "^5.7.2",
+        "react-pdf": "^10.1.0",
 
         "react-pdf-to-image": "^1.0.2",
 
-        "react-router-dom": "^5.2.0",
-
-        "react-scripts": "4.0.0",
+        "react-router-dom": "^7.9.3",
 
         "react-xml-parser": "^1.1.8",
+
+        "recharts": "^3.2.1",
 
         "Verif": "file:",
 
@@ -161,12 +173,19 @@
         },
 
         "files": [
+
             "build/**/**/*",
+
             "build-server/**/**/*",
+
             "public/splash-resources/*",
+
             "node_modules/**/*",
+
             "./public/electron.js",
+
             "src/**/**/*"
+
         ],
 
         "directories": {
@@ -177,7 +196,29 @@
 
     },
 
-    "browserslist": []
+    "browserslist": {
+
+        "production": [
+
+            ">0.2%",
+
+            "not dead",
+
+            "not op_mini all"
+
+        ],
+
+        "development": [
+
+            "last 1 chrome version",
+
+            "last 1 firefox version",
+
+            "last 1 safari version"
+
+        ]
+
+    }
 
 }
 

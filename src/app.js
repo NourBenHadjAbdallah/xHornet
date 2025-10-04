@@ -1,21 +1,15 @@
 import React from 'react';
-import {Route,HashRouter } from "react-router-dom"
+import { Routes, Route, HashRouter } from "react-router-dom";
 import './css/main-interface.css';
-import Login  from './pages/Login/Login';
-
+import Login from './pages/Login/Login';
 
 function App() {
-
   return (
     <HashRouter>
-
-      <Route  path="/" component={Login} />
-
-
-   </HashRouter>
-
-
-
+      <Routes>
+        <Route path="/" element={<Login />} />
+      </Routes>
+    </HashRouter>
   );
 }
 

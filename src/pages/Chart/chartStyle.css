@@ -1,0 +1,586 @@
+/* 🎨 CHART PAGE STYLES (Yellow Theme) */
+
+:root {
+  --bg-light: #ffffff;
+  --bg-card: #fdfdfd;
+  --accent: #ffd60a;
+  --accent-danger: #ff4d4d;
+  --accent-warning: #ff9800;
+  --accent-success: #28a745;
+  --text-dark: #000000;
+  --text-muted: #555555;
+  --border: #e0e0e0;
+}
+
+/* ==================== */
+/* 🟢 MAIN LAYOUT       */
+/* ==================== */
+.chart-page {
+  margin-left: 240px;
+  min-height: 100vh;
+  background: var(--bg-light);
+  font-family: 'Inter', sans-serif;
+}
+
+/* ==================== */
+/* 🟢 HEADER            */
+/* ==================== */
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+}
+
+.chart-header h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.8rem;
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chart-header p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.header-icon {
+  vertical-align: middle;
+}
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: var(--accent);
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-dark);
+  transition: opacity 0.2s;
+}
+
+.refresh-btn:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.refresh-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ==================== */
+/* 🟢 LAYOUT            */
+/* ==================== */
+.chart-layout {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+/* ==================== */
+/* 🟢 SIDEBAR           */
+/* ==================== */
+.coin-sidebar {
+  width: 320px;
+  background: var(--bg-card);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 1rem;
+  max-height: calc(100vh - 180px);
+  overflow-y: auto;
+}
+
+.search-container {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.7rem 0.7rem 0.7rem 2.5rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  outline: none;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+.search-input:focus {
+  border-color: var(--accent);
+}
+
+/* ==================== */
+/* 🟢 COIN LIST         */
+/* ==================== */
+.coin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.coin-item {
+  padding: 0.75rem;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.coin-item:hover {
+  background: #f9f9f9;
+}
+
+.coin-item.active {
+  background: #fffbe6;
+  border-color: var(--accent);
+}
+
+.coin-item-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.coin-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-dark);
+}
+
+.coin-symbol {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ==================== */
+/* 🟢 MAIN CONTENT      */
+/* ==================== */
+.chart-main {
+  flex: 1;
+}
+
+/* ==================== */
+/* 🟢 COIN INFO CARD    */
+/* ==================== */
+.coin-info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.coin-info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.coin-info-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.coin-image {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+.coin-info-left h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--text-dark);
+}
+
+.coin-symbol-large {
+  margin: 0.25rem 0 0 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.coin-info-right {
+  text-align: right;
+}
+
+.coin-price {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 0.25rem;
+}
+
+.coin-change {
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.coin-change.positive {
+  color: var(--accent-success);
+}
+
+.coin-change.negative {
+  color: var(--accent-danger);
+}
+
+/* ==================== */
+/* 🟢 STATS GRID        */
+/* ==================== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.stat-item {
+  padding: 0.75rem;
+  background: #fffbe6;
+  border-radius: 8px;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.stat-value.positive {
+  color: var(--accent-success);
+}
+
+.stat-value.negative {
+  color: var(--accent-danger);
+}
+
+/* ==================== */
+/* 🟢 CHART CONTROLS    */
+/* ==================== */
+.chart-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.control-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.control-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 400;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+
+.control-btn:hover:not(:disabled) {
+  background: #f9f9f9;
+}
+
+.control-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.control-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ==================== */
+/* 🟢 CHART CONTAINER   */
+/* ==================== */
+.chart-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  min-height: 450px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-loading,
+.chart-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  gap: 1rem;
+}
+
+.chart-error p {
+  margin: 0;
+}
+
+/* ==================== */
+/* 🟢 TOOLTIP           */
+/* ==================== */
+.custom-tooltip {
+  background: #fff;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tooltip-price {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.tooltip-volume {
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ==================== */
+/* 🟢 ACTION BUTTONS    */
+/* ==================== */
+.action-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.action-btn {
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: opacity 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+
+.action-btn:hover {
+  opacity: 0.85;
+}
+
+.btn-buy {
+  background: var(--accent-success);
+  color: #fff;
+}
+
+.btn-sell {
+  background: var(--accent-danger);
+  color: #fff;
+}
+
+.btn-alert {
+  background: var(--accent);
+  color: var(--text-dark);
+}
+
+/* ==================== */
+/* 🟢 EMPTY STATE       */
+/* ==================== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  color: var(--text-muted);
+}
+
+.empty-state svg {
+  opacity: 0.3;
+  margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--text-dark);
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* ==================== */
+/* 🟢 LOADING STATE     */
+/* ==================== */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  color: var(--text-muted);
+  gap: 1rem;
+}
+
+.loading-state p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* ==================== */
+/* 🟢 ERROR STATE       */
+/* ==================== */
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  color: var(--accent-danger);
+}
+
+.error-state p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* ==================== */
+/* 🟢 SCROLLBAR         */
+/* ==================== */
+.coin-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.coin-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.coin-sidebar::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.coin-sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* ==================== */
+/* 🟢 RESPONSIVE        */
+/* ==================== */
+@media (max-width: 1024px) {
+  .chart-page {
+    margin-left: 0;
+  }
+
+  .chart-layout {
+    flex-direction: column;
+  }
+
+  .coin-sidebar {
+    width: 100%;
+    max-height: 300px;
+  }
+
+  .coin-info-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .coin-info-right {
+    text-align: left;
+  }
+
+  .coin-change {
+    justify-content: flex-start;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .chart-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .chart-header h1 {
+    font-size: 1.4rem;
+  }
+
+  .coin-price {
+    font-size: 1.5rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .action-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .control-group {
+    width: 100%;
+  }
+
+  .control-btn {
+    flex: 1;
+  }
+}

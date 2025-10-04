@@ -1,8 +1,7 @@
-import { ethers } from "ethers";
+import { ethers, isAddress, Contract } from "ethers";
 import { connectWalletWithPrivateKey } from './wallet.js';
 import { checkBalanceForTx } from './LimitAlert.js';
 import CONTRACT_ABI from './ABI.json';
-
 
 //const CONTRACT_ADDRESS = "0x7Dba8948a8d6E5CABF907fA4cAd498d4e49d069d";
 //const CONTRACT_ADDRESS = "0x732aDB73A60D3f2dED37517b34b599787d640f53";
@@ -13,13 +12,13 @@ const CONTRACT_ADDRESS = "0x17DA642b3c036CA6e0E92078D4758E573307C225"; //BSC
 // const CONTRACT_ADDRESS = "0xc1Fbcba0163Bef2882Ff3F622144e07006F33Ede"; //POL
 export const connectToContract = async (privateKey) => {
   try {
-    if (!ethers.utils.isAddress(CONTRACT_ADDRESS)) {
+    if (!isAddress(CONTRACT_ADDRESS)) {
       throw new Error("❌ Invalid contract address");
     }
 
     const walletConnection = await connectWalletWithPrivateKey(privateKey);
 
-    const contract = new ethers.Contract(
+    const contract = new Contract(
       CONTRACT_ADDRESS,
       CONTRACT_ABI,
       walletConnection.signer
