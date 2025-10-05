@@ -1,44 +1,27 @@
-# Description de la tâche
+# Pull Request Description
 
-<!-- Décris clairement ce que fait cette PR : fonctionnalité ajoutée, bug corrigé, ou autre modification. Mentionne le contexte si nécessaire. -->
+<!-- Clearly describe what this PR does: added feature, bug fix, or other change. Mention the context if necessary. -->
 
-- **Type de changement :**  
-  - [ ] Nouvelle fonctionnalité  
-  - [ ] Correction de bug  
-  - [ ] Amélioration technique / refactorisation  
-  - [ ] Autre : ___________________
-
----
-
-#  Carte Trello associée
-
-<!-- Colle ici le lien vers la carte Trello correspondante -->
-
-
+- **Type of Change:**  
+  - [ ] New Feature
+  - [ ] Bug Fix
+  - [ ] Technical Improvement / Refactoring 
+  - [ ] Other: ___________________
 
 ---
 
-#  Captures d’écran / Démonstration (UI/UX)
 
-_
----
+#  Screenshots / Demonstration (UI/UX)
 
-#  Comment tester ?
-
-<!-- Donne les instructions pour tester ta PR : étapes à suivre, environnement requis, données à utiliser… -->
 
 ---
 
-#  Checklist avant review
+#  Pre-Review Checklist
 
-- [ ] Le code compile / fonctionne sans erreur  
-- [ ] La documentation est mise à jour (si besoin)  
-- [ ] La carte Trello est liée  
-- [ ] Les screenshots / démonstrations sont fournis (si applicable)
+- [ ] Code compiles / runs without errors
+- [ ] Documentation is updated (if necessary)  
+- [ ] Screenshots / demonstrations are provided (if applicable)
 
 ---
 
-# Points d’attention supplémentaires
 
-- **Plan de rollback (en cas de problème après merge) :**  
-<!-- Décris comment annuler ou corriger les changements si besoin -->
