@@ -1,3 +1,10 @@
+const { contextBridge, ipcRenderer } = require("electron");
+
+contextBridge.exposeInMainWorld("geminiAPI", {
+  ask: async (message) => {
+    return await ipcRenderer.invoke("chat-to-gemini", message);
+  },
+});
 // All of the Node.js APIs are available in the preload process.
 // It has the same sandbox as a Chrome extension.
 window.addEventListener('DOMContentLoaded', () => {

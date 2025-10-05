@@ -1,33 +1,38 @@
 const electron = require("electron");
-const app = electron.app;
-const BrowserWindow = electron.BrowserWindow;
+const { app, BrowserWindow, ipcMain } = electron;
 const path = require("path");
 const isDev = require("electron-is-dev");
 
-let mainWindow;
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-//Create main window
+
+let mainWindow;
+let chatHistory = []; // Stores chat context memory
+
+// Initialize Gemini
+const genAI = new GoogleGenerativeAI("AIzaSyAVkU9DdyLEUCksVqWUNJDW-0_adOpT8Wk");
+
+// -------------------------
+// 🪟 CREATE MAIN WINDOW
+// -------------------------
 function createWindow() {
   const { screen } = require("electron");
   const primaryDisplay = screen.getPrimaryDisplay();
   const { width, height } = primaryDisplay.workAreaSize;
 
   mainWindow = new BrowserWindow({
-    width: width,
-    height: height,
-    // width:1280,
-    // height: 720,
+    width,
+    height,
     minWidth: 1280,
     minHeight: 720,
     autoHideMenuBar: true,
-    //webSecurity: false,
-    // resizable: false,
     useContentSize: true,
     show: false,
     icon: "favicon.ico",
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
-      nodeIntegration: true,
+      nodeIntegration: false,
+      contextIsolation: true,
       webSecurity: false,
     },
   });
@@ -38,8 +43,10 @@ function createWindow() {
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
 
-  mainWindow.webContents.openDevTools();
-  var splash = new BrowserWindow({
+  if (isDev) mainWindow.webContents.openDevTools();
+
+  // Splash screen
+  const splash = new BrowserWindow({
     width: 950,
     height: 500,
     transparent: true,
@@ -47,31 +54,52 @@ function createWindow() {
     alwaysOnTop: true,
   });
 
-  splash.loadURL(
-    `file://${path.join(__dirname, "/splash-resources/splash.html")}`
-  );
-
+  splash.loadURL(`file://${path.join(__dirname, "/splash-resources/splash.html")}`);
   splash.center();
-  setTimeout(function () {
+
+  setTimeout(() => {
     splash.close();
     mainWindow.show();
   }, 5000);
 }
 
+// -------------------------
+// 🤖 GEMINI CHAT HANDLER
+// -------------------------
+ipcMain.handle("chat-to-gemini", async (event, userMessage) => {
+  try {
+    // Add message to chat history for context
+    chatHistory.push({ role: "user", content: userMessage });
 
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const context = chatHistory.map((m) => `${m.role}: ${m.content}`).join("\n");
+
+    const result = await model.generateContent(context);
+    const reply = result.response.text();
+
+    // Store assistant reply
+    chatHistory.push({ role: "assistant", content: reply });
+
+    return reply;
+  } catch (error) {
+    console.error("❌ Gemini API Error:", error);
+    return "Désolé 😔, je rencontre un problème technique pour le moment.";
+  }
+});
+
+// -------------------------
+// ⚡ APP READY
+// -------------------------
 app.whenReady().then(() => {
   createWindow();
-
   app.on("activate", function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 });
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
+// -------------------------
+// ❌ CLOSE EVENT
+// -------------------------
 app.on("window-all-closed", function () {
   if (process.platform !== "darwin") app.quit();
 });

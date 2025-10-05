@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import SideBar from '../../components/NavBar/Sidebar';
+import SideBar from '../../components/NavBar/SideBar';
+import ChatBot from '../../components/Bot/chatBot';
 import Dashboard from '../Dashboard/Dashboard';
 import ChartPage from '../Chart/Chart';
 
@@ -22,7 +23,7 @@ export default function Main() {
       )}
 
 
-
+      <ChatBot />
     </div>
   );
 }
